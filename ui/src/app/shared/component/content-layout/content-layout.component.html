@@ -1,0 +1,37 @@
+<div class="dark-body-only" id="outer-container">
+  <!-- page-wrapper Start-->
+  <div class="page-wrapper" id="canvas-bookmark">
+    <ng-container>
+      <app-header></app-header>
+    </ng-container>
+    <!-- Page Body Start-->
+    <div #pageBodyWrapper [ngClass]="{'colapsedSidebar': !navServices.collapseSidebar,
+                  'openSidebar' : navServices.collapseSidebar }"
+         class="page-body-wrapper d-flex position-relative"
+         id="pageBodyWrapper"
+    >
+      <div (click)="collapseSidebar()" class="white-overlay"></div>
+      <div #sidebarBlock id="sidebar-wrapper">
+        <!-- *ngIf="!!navServices", чтобы меню не появлялось до проставления класса openSidebar или colapsedSidebar -->
+        <app-sidebar *ngIf="!!navServices"></app-sidebar>
+      </div>
+
+      <div [style.width.px]="pageBodyWidth"
+           class="page-body d-flex flex-column justify-content-between" id="page-body">
+        <div> <!-- див для того чтобы justify-content-between, норм раздялал -->
+          <app-breadcrumb></app-breadcrumb>
+          <main [@animateRoute]="getRouterOutletState()">
+            <router-outlet></router-outlet>
+          </main>
+        </div>
+      </div>
+    </div>
+    <!-- footer start-->
+    <footer class="footer ps-0 pb-0 pl-0 l-h-100" style="max-width: 165px;">
+      <app-footer></app-footer>
+    </footer>
+    <!-- footer End-->
+    <!-- Page Body End-->
+  </div>
+  <!-- page-wrapper End-->
+</div>

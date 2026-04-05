@@ -1,0 +1,59 @@
+<div *ngIf="userList == null" class="no-data">
+  <p>{{ 'common.no_data' | lang }}</p>
+</div>
+
+<div *ngIf="userList != null" class="custom-table">
+  <table>
+    <thead>
+    <tr>
+      <th>№</th>
+      <th>{{ 'users.name' | lang }}</th>
+      <th>{{ 'users.email' | lang }}</th>
+      <th>{{ 'users.group' | lang }}</th>
+      <th>{{ 'users.room' | lang }}</th>
+      <th>{{ 'users.status' | lang }}</th>
+      <th></th>
+      <th>{{ 'users.registered_date' | lang }}</th>
+      <th class="text-center">{{ 'users.is_confirm' | lang }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of userList; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ user.fullName }}</td>
+      <td>
+        <div (click)="copyText(user.username)" class="cursor">
+          {{ user.username }}
+        </div>
+      </td>
+      <td>{{ user.numGroup }}</td>
+      <td>{{ user.numRoom }}</td>
+      <td>
+        <span
+          [ngClass]="getStatusStyle(user.status).classname">
+          {{ 'user_status.' + user.status | lang }}
+        </span>
+      </td>
+      <td>
+        <div (click)="changeStatus(user)">
+          <img alt="" height="12" ngSrc="assets/image/buttons/pencil.svg"
+               width="14"/>
+        </div>
+      </td>
+      <td>{{ user.registerDate }}</td>
+      <td>
+        <div class="d-flex justify-content-center">
+          <div *ngIf="user.isConfirm">
+            <img alt="" height="12" ngSrc="assets/image/table_icons/check_status.svg"
+                 width="14"/>
+          </div>
+          <div *ngIf="!user.isConfirm">
+            <img alt="" height="12" ngSrc="assets/image/table_icons/x_status.svg"
+                 width="12"/>
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

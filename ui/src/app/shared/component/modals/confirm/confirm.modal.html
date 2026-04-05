@@ -1,0 +1,47 @@
+<div class="card-modal mx-auto modal-width">
+  <div *ngIf="showTitle" class="row mb-3">
+    <div class="col f-26 f-w-600" ngbAutofocus>{{ title }}</div>
+  </div>
+  <div class="col">
+    <div class="col">
+      <div [hidden]="!descriptionHTML" class="row mb-4 text-break">
+        <label [innerHtml]="descriptionHTML" class="f-16 c-grey"></label>
+      </div>
+      <div class="row justify-content-center text-center">
+        <div *ngIf="showDeclineButton" class="col">
+          <button
+            (click)="isConfirm(false)"
+            class="btn btn-outline-primary w-100"
+            data-target="#modal-confirm"
+            data-toggle="modal"
+            type="button"
+          >
+            {{ buttonDecline }}
+          </button>
+        </div>
+        <div *ngIf="showConfirmButton" class="col">
+          <button
+            (click)="isConfirm(true)"
+            class="btn btn-primary w-100"
+            data-target="#modal-confirm"
+            data-toggle="modal"
+            type="button"
+          >
+            {{ buttonConfirm }}
+          </button>
+        </div>
+        <div *ngIf="showErrorButton" class="col">
+          <button
+            (click)="isConfirm(true)"
+            class="btn btn-danger w-100"
+            data-target="#modal-confirm"
+            data-toggle="modal"
+            type="button"
+          >
+            {{ buttonError }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

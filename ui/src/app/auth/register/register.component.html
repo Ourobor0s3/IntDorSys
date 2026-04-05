@@ -1,0 +1,154 @@
+<div class="auth-form">
+  <h2 class="text-center mb-4 f-w-600">{{ 'Register' | lang | uppercase }}</h2>
+
+  <form (ngSubmit)="createAccount()" [formGroup]="regForm" class="needs-validation">
+    <div class="form-group mb-3">
+      <label class="form-label" for="telegram-field">{{ 'Telegram ID' | lang }}</label>
+      <div class="input-group">
+        <span class="input-group-text">
+          <img alt="Telegram Icon" height="20" src="/assets/image/fields/telegram.svg" width="20">
+        </span>
+        <input
+          [attr.aria-describedby]="'telegramId-error'"
+          [attr.aria-label]="'Telegram ID' | lang"
+          [attr.aria-required]="true"
+          autofocus
+          class="form-control"
+          formControlName="telegram"
+          id="telegram-field"
+          placeholder="{{ 'Telegram ID' | lang }}"
+          required
+          type="text"
+        >
+      </div>
+      <div *ngIf="elemIsInvalid(regForm.controls.telegram)"
+           class="invalid-feedback d-block"
+           id="telegramId-error">
+        {{ textErrorStr(regForm.controls.telegram) | lang }}
+      </div>
+    </div>
+
+    <div class="form-group mb-3">
+      <label class="form-label" for="email-field">{{ 'Email' | lang }}</label>
+      <div class="input-group">
+        <span class="input-group-text">
+          <img alt="Email Icon" height="20" src="/assets/image/fields/email.svg" width="20">
+        </span>
+        <input
+          [attr.aria-describedby]="'email-error'"
+          [attr.aria-label]="'Email' | lang"
+          class="form-control"
+          formControlName="email"
+          id="email-field"
+          placeholder="{{ 'Email' | lang }}"
+          type="email"
+        >
+      </div>
+      <div *ngIf="elemIsInvalid(regForm.controls.email)"
+           class="invalid-feedback d-block"
+           id="email-error">
+        {{ textErrorStr(regForm.controls.email) | lang }}
+      </div>
+    </div>
+
+    <div class="form-group mb-3">
+      <label class="form-label" for="pass-field">{{ 'Password' | lang }}</label>
+      <div class="input-group">
+        <span class="input-group-text">
+          <img alt="Password Icon" height="20" src="/assets/image/fields/lock.svg" width="20">
+        </span>
+        <input
+          [attr.aria-describedby]="'pass-error'"
+          [attr.aria-label]="'Password' | lang"
+          [attr.aria-required]="true"
+          [type]="showPass ? 'text' : 'password'"
+          class="form-control"
+          formControlName="password"
+          id="pass-field"
+          placeholder="{{ 'Password' | lang }}"
+          required
+        />
+        <button
+          (click)="hideOrShowPassword()"
+          [attr.aria-label]="(showPass ? 'Hide password' : 'Show password') | lang"
+          class="btn btn-outline-secondary"
+          type="button"
+        >
+          <img
+            [alt]="(showPass ? 'Hide password' : 'Show password') | lang"
+            [src]="showPass ? '/assets/image/fields/eye_hide.svg' : '/assets/image/fields/eye_show.svg'"
+            height="20"
+            width="20"
+          >
+        </button>
+      </div>
+      <div *ngIf="elemIsInvalid(regForm.controls.password)"
+           class="invalid-feedback d-block"
+           id="pass-error">
+        {{ textErrorStr(regForm.controls.password, passwordPattern) | lang }}
+      </div>
+    </div>
+
+    <div class="form-group mb-4">
+      <label class="form-label" for="pass-confirm-field">{{ 'Confirm password' | lang }}</label>
+      <div class="input-group">
+        <span class="input-group-text">
+          <img alt="Password Confirm Icon" height="20" src="/assets/image/fields/lock.svg" width="20">
+        </span>
+        <input
+          [attr.aria-describedby]="'pass-confirm-error'"
+          [attr.aria-label]="'Confirm password' | lang"
+          [attr.aria-required]="true"
+          [type]="showConfirmPass ? 'text' : 'password'"
+          class="form-control"
+          formControlName="passwordConfirm"
+          id="pass-confirm-field"
+          placeholder="{{ 'Confirm password' | lang }}"
+          required
+        />
+        <button
+          (click)="hideOrShowPassword(true)"
+          [attr.aria-label]="(showConfirmPass ? 'Hide password' : 'Show password') | lang"
+          class="btn btn-outline-secondary"
+          type="button"
+        >
+          <img
+            [alt]="(showConfirmPass ? 'Hide password' : 'Show password') | lang"
+            [src]="showConfirmPass ? '/assets/image/fields/eye_hide.svg' : '/assets/image/fields/eye_show.svg'"
+            height="20"
+            width="20"
+          >
+        </button>
+      </div>
+      <div *ngIf="elemIsInvalid(regForm.controls.passwordConfirm)"
+           class="invalid-feedback d-block"
+           id="pass-confirm-error">
+        {{ textErrorStr(regForm.controls.passwordConfirm, passwordPattern) | lang }}
+      </div>
+    </div>
+
+    <div class="d-grid gap-2">
+      <button
+        [disabled]="regForm.invalid"
+        class="btn btn-primary"
+        id="sign-up-btn"
+        type="submit"
+      >
+        {{ 'Register' | lang }}
+      </button>
+    </div>
+
+    <div class="text-center mt-4">
+      <span class="text-muted">{{ 'account.login' | lang }}</span>
+      <a
+        (click)="navigateToLogin()"
+        class="text-decoration-none ms-1"
+        href="javascript:void(0)"
+        role="button"
+        tabindex="0"
+      >
+        {{ 'Login' | lang }}
+      </a>
+    </div>
+  </form>
+</div>

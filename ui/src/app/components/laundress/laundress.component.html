@@ -1,0 +1,55 @@
+<div>
+  <div class="row mt-3 custom-filter theme-form">
+    <!--Start date-->
+    <div class="col-auto selector pr-0">
+      <label>{{ 'laundress.start_date' | lang }}</label>
+      <input #dps="bsDatepicker" (click)="calendarClick('#bsCalendarStart')"
+             (onShown)="setCalendarWidth('#bsCalendarStart')"
+             [(bsValue)]="startDate" [bsConfig]="bsConfig"
+             [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
+             bsDatepicker class="form-control input-datepicker min-w-250" id="bsCalendarStart"
+             style="height: 45px" type="text">
+    </div>
+
+    <!--End date-->
+    <div class="col-auto selector pr-0">
+      <label>{{ 'laundress.end_date' | lang }}</label>
+      <input #dpe="bsDatepicker" (click)="calendarClick('#bsCalendarEnd')"
+             (onShown)="setCalendarWidth('#bsCalendarEnd')" [(bsValue)]="endDate"
+             [bsConfig]="bsConfig" [ngClass]="{'iconShow' : dpe.isOpen }"
+             [readonly]="true" bsDatepicker class="form-control input-datepicker min-w-250" id="bsCalendarEnd"
+             style="height: 45px" type="text">
+    </div>
+
+    <!-- Find button -->
+    <div class="col selector align-self-end">
+      <button (click)="searchTimeLaund()" class="btn btn-primary btn-find" type="button">
+        {{ 'laundress.filter' | lang }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="laundList == null" class="text-center p-4 no-data">
+  <p class="text-muted">{{ 'common.no_data' | lang }}</p>
+</div>
+<div *ngIf="laundList != null" class="row row-cols-1 row-cols-sm-2 g-3">
+  <div *ngFor="let laund of laundList" class="col">
+    <div class="card mb-0 h-100 card-info">
+      <div class="card-body">
+        <span class="card-header">{{ laund.date }}</span>
+        <div *ngIf="laund.laundModels == null" class="text-center p-3">
+          <p class="text-muted">{{ 'common.no_data' | lang }}</p>
+        </div>
+        <div *ngIf="laund.laundModels != null">
+          <div *ngFor="let l of laund.laundModels" class="card-item">
+            <div>
+              <span class="time">{{ l.timeWash | date:'HH:mm' }}</span> -
+              <span class="user-name">{{ l.selectUser?.fullName }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

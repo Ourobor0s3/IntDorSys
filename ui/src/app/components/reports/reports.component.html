@@ -1,0 +1,81 @@
+<div class="row mt-3 custom-filter theme-form">
+  <!--Start date-->
+  <div class="col-auto selector pr-0">
+    <label>{{ 'laundress.start_date' | lang }}</label>
+    <input #dps="bsDatepicker" (click)="calendarClick('#bsCalendarStart')"
+           (onShown)="setCalendarWidth('#bsCalendarStart')"
+           [(bsValue)]="startDate" [bsConfig]="bsConfig"
+           [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
+           bsDatepicker class="form-control input-datepicker min-w-250" id="bsCalendarStart"
+           style="height: 45px" type="text">
+  </div>
+
+  <!--End date-->
+  <div class="col-auto selector pr-0">
+    <label>{{ 'laundress.end_date' | lang }}</label>
+    <input #dpe="bsDatepicker" (click)="calendarClick('#bsCalendarEnd')"
+           (onShown)="setCalendarWidth('#bsCalendarEnd')" [(bsValue)]="endDate"
+           [bsConfig]="bsConfig" [ngClass]="{'iconShow' : dpe.isOpen }"
+           [readonly]="true" bsDatepicker class="form-control input-datepicker min-w-250" id="bsCalendarEnd"
+           style="height: 45px" type="text">
+  </div>
+
+  <!-- Find button -->
+  <div class="col selector align-self-end">
+    <button (click)="searchTimeLaund()" class="btn btn-primary btn-find" type="button">
+      {{ 'laundress.filter' | lang }}
+    </button>
+  </div>
+</div>
+
+<div *ngIf="reportList == null" class="text-center p-4 no-data">
+  <p class="text-muted">{{ 'common.no_data' | lang }}</p>
+</div>
+<div *ngIf="reportList != null" class="row row-cols-auto row-cols-sm-2 g-3">
+  <div *ngFor="let report of reportList; let i = index" class="col">
+    <div class="card card-info h-full mb-0">
+      <div class="card-body flex flex-col gap-4">
+        <div class="card-header fw-semibold text-primary mb-1">{{ report.username }}</div>
+
+        <!-- Карусель -->
+        <div [id]="'carouselWithIndicators' + i" class="carousel slide">
+
+          <ol class="carousel-indicators">
+            <li *ngFor="let file of report.files; let j = index"
+                [attr.aria-current]="j === 0 ? 'true' : null"
+                [attr.data-bs-slide-to]="j"
+                [attr.data-bs-target]="'#carouselWithIndicators' + i"
+                [class.active]="j === 0">
+            </li>
+          </ol>
+
+          <div class="carousel-inner rounded overflow-hidden">
+            <div *ngFor="let file of report.files; let j = index"
+                 [ngClass]="{ active: j === 0 }"
+                 class="carousel-item">
+              <div class="card-photo">
+                <img [src]="file.filePath" alt="Slide {{ j + 1 }}" class="d-block w-100 object-cover">
+              </div>
+            </div>
+          </div>
+
+          <!-- Навигация -->
+          <a [href]="'#carouselWithIndicators' + i" class="carousel-control-prev" data-bs-slide="prev" role="button">
+            <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Previous</span>
+          </a>
+          <a [href]="'#carouselWithIndicators' + i" class="carousel-control-next" data-bs-slide="next" role="button">
+            <span aria-hidden="true" class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Next</span>
+          </a>
+        </div>
+
+        <!-- Текстовая информация -->
+        <div class="card-meta">
+          <div class="card-description text-sm text-muted mb-2">{{ report.description }}</div>
+          <div class="text-end text-xs text-secondary">{{ report.createdAt | date:"d.MM.yyyy HH:mm" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

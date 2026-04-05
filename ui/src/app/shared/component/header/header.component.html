@@ -1,0 +1,111 @@
+<div class="page-main-header">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <img (click)="goOverview()" alt="Logo" class="logo cursor-pointer" src="assets/image/logo/logo.svg">
+      </div>
+      <div class="col">
+        <div class="main-header-right">
+          <ul class="d-flex align-items-center gap-4 mb-0 justify-content-end">
+            <!-- Desktop menu items -->
+            <li class="d-flex align-items-center d-none d-md-flex">
+              <span class="text-dark">{{ getUser()?.username ?? "" }}</span>
+            </li>
+            <li class="d-none d-md-block">
+              <div class="dropdown">
+                <button aria-expanded="false" class="btn btn-outline-primary" data-bs-toggle="dropdown"
+                        id="languageDropdown">
+                  {{ currentLanguageInfo.flag }}
+                </button>
+                <ul aria-labelledby="languageDropdown" class="dropdown-menu">
+                  <li *ngFor="let lang of availableLanguages">
+                    <a (click)="changeLanguage(lang.shortName)" class="dropdown-item" href="javascript:void(0)">
+                      {{ lang.flag }}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="d-none d-md-block">
+              <button (click)="onLogout()" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                <img alt="Logout" height="20" src="assets/image/buttons/logout.svg" width="20"/>
+                <span>{{ 'Logout' | lang }}</span>
+              </button>
+            </li>
+
+            <!-- Mobile menu button -->
+            <li class="d-md-none">
+              <button (click)="toggleMobileMenu()" class="btn btn-link text-dark">
+                <img alt="Menu" height="24" src="assets/image/menuitems/burger.svg" width="24"/>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile menu overlay -->
+<div (click)="toggleMobileMenu()" [class.show]="isMobileMenuOpen" class="mobile-menu-overlay"></div>
+
+<!-- Mobile menu -->
+<div [class.show]="isMobileMenuOpen" class="mobile-menu">
+  <div class="mobile-menu-header">
+    <span class="text-dark">{{ getUser()?.username ?? "" }}</span>
+    <button (click)="toggleMobileMenu()" class="btn btn-link text-dark">
+      <img alt="Close" height="24" src="assets/image/table_icons/x_status.svg" width="24"/>
+    </button>
+  </div>
+
+  <div class="d-flex flex-column">
+    <ul class="nav nav-pills d-flex flex-column gap-2">
+      <li *ngFor="let menuItem of menuItems"
+          [hidden]="needHidden(menuItem.roles)"
+          class="nav-item">
+        <a (click)="toggletNavActive(menuItem)"
+           *ngIf="menuItem.type === 'link' && !menuItem.notShowInSidebar"
+           [class.active]="menuItem.active"
+           [routerLink]="!menuItem.type ? null : [menuItem.path]"
+           class="nav-link">
+          <div class="d-flex align-items-center gap-3">
+            <img *ngIf="menuItem.image"
+                 [alt]="menuItem.title"
+                 [class.active-image]="menuItem.active"
+                 [src]="menuItem.image"
+                 height="24"
+                 width="24">
+            <span [class.active]="menuItem.active" class="menu-asset">
+              {{ menuItem.title | lang }}
+            </span>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="mobile-menu-content">
+    <div class="row">
+      <div class="col">
+        <div class="dropdown">
+          <button class="btn btn-outline-primary w-100" data-bs-toggle="dropdown">
+            {{ currentLanguageInfo.flag }}
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let lang of availableLanguages">
+              <a (click)="changeLanguage(lang.shortName)" class="dropdown-item" href="javascript:void(0)">
+                {{ lang.flag }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <button (click)="onLogout()"
+                class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2">
+          <img alt="Logout" height="20" src="assets/image/buttons/logout.svg" width="20"/>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

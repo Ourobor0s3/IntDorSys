@@ -1,0 +1,128 @@
+{
+  "Register": "Register",
+  "Telegram": "Telegram ID",
+  "Password": "Password",
+  "Login": "Login",
+  "Registered": "Registered",
+  "Confirm password": "Confirm password",
+  "Show password": "Show password",
+  "Hide password": "Hide password",
+  "Email": "Email",
+  "Logout": "Logout",
+  "account": {
+    "create": "Create new account?",
+    "login": "Already have an account?"
+  },
+  "errors": {
+    "required": "All fields are required",
+    "max": "Maximum",
+    "min": "Minimum",
+    "maxLength": "Maximum length ",
+    "minLength": "Minimum length ",
+    "passwordPattern": "Only Latin letters, numbers, and special characters",
+    "invalidEmail": "The email format is incorrect",
+    "mismatch": "Password mismatch",
+    "passwordConfirmation": {
+      "notMatch": "Passwords does not match"
+    }
+  },
+  "menu": {
+    "home": "Home",
+    "users": "Users",
+    "laundress": "Laundress",
+    "reports": "Reports"
+  },
+  "common": {
+    "ok": "Ok",
+    "no_data": "No data available",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "refresh": "Refresh",
+    "filter": "Filter",
+    "clear": "Clear",
+    "apply": "Apply",
+    "reset": "Reset",
+    "copy_success": "Copied to clipboard",
+    "system_error": "System error. Please contact technical support"
+  },
+  "status": {
+    "active": "active",
+    "inactive": "inactive",
+    "blocked": "blocked",
+    "registered": "registered",
+    "confirmed": "confirmed",
+    "not_confirmed": "not confirmed"
+  },
+  "user": {
+    "name": "name",
+    "email": "email",
+    "group": "group",
+    "room": "room",
+    "status": "status",
+    "registered_date": "registered date",
+    "confirmation": "confirmation"
+  },
+  "users": {
+    "name": "Name",
+    "email": "Email",
+    "group": "Group",
+    "room": "Room",
+    "status": "Status",
+    "registered_date": "Registered date",
+    "is_confirm": "Is confirm",
+    "block_user": "Block user",
+    "unblock_user": "Unblock user",
+    "confirm_block": "Are you sure you want to block this user?",
+    "confirm_unblock": "Are you sure you want to unblock this user?",
+    "confirm_delete": "Are you sure you want to delete this user?"
+  },
+  "home": {
+    "welcome": "Welcome to the Laundry control panel",
+    "admin_description": "In the Laundry control panel, you can view laundry records, check laundry analytics, view registered users, and confirm or cancel their access to the laundry service."
+  },
+  "laundress": {
+    "start_date": "Start date",
+    "end_date": "End date",
+    "filter": "Filter",
+    "machine_type": "Machine type",
+    "washing": "Washing",
+    "drying": "Drying",
+    "duration": "Duration",
+    "start_time": "Start time",
+    "end_time": "End time",
+    "user": "User",
+    "machine": "Machine",
+    "status": "Status",
+    "available": "Available",
+    "in_use": "In use",
+    "maintenance": "Maintenance"
+  },
+  "messages": {
+    "no_data": "no data available",
+    "copy_success": "copied to clipboard",
+    "welcome": "welcome"
+  },
+  "chart": {
+    "all_time_records": "All time records",
+    "used_time_records": "Used time records",
+    "time": "Time",
+    "count": "Count"
+  },
+  "language": {
+    "en": "English",
+    "ru": "Russian"
+  },
+  "user_status": {
+    "-1": "Blocked",
+    "0": "Registered"
+  }
+}

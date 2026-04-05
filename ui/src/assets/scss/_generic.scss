@@ -1,0 +1,122 @@
+/*====== Font-size css starts ======*/
+$i: 12;
+@while $i<=100 {
+    .f-#{$i} {
+        font-size: #{$i}px;
+    }
+    $i: $i+2;
+}
+
+/*====== Font-size css ends ======*/
+
+/*====== Font-weight css starts ======*/
+$i: 100,
+300,
+400,
+500,
+600,
+700,
+900;
+@each $val in $i {
+    .f-w-#{$val} {
+        font-weight: $val;
+    }
+}
+
+/*====== Font-weight css ends ======*/
+
+/*====== Height css starts ======*/
+$i: 12;
+@while $i<=500 {
+    .h-#{$i} {
+        height: #{$i}px;
+    }
+    $i: $i+1;
+}
+
+/*====== Height css ends ======*/
+
+/*====== Line-height css starts ======*/
+$i: 100;
+@while $i<=1000 {
+    .l-h-#{$i} {
+        line-height: #{$i}+'%';
+    }
+    $i: $i+10;
+}
+
+/*====== Line-height css ends ======*/
+
+/**=====================
+    Mobile options
+==========================**/
+@media(max-width: 540px) {
+    /*====== Mobile Font-size css starts ======*/
+    $i: 12;
+    @while $i<=100 {
+        .mf-#{$i} {
+            font-size: #{$i}px;
+        }
+        $i: $i+2;
+    }
+    /*====== Mobile Font-size css ends ======*/
+}
+
+/**=====================
+    Laptop options
+==========================**/
+@media(max-width: 1400px) {
+    /*====== Laptop Font-size css starts ======*/
+    $i: 12;
+    @while $i<=100 {
+        .lf-#{$i} {
+            font-size: #{$i}px;
+        }
+        $i: $i+2;
+    }
+    /*====== Laptop Font-size css ends ======*/
+}
+
+/**=====================
+    Tablet options
+==========================**/
+@media(min-width: 540px) and (max-width: 1400px) {
+
+    /*====== Tablet Font-size css starts ======*/
+    $i: 12;
+    @while $i<=100 {
+        .tf-#{$i} {
+            font-size: #{$i}px;
+        }
+        $i: $i+2;
+    }
+    /*====== Tablet Font-size css ends ======*/
+}
+
+/*====== Extra large grid css starts ======*/
+@media (min-width: 1601px) {
+    .col-fullHd-auto {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 100%;
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    $i: 1;
+    @while $i<=12 {
+        .col-fullHd-#{$i} {
+            //flex: 0 0 percentage($i / 12);
+            //max-width: percentage($i / 12);
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        $i: $i+1;
+    }
+}
+
+/*====== Extra large grid css ends ======*/

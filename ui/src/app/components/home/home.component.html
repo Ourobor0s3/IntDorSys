@@ -1,0 +1,28 @@
+<h1>{{ 'home.welcome' | lang }}</h1>
+<p>{{ 'home.admin_description' | lang }}</p>
+
+<div *ngIf="laund != null" class="m-3">
+  <div class="card mb-0 h-100 card-info">
+    <div class="card-body">
+      <span class="card-header">{{ laund.date }}</span>
+      <div *ngIf="laund.laundModels == null" class="text-center p-3">
+        <p class="text-muted">{{ 'common.no_data' | lang }}</p>
+      </div>
+      <div *ngIf="laund.laundModels != null">
+        <div *ngFor="let l of laund.laundModels" class="card-item">
+          <div>
+            <span class="time">{{ l.timeWash | date:'HH:mm' }}</span> -
+            <span class="user-name">{{ l.selectUser?.fullName }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-body">
+    <div class="col">
+      <app-bar-chart [chartInfo]="chart"></app-bar-chart>
+    </div>
+  </div>
+</div>
