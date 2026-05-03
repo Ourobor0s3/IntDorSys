@@ -1,8 +1,10 @@
 using IntDorSys.Core.Constants;
 using IntDorSys.Core.Enums;
+using IntDorSys.Core.Settings;
 using IntDorSys.Laundress.Services.Services;
 using IntDorSys.TelegramBot.Service.AdminServices;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Ouro.TelegramBot.Core.Services;
 using Telegram.Bot.Types;
@@ -16,18 +18,21 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
         private readonly ILogger<AdminCallbackHandler> _logger;
         private readonly ITelegramService _telegramService;
         private readonly IUserBotService _userService;
+        private readonly IOptionsMonitor<AdminSettings> _adminSettings;
 
         /// <inheritdoc cref="IAdminCallbackHandler" />
         public AdminCallbackHandler(
             IAdminService adminService,
             ITelegramService telegramService,
             ILogger<AdminCallbackHandler> logger,
-            IUserBotService userService)
+            IUserBotService userService,
+            IOptionsMonitor<AdminSettings> adminSettings)
         {
             _adminService = adminService;
             _telegramService = telegramService;
             _logger = logger;
             _userService = userService;
+            _adminSettings = adminSettings;
         }
 
         /// <inheritdoc />
@@ -48,14 +53,14 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                                     ct);
                                 await _adminService.UpdateNotificateUserAsync(long.Parse(listCallback[2]), ct);
                                 break;
-                            case "No":
-                                await _telegramService.DeleteMessageAsync(AdminConstants.AdminChatId,
+case "No":
+                                await _telegramService.DeleteMessageAsync(_adminSettings.CurrentValue.AdminChatId,
                                     callbackQuery.Message!.MessageId,
                                     ct);
                                 await _telegramService.SendMessageAsync(long.Parse(listCallback[2]),
                                     MessageText.NotConfirmTg,
                                     ct);
-                                await _telegramService.SendMessageAsync(AdminConstants.AdminChatId,
+                                await _telegramService.SendMessageAsync(_adminSettings.CurrentValue.AdminChatId,
                                     $"User {listCallback[2]} not confirm",
                                     ct);
                                 break;

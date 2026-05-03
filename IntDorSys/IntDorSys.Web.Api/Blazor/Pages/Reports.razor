@@ -1,0 +1,225 @@
+@page "/reports"
+@inject ApiClient Api
+@inherits AuthorizedPageBase
+@implements IDisposable
+
+<h1 class="h4 mb-3">Reports</h1>
+
+<div class="d-flex gap-2 mb-3 flex-wrap">
+    <InputDate class="form-control w-auto" @bind-Value="_startDate" />
+    <InputDate class="form-control w-auto" @bind-Value="_endDate" />
+    <button type="button" class="btn btn-primary" @onclick="ApplyFilter">Filter</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="ResetFilter">Reset</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="ToggleSort">@(_sortDesc ? "Newest" : "Oldest")</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_loading)
+{
+    <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+}
+else if (_reports.Count == 0)
+{
+    <div class="text-muted">No reports found.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var report in SortedReports())
+        {
+            var currentIndex = GetCurrentPhotoIndex(report);
+            <div class="col-12 col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between mb-2">
+                            <div>
+                                <div class="fw-semibold">@report.Username</div>
+                                <div class="text-muted small">@report.CreatedAt.ToString("d MMM yyyy HH:mm")</div>
+                            </div>
+                        </div>
+
+                        @if (report.Files.Count == 0)
+                        {
+                            <div class="text-muted small">No photos.</div>
+                        }
+                        else
+                        {
+                            <div class="report-gallery">
+                                <img class="report-gallery__image" src="@report.Files[currentIndex].FilePath" alt="report"
+                                     loading="lazy" @onclick="() => OpenLightbox(report, currentIndex)" />
+                                @if (report.Files.Count > 1)
+                                {
+                                    <button type="button" class="report-gallery__nav report-gallery__nav--prev" @onclick="() => PrevPhoto(report)">&#8249;</button>
+                                    <button type="button" class="report-gallery__nav report-gallery__nav--next" @onclick="() => NextPhoto(report)">&#8250;</button>
+                                }
+                                <div class="report-gallery__dots">
+                                    @for (var i = 0; i < report.Files.Count; i++)
+                                    {
+                                        var dotIndex = i;
+                                        <button type="button" class="@(currentIndex == i ? "dot active" : "dot")" @onclick="() => SetPhoto(report, dotIndex)"></button>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(report.Description))
+                        {
+                            <div class="mt-2 text-muted small">@report.Description</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (_lightboxReport != null)
+{
+    <div class="app-modal-backdrop" @onclick="CloseLightbox"></div>
+    <div class="app-modal card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="fw-semibold">@_lightboxReport.Username</div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="CloseLightbox">Close</button>
+            </div>
+            <img class="w-100 rounded" src="@_lightboxReport.Files[_lightboxIndex].FilePath" alt="preview" />
+            @if (_lightboxReport.Files.Count > 1)
+            {
+                <div class="d-flex justify-content-between mt-2">
+                    <button type="button" class="btn btn-outline-secondary" @onclick="LightboxPrev">Prev</button>
+                    <span class="text-muted">@(_lightboxIndex + 1) / @_lightboxReport.Files.Count</span>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="LightboxNext">Next</button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private readonly List<ReportViewModel> _reports = [];
+    private readonly Dictionary<long, int> _photoIndexes = [];
+    private bool _loading = true;
+    private string? _error;
+    private bool _sortDesc = true;
+    private DateTime _startDate = DateTime.Today.AddDays(-7);
+    private DateTime _endDate = DateTime.Today;
+    private PeriodicTimer? _timer;
+    private CancellationTokenSource? _cts;
+    private ReportViewModel? _lightboxReport;
+    private int _lightboxIndex;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (!Auth.IsLoggedIn) return;
+
+        await LoadReports();
+        StartAutoRefresh();
+    }
+
+    private async Task LoadReports()
+    {
+        _loading = true;
+        _error = null;
+        _reports.Clear();
+
+        var response = await Api.GetReportsAsync(_startDate, _endDate.AddDays(1), CancellationToken.None);
+        if (response?.Data != null)
+        {
+            _reports.AddRange(response.Data);
+        }
+
+        _error = response?.Errors.FirstOrDefault()?.Message;
+        _loading = false;
+    }
+
+    private async Task ApplyFilter() => await LoadReports();
+
+    private async Task ResetFilter()
+    {
+        _startDate = DateTime.Today.AddDays(-7);
+        _endDate = DateTime.Today;
+        await LoadReports();
+    }
+
+    private void ToggleSort() => _sortDesc = !_sortDesc;
+
+    private IEnumerable<ReportViewModel> SortedReports() =>
+        _sortDesc ? _reports.OrderByDescending(r => r.CreatedAt) : _reports.OrderBy(r => r.CreatedAt);
+
+    private int GetCurrentPhotoIndex(ReportViewModel report)
+    {
+        if (!_photoIndexes.TryGetValue(report.UserId ^ report.CreatedAt.GetHashCode(), out var index))
+        {
+            index = 0;
+            _photoIndexes[report.UserId ^ report.CreatedAt.GetHashCode()] = 0;
+        }
+        if (report.Files.Count == 0) return 0;
+        if (index >= report.Files.Count) index = 0;
+        return index;
+    }
+
+    private void SetPhoto(ReportViewModel report, int index) =>
+        _photoIndexes[report.UserId ^ report.CreatedAt.GetHashCode()] = index;
+
+    private void NextPhoto(ReportViewModel report)
+    {
+        if (report.Files.Count == 0) return;
+        SetPhoto(report, (GetCurrentPhotoIndex(report) + 1) % report.Files.Count);
+    }
+
+    private void PrevPhoto(ReportViewModel report)
+    {
+        if (report.Files.Count == 0) return;
+        SetPhoto(report, (GetCurrentPhotoIndex(report) - 1 + report.Files.Count) % report.Files.Count);
+    }
+
+    private void OpenLightbox(ReportViewModel report, int index)
+    {
+        _lightboxReport = report;
+        _lightboxIndex = index;
+    }
+
+    private void CloseLightbox() => _lightboxReport = null;
+
+    private void LightboxNext()
+    {
+        if (_lightboxReport == null || _lightboxReport.Files.Count == 0) return;
+        _lightboxIndex = (_lightboxIndex + 1) % _lightboxReport.Files.Count;
+    }
+
+    private void LightboxPrev()
+    {
+        if (_lightboxReport == null || _lightboxReport.Files.Count == 0) return;
+        _lightboxIndex = (_lightboxIndex - 1 + _lightboxReport.Files.Count) % _lightboxReport.Files.Count;
+    }
+
+    private void StartAutoRefresh()
+    {
+        _cts = new CancellationTokenSource();
+        _timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                while (_timer != null && await _timer.WaitForNextTickAsync(_cts.Token))
+                {
+                    await InvokeAsync(LoadReports);
+                }
+            }
+            catch (OperationCanceledException) { }
+        });
+    }
+
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _timer?.Dispose();
+        _cts?.Dispose();
+    }
+}

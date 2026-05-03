@@ -2,10 +2,12 @@ using System.Globalization;
 using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
+using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Models.Filters;
 using IntDorSys.Services.Users;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Extensions;
 using Ouro.TelegramBot.Core.Constants;
 using Ouro.TelegramBot.Core.Models;
@@ -20,17 +22,20 @@ namespace IntDorSys.Laundress.Services.Services.Impl
         private readonly AppDataContext _db;
         private readonly ILogger<UserBotService> _logger;
         private readonly ITelegramService _telegramService;
+        private readonly IOptionsMonitor<AdminSettings> _adminSettings;
 
         public UserBotService(
             IUserService  userService,
-            ITelegramService telegramService,
+            AppDataContext db,
             ILogger<UserBotService> logger,
-            AppDataContext db)
+            ITelegramService telegramService,
+            IOptionsMonitor<AdminSettings> adminSettings)
         {
             _userService = userService;
-            _telegramService = telegramService;
-            _logger = logger;
             _db = db;
+            _logger = logger;
+            _telegramService = telegramService;
+            _adminSettings = adminSettings;
         }
 
         /// <inheritdoc />
@@ -43,7 +48,7 @@ namespace IntDorSys.Laundress.Services.Services.Impl
             try
             {
                 var filteredUsers = (await _userService.GetListUsersAsync(ct)).Data
-                    .Where(user => !AdminConstants.ManagersLaundress.Contains(user.TelegramId))
+                    .Where(user => !_adminSettings.CurrentValue.ManagersLaundress.Contains(user.TelegramId))
                     .Where(user => user.Status == (isBlockedUsers ? UserStatus.Blocked : UserStatus.Registered))
                     .ToList();
 

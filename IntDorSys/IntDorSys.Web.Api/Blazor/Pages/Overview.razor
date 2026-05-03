@@ -1,0 +1,126 @@
+@page "/overview"
+@page "/home"
+@inject ApiClient Api
+@inherits AuthorizedPageBase
+
+<h1 class="h4 mb-3">Overview</h1>
+
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_loading)
+{
+    <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Today</div>
+                <div class="card-body p-2">
+                    @if (_todayModels.Count == 0)
+                    {
+                        <div class="text-muted small">No records today.</div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column gap-1">
+                            @foreach (var item in _todayModels)
+                            {
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-muted">@item.TimeWash.ToString("HH:mm")</span>
+                                    <span>@GetUserName(item.SelectUser)</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    @if (_points.Count == 0)
+                    {
+                        <div class="text-muted small">No analytics yet.</div>
+                    }
+                    else
+                    {
+                        <div class="overview-legend mb-3">
+                            <span class="me-3"><i class="legend-dot legend-dot--a"></i> All records</span>
+                            <span><i class="legend-dot legend-dot--b"></i> Used</span>
+                        </div>
+                        <div class="overview-bars">
+                            @foreach (var item in _points)
+                            {
+                                var max = Math.Max(1, MaxValue);
+                                var a = Math.Max(2, (int)Math.Round((double)item.Value1 / max * 100));
+                                var b = Math.Max(2, (int)Math.Round((double)item.Value2 / max * 100));
+
+                                <div class="overview-bar-row">
+                                    <div class="overview-bar-label" title="@item.Name">@item.Name</div>
+                                    <div class="overview-bar-track">
+                                        <div class="overview-bar overview-bar--a" style="width: @a%">@item.Value1</div>
+                                        <div class="overview-bar overview-bar--b" style="width: @b%">@item.Value2</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly List<LaundressViewModel> _todayModels = [];
+    private readonly List<ChartPoint> _points = [];
+    private bool _loading = true;
+    private string? _error;
+    private int MaxValue => _points.Count == 0 ? 1 : _points.SelectMany(p => new[] { p.Value1, p.Value2 }).Max();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (!Auth.IsLoggedIn)
+        {
+            return;
+        }
+
+        var laundressTask = Api.GetLaundressAsync(DateTime.Today, DateTime.Today, CancellationToken.None);
+        var analyticsTask = Api.GetAnalyticsAsync(CancellationToken.None);
+
+        await Task.WhenAll(laundressTask, analyticsTask);
+
+        var laundress = await laundressTask;
+        if (laundress?.Data != null)
+        {
+            var today = DateTime.Today.ToString("d.MM.yyyy");
+            var todayDay = laundress.Data.FirstOrDefault(d => d.Date == today);
+            if (todayDay != null)
+            {
+                _todayModels.AddRange(todayDay.LaundModels);
+            }
+        }
+
+        var analytics = await analyticsTask;
+        if (analytics?.Data != null)
+        {
+            _points.AddRange(analytics.Data);
+        }
+
+        _error = laundress?.Errors.FirstOrDefault()?.Message ?? analytics?.Errors.FirstOrDefault()?.Message;
+        _loading = false;
+    }
+
+    private static string GetUserName(UserInfoViewModel? user)
+    {
+        if (user == null) return "—";
+        return string.IsNullOrWhiteSpace(user.FullName) ? user.Username : $"{user.FullName} ({user.Username})";
+    }
+}

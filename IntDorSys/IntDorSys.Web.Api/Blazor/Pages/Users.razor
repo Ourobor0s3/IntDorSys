@@ -1,0 +1,220 @@
+@page "/users"
+@page "/user-info"
+@inject ApiClient Api
+@inherits AuthorizedPageBase
+
+<h1 class="h4 mb-3">Users</h1>
+
+<div class="d-flex gap-2 mb-3 flex-wrap">
+    <input class="form-control" style="max-width: 320px" placeholder="Search by name or email" @bind="_query" />
+    <select class="form-select w-auto" @bind="_sortKey">
+        <option value="name">Sort: Name</option>
+        <option value="status">Sort: Status</option>
+        <option value="id">Sort: Id</option>
+    </select>
+    <button type="button" class="btn btn-outline-secondary" @onclick="ToggleSortDir">@(_sortDesc ? "Desc" : "Asc")</button>
+    <button type="button" class="btn @(_showWithNameOnly ? "btn-primary" : "btn-outline-secondary")" @onclick="ToggleNameFilter">With Name</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_loading)
+{
+    <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status"></div>
+        <div class="text-muted mt-2">Loading...</div>
+    </div>
+}
+else
+{
+    <div class="table-responsive custom-table-modern">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th class="text-muted">#</th>
+                <th class="text-muted">Name</th>
+                <th class="text-muted">Email</th>
+                <th class="text-muted">Group</th>
+                <th class="text-muted">Room</th>
+                <th class="text-muted">Status</th>
+                <th></th>
+                <th class="text-muted">Registered</th>
+                <th class="text-center text-muted">Confirm</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var row in FilteredUsers().Select((u, i) => new { User = u, Index = i + 1 }))
+            {
+                var user = row.User;
+                <tr>
+                    <td class="text-muted">@row.Index</td>
+                    <td>@user.FullName</td>
+                    <td>
+                        <button type="button" class="btn btn-link p-0 text-decoration-none" @onclick="() => CopyUsername(user.Username)">@user.Username</button>
+                    </td>
+                    <td>@user.NumGroup</td>
+                    <td>@user.NumRoom</td>
+                    <td>
+                        <span class="badge @(user.IsBlocked ? "text-bg-danger" : "text-bg-success")">
+                            @(user.IsBlocked ? "Blocked" : "Registered")
+                        </span>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="() => OpenConfirm(user)">Edit</button>
+                    </td>
+                    <td class="text-muted">@FormatDate(user.RegisterDate)</td>
+                    <td class="text-center">
+                        @if (user.IsConfirm)
+                        {
+                            <span class="text-success">&#10004;</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">&#10008;</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(_toast))
+{
+    <div class="app-toast">@_toast</div>
+}
+
+@if (_confirmUser != null)
+{
+    <div class="app-modal-backdrop" @onclick="CloseConfirm"></div>
+    <div class="app-modal card">
+        <div class="card-body">
+            <h2 class="h6">Confirm</h2>
+            <p class="mb-3 text-muted">@(_confirmUser.IsBlocked ? "Unblock user?" : "Block user?")</p>
+            <div class="d-flex gap-2 justify-content-end">
+                <button type="button" class="btn btn-light" @onclick="CloseConfirm">Cancel</button>
+                <button type="button" class="btn @(_confirmUser.IsBlocked ? "btn-danger" : "btn-primary")" @onclick="ConfirmToggle">Ok</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly List<UserInfoViewModel> _users = [];
+    private bool _loading = true;
+    private string? _error;
+    private string _query = string.Empty;
+    private string _sortKey = "name";
+    private bool _sortDesc;
+    private bool _showWithNameOnly;
+    private UserInfoViewModel? _confirmUser;
+    private string? _toast;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (!Auth.IsLoggedIn) return;
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        _users.Clear();
+        var response = await Api.GetUsersAsync(CancellationToken.None);
+        if (response?.Data != null)
+        {
+            _users.AddRange(response.Data);
+        }
+        _error = response?.Errors.FirstOrDefault()?.Message;
+        _loading = false;
+    }
+
+    private IEnumerable<UserInfoViewModel> FilteredUsers()
+    {
+        IEnumerable<UserInfoViewModel> query = _users;
+
+        if (_showWithNameOnly)
+        {
+            query = query.Where(x => !string.IsNullOrWhiteSpace(x.FullName));
+        }
+
+        if (!string.IsNullOrWhiteSpace(_query))
+        {
+            var q = _query.Trim();
+            query = query.Where(x =>
+                (x.FullName?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                x.Username.Contains(q, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return _sortKey switch
+        {
+            "id" => _sortDesc ? query.OrderByDescending(x => x.Id) : query.OrderBy(x => x.Id),
+            "status" => _sortDesc ? query.OrderByDescending(x => x.IsBlocked) : query.OrderBy(x => x.IsBlocked),
+            _ => _sortDesc ? query.OrderByDescending(x => x.FullName ?? x.Username) : query.OrderBy(x => x.FullName ?? x.Username),
+        };
+    }
+
+    private void ToggleSortDir() => _sortDesc = !_sortDesc;
+    private void ToggleNameFilter() => _showWithNameOnly = !_showWithNameOnly;
+    private void OpenConfirm(UserInfoViewModel user) => _confirmUser = user;
+    private void CloseConfirm() => _confirmUser = null;
+
+    private async Task ConfirmToggle()
+    {
+        if (_confirmUser == null || _busy) return;
+
+        var user = _confirmUser;
+        CloseConfirm();
+
+        _busy = true;
+        await InvokeAsync(StateHasChanged);
+
+        var newStatus = user.IsBlocked ? 0 : -1;
+        var result = await Api.ChangeUserStatusAsync(user.Id, newStatus, CancellationToken.None);
+
+        if (result?.IsSuccess == true)
+        {
+            user.IsBlocked = !user.IsBlocked;
+            user.Status = newStatus;
+            _toast = "Status updated";
+        }
+        else
+        {
+            _toast = result?.Errors.FirstOrDefault()?.Message ?? "Failed to update status";
+        }
+
+        await Task.Delay(2000);
+        _toast = null;
+        _busy = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CopyUsername(string username)
+    {
+        if (_busy) return;
+
+        _busy = true;
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", username);
+        _toast = "Copied";
+
+        await Task.Delay(1500);
+        _toast = null;
+        _busy = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private static string FormatDate(string dateStr)
+    {
+        if (DateTime.TryParse(dateStr, out var date))
+        {
+            return date.ToString("dd.MM.yyyy");
+        }
+        return dateStr;
+    }
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+}

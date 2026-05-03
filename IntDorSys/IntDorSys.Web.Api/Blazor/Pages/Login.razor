@@ -1,0 +1,92 @@
+@page "/"
+@page "/login"
+@page "/auth/login"
+@inject ApiClient Api
+@inject AuthSession Auth
+@inject NavigationManager Navigation
+
+<div class="auth-page">
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h1 class="h4 mb-4 text-center">IntDorSys</h1>
+            @if (_initialized && Auth.IsLoggedIn)
+            {
+                <div class="text-center text-muted">Redirecting...</div>
+            }
+            else if (!_initialized)
+            {
+                <div class="text-center text-muted">Loading...</div>
+            }
+            else
+            {
+                <EditForm Model="_model" OnValidSubmit="OnSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <InputText class="form-control" @bind-Value="_model.Email" />
+                        <div class="text-danger small"><ValidationMessage For="() => _model.Email" /></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <InputText class="form-control" type="password" @bind-Value="_model.Password" />
+                        <div class="text-danger small"><ValidationMessage For="() => _model.Password" /></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@_loading">@(_loading ? "Loading..." : "Sign in")</button>
+                </EditForm>
+                <div class="text-center">
+                    <button type="button" class="btn btn-link" @onclick="GoToRegister">Create account</button>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(_error))
+                {
+                    <div class="alert alert-danger mt-3 mb-0">@_error</div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginForm _model = new();
+    private bool _loading;
+    private bool _initialized;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        _initialized = true;
+
+        if (Auth.IsLoggedIn)
+        {
+            Navigation.NavigateTo("/overview", forceLoad: true);
+        }
+    }
+
+    private async Task OnSubmit()
+    {
+        _loading = true;
+        _error = null;
+
+        var result = await Api.LoginAsync(_model.Email, _model.Password, CancellationToken.None);
+        if (result?.Data?.AccessToken is { Length: > 0 })
+        {
+            Navigation.NavigateTo("/overview", forceLoad: true);
+            return;
+        }
+
+        _error = result?.Errors.FirstOrDefault()?.Message ?? "Login failed";
+        _loading = false;
+    }
+
+    private void GoToRegister() => Navigation.NavigateTo("/register");
+
+    private sealed class LoginForm
+    {
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Password { get; set; } = string.Empty;
+    }
+}

@@ -1,6 +1,8 @@
 ﻿using IntDorSys.Core.Constants;
+using IntDorSys.Core.Settings;
 using IntDorSys.Laundress.Services.Services;
 using IntDorSys.Services.Users;
+using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 
 namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
@@ -10,11 +12,16 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
     {
         private readonly ILaundressBotService _laundBot;
         private readonly IUserService _userService;
+        private readonly IOptionsMonitor<AdminSettings> _adminSettings;
 
-        public LaundressMessageHandler(ILaundressBotService laundBot, IUserService userService)
+        public LaundressMessageHandler(
+            ILaundressBotService laundBot,
+            IUserService userService,
+            IOptionsMonitor<AdminSettings> adminSettings)
         {
             _laundBot = laundBot;
             _userService = userService;
+            _adminSettings = adminSettings;
         }
 
         /// <inheritdoc />
@@ -40,13 +47,13 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
                         await _laundBot.SendUseTimeByUserAsync(userInfo, ct: ct);
                     }
                     else if (userMessage.Equals(MessageText.AllRecords)
-                          && AdminConstants.ManagersLaundress.Contains(userInfo.TelegramId))
+                          && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
                     {
                         await _laundBot.SendAllTimeAsync(userInfo.TelegramId, ct: ct);
                     }
                 }
 
-                if (AdminConstants.ManagersLaundress.Contains(userInfo.TelegramId) && message.Text != null)
+                if (_adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId) && message.Text != null)
                 {
                     var specialMessage = message.Text.Split("$");
 

@@ -15,11 +15,20 @@ namespace IntDorSys.TelegramBot.Core
             IConfiguration configuration,
             SettingsAndHandlers settingsAndHandlers)
         {
+            return services.AddBotHostServices(configuration, _ => settingsAndHandlers);
+        }
+
+        public static IServiceCollection AddBotHostServices(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            Func<IServiceProvider, SettingsAndHandlers> settingsFactory)
+        {
             services.AddSingleton(configuration);
 
             services.AddTransient<IBotHandler>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<BotHandler>>();
+                var settingsAndHandlers = settingsFactory(sp);
                 return new BotHandler(logger, configuration, settingsAndHandlers);
             });
 

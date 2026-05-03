@@ -29,5 +29,10 @@ namespace IntDorSys.Core.Constants
         ///     Section with link settings
         /// </summary>
         public const string LinkSection = "Links";
+
+        /// <summary>
+        ///     Section with admin ids
+        /// </summary>
+        public const string AdminIdsSection = "AdminIds";
     }
 }

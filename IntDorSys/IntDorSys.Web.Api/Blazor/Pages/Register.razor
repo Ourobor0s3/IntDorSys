@@ -1,0 +1,145 @@
+@page "/register"
+@inject ApiClient Api
+@inject AuthSession Auth
+@inject NavigationManager Navigation
+
+<div class="auth-page">
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h1 class="h4 mb-4 text-center">Create Account</h1>
+            @if (_initialized && Auth.IsLoggedIn)
+            {
+                <div class="text-center text-muted">Redirecting...</div>
+            }
+            else if (!_initialized)
+            {
+                <div class="text-center text-muted">Loading...</div>
+            }
+            else
+            {
+                <EditForm Model="_model" OnValidSubmit="OnSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <InputText class="form-control" @bind-Value="_model.Email" />
+                        <ValidationMessage For="() => _model.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <InputText class="form-control" @bind-Value="_model.FullName" />
+                        <ValidationMessage For="() => _model.FullName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Group</label>
+                        <InputText class="form-control" @bind-Value="_model.NumGroup" />
+                        <ValidationMessage For="() => _model.NumGroup" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Room</label>
+                        <InputText class="form-control" @bind-Value="_model.NumRoom" />
+                        <ValidationMessage For="() => _model.NumRoom" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <InputText class="form-control" type="password" @bind-Value="_model.Password" />
+                        <ValidationMessage For="() => _model.Password" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <InputText class="form-control" type="password" @bind-Value="_model.ConfirmPassword" />
+                        <ValidationMessage For="() => _model.ConfirmPassword" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@_loading">@(_loading ? "Loading..." : "Register")</button>
+                </EditForm>
+                <div class="text-center">
+                    <button type="button" class="btn btn-link" @onclick="GoToLogin">Already have an account?</button>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(_error))
+                {
+                    <div class="alert alert-danger mt-3 mb-0">@_error</div>
+                }
+                @if (!string.IsNullOrWhiteSpace(_success))
+                {
+                    <div class="alert alert-success mt-3 mb-0">@_success</div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterForm _model = new();
+    private bool _loading;
+    private bool _initialized;
+    private string? _error;
+    private string? _success;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        _initialized = true;
+
+        if (Auth.IsLoggedIn)
+        {
+            Navigation.NavigateTo("/overview", forceLoad: true);
+        }
+    }
+
+    private async Task OnSubmit()
+    {
+        _loading = true;
+        _error = null;
+        _success = null;
+
+        if (_model.Password != _model.ConfirmPassword)
+        {
+            _error = "Passwords do not match";
+            _loading = false;
+            return;
+        }
+
+        var result = await Api.RegisterAsync(
+            _model.Email,
+            _model.FullName,
+            _model.NumGroup,
+            _model.NumRoom,
+            _model.Password,
+            CancellationToken.None);
+
+        if (result?.IsSuccess == true)
+        {
+            _success = "Registration successful! Please wait for confirmation.";
+        }
+        else
+        {
+            _error = result?.Errors.FirstOrDefault()?.Message ?? "Registration failed";
+        }
+
+        _loading = false;
+    }
+
+    private void GoToLogin() => Navigation.NavigateTo("/login");
+
+    private sealed class RegisterForm
+    {
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string FullName { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string NumGroup { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string NumRoom { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

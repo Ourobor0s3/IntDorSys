@@ -1,0 +1,108 @@
+@page "/laundress"
+@inject ApiClient Api
+@inherits AuthorizedPageBase
+
+<h1 class="h4 mb-3">Laundry Schedule</h1>
+
+<div class="d-flex gap-2 mb-3 flex-wrap">
+    <InputDate class="form-control w-auto" @bind-Value="_startDate" />
+    <InputDate class="form-control w-auto" @bind-Value="_endDate" />
+    <button type="button" class="btn btn-primary" @onclick="ApplyFilter">Filter</button>
+    <button type="button" class="btn btn-outline-secondary" @onclick="ResetFilter">Reset</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+    <div class="alert alert-danger">@_error</div>
+}
+else if (_loading)
+{
+    <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+}
+else if (_days.Count == 0)
+{
+    <div class="text-muted">No schedule found.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var day in _days)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">@day.Date</div>
+                    <div class="card-body p-2">
+                        @if (day.LaundModels.Count == 0)
+                        {
+                            <span class="text-muted">No records.</span>
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column gap-1">
+                                @foreach (var item in day.LaundModels)
+                                {
+                                    <div class="d-flex justify-content-between small">
+                                        <span class="text-muted">@item.TimeWash.ToString("HH:mm")</span>
+                                        <span>@GetUserName(item.SelectUser)</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private readonly List<LaundressPageViewModel> _days = [];
+    private bool _loading = true;
+    private string? _error;
+    private DateTime _startDate = DateTime.Today.AddDays(-7);
+    private DateTime _endDate = DateTime.Today;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (!Auth.IsLoggedIn)
+        {
+            return;
+        }
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _loading = true;
+        _error = null;
+        _days.Clear();
+
+        var response = await Api.GetLaundressAsync(_startDate, _endDate, CancellationToken.None);
+        if (response?.Data != null)
+        {
+            _days.AddRange(response.Data);
+        }
+
+        _error = response?.Errors.FirstOrDefault()?.Message;
+        _loading = false;
+    }
+
+    private async Task ApplyFilter() => await LoadData();
+
+    private async Task ResetFilter()
+    {
+        _startDate = DateTime.Today.AddDays(-7);
+        _endDate = DateTime.Today;
+        await LoadData();
+    }
+
+    private static string GetUserName(UserInfoViewModel? user)
+    {
+        if (user == null) return "—";
+        return string.IsNullOrWhiteSpace(user.FullName) ? user.Username : $"{user.FullName} ({user.Username})";
+    }
+}

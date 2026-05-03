@@ -1,0 +1,39 @@
+@inherits LayoutComponentBase
+@inject AuthSession Auth
+
+<div class="app-shell">
+    @if (Auth.IsLoggedIn)
+    {
+        <nav class="app-nav">
+            <div class="app-nav__brand">IntDorSys</div>
+            <button type="button" class="btn btn-sm btn-outline-secondary app-nav__menu" @onclick="ToggleMenu">Menu</button>
+            <div class="navbar-nav gap-2 flex-row flex-wrap @( _menuOpen ? "app-nav__links--open" : "app-nav__links")">
+                <NavLink class="nav-link" href="/home">Overview</NavLink>
+                <NavLink class="nav-link" href="/user-info">Users</NavLink>
+                <NavLink class="nav-link" href="/laundress">Laundress</NavLink>
+                <NavLink class="nav-link" href="/reports">Reports</NavLink>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger ms-auto" @onclick="Logout">Logout</button>
+        </nav>
+    }
+
+    <main class="app-content">@Body</main>
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    private bool _menuOpen;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+    }
+
+    private void ToggleMenu() => _menuOpen = !_menuOpen;
+
+    private async Task Logout()
+    {
+        await Auth.LogoutAsync();
+        Navigation.NavigateTo("/login", forceLoad: true);
+    }
+}

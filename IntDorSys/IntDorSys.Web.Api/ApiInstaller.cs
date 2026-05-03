@@ -10,6 +10,7 @@ namespace IntDorSys.Web.Api
         {
             builder.Configuration.Sources.Clear();
             builder.Configuration.AddJsonFile("appsettings.json", false, true);
+            builder.Configuration.AddJsonFile("appsettings.local.json", false, true);
 
             return builder;
         }

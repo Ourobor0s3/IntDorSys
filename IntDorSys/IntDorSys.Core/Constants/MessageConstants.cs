@@ -1,6 +1,5 @@
 ﻿namespace IntDorSys.Core.Constants
 {
-    // TODO Поправить сообщения
     public static class MessageConstants
     {
         //public static string GetMessage(string key) => FileExtensions.GetReplacedTextForMessage(key,)
@@ -20,7 +19,7 @@
             [MessageKeyConstants.GetUserInfo] =
                 "Чтобы получить доступ, ответьте на это сообщение (функция <Ответить>) введя свои ФИО (Отчество, если имеется), номер группы, номер комнаты\nПример: Иванов Иван Иванович, 3114, 1511",
             [MessageKeyConstants.MyRecords] = "📝 Мои записи",
-            [MessageKeyConstants.NotCorrect] = "Данные введены не корректно",
+            [MessageKeyConstants.NotCorrect] = "Данные введены некорректно",
             [MessageKeyConstants.ConfirmTg] = "Телеграм подтвержден",
             [MessageKeyConstants.NotConfirmTg] = "Телеграм не подтвержден",
             [MessageKeyConstants.NoEntries] = "Записей нет",

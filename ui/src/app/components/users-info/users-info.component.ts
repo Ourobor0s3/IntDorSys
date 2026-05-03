@@ -92,7 +92,9 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
 
         t.modalRef.result
             .then((result) => {
-                if (result) t.userService.changeUserStatus(user.id, !user.isBlocked).finally(() => {
+                if (result) t.userService.changeUserStatus(user.id, !user.isBlocked).then(() => {
+                    t.showToast(t.translate.instant('common.status_changed'));
+                }).finally(() => {
                     t.searchUsers();
                 });
             })

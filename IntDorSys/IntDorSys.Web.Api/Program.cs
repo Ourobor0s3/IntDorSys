@@ -13,6 +13,7 @@ using IntDorSys.TelegramBot.Service.CommandServices;
 using IntDorSys.TelegramBot.Service.MessageServices;
 using Ouro.TelegramBot.Core;
 using ServicesInstaller = IntDorSys.TelegramBot.Service.ServicesInstaller;
+using IntDorSys.Web.Api.Blazor.Services;
 
 namespace IntDorSys.Web.Api
 {
@@ -34,6 +35,28 @@ namespace IntDorSys.Web.Api
 
             builder.Services
                 .AddHealthChecks();
+
+            builder.Services
+                .AddRazorComponents()
+                .AddInteractiveServerComponents();
+
+            builder.Services
+                .AddHttpContextAccessor()
+                .AddScoped<AuthSession>()
+                .AddScoped<ApiClient>()
+                .AddScoped(sp =>
+                {
+                    var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+                    var request = httpContext?.Request;
+                    var baseUri = request == null
+                        ? "http://localhost:5050/"
+                        : $"{request.Scheme}://{request.Host}/";
+
+                    return new HttpClient
+                    {
+                        BaseAddress = new Uri(baseUri),
+                    };
+                });
 
             builder.Services
                 .AddCors(options =>
@@ -79,13 +102,13 @@ namespace IntDorSys.Web.Api
                         serviceProvider.GetRequiredService<ICallbackHandlerService>(),
                         serviceProvider.GetRequiredService<IMessageHandlerService>(),
                         serviceProvider.GetRequiredService<IAuthService>(),
-                        serviceProvider.GetRequiredService<ICommandService>()
-                    )
+                        serviceProvider.GetRequiredService<ICommandService>())
                 );
 
             var app = builder.Build();
 
             app.MigrateDb();
+            app.UseStaticFiles();
 
             app.UseRouting();
             app.UseCors(policyBuilder =>
@@ -101,8 +124,11 @@ namespace IntDorSys.Web.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseAntiforgery();
 
             app.MapControllers();
+            app.MapRazorComponents<Blazor.App>()
+                .AddInteractiveServerRenderMode();
 
             app.Run();
         }

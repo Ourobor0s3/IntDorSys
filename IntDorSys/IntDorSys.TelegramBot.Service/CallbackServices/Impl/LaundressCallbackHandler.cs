@@ -1,6 +1,8 @@
 using IntDorSys.Core.Constants;
+using IntDorSys.Core.Settings;
 using IntDorSys.Laundress.Services.Services;
 using IntDorSys.Services.Users;
+using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 
 namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
@@ -10,12 +12,17 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
     {
         private readonly ILaundressBotService _laundBot;
         private readonly IUserService _userService;
+        private readonly IOptionsMonitor<AdminSettings> _adminSettings;
 
         /// <inheritdoc cref="ILaundressCallbackHandler" />
-        public LaundressCallbackHandler(ILaundressBotService laundBot, IUserService userService)
+        public LaundressCallbackHandler(
+            ILaundressBotService laundBot,
+            IUserService userService,
+            IOptionsMonitor<AdminSettings> adminSettings)
         {
             _laundBot = laundBot;
             _userService = userService;
+            _adminSettings = adminSettings;
         }
 
         /// <inheritdoc />
@@ -44,7 +51,7 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                                 ct);
                         }
                         else if (listCallback[1].Equals(MessageText.AllRecords)
-                              && AdminConstants.ManagersLaundress.Contains(userInfo.TelegramId))
+                              && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
                         {
                             await _laundBot.SendAllTimeAsync(
                                 userInfo.TelegramId,

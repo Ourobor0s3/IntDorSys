@@ -1,12 +1,14 @@
 ﻿using System.Globalization;
 using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
+using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Constants;
 using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Ouro.CommonUtils.Results;
 using Ouro.TelegramBot.Core.Constants;
 using Ouro.TelegramBot.Core.Models;
@@ -21,17 +23,20 @@ namespace IntDorSys.Laundress.Services.Services.Impl
         private readonly ILaundressService _laund;
         private readonly ILogger<LaundressBotService> _logger;
         private readonly ITelegramService _telegramService;
+        private readonly IOptionsMonitor<AdminSettings> _adminSettings;
 
         public LaundressBotService(
             ILaundressService laund,
             ITelegramService telegramService,
             ILogger<LaundressBotService> logger,
-            AppDataContext db)
+            AppDataContext db,
+            IOptionsMonitor<AdminSettings> adminSettings)
         {
             _laund = laund;
             _telegramService = telegramService;
             _logger = logger;
             _db = db;
+            _adminSettings = adminSettings;
         }
 
         /// <inheritdoc />
@@ -40,7 +45,7 @@ namespace IntDorSys.Laundress.Services.Services.Impl
             var mes = new BotResponceMessage
             {
                 Message = "Меню прачечной:",
-                InlineKeyboard = AdminConstants.ManagersLaundress.Contains(user.TelegramId)
+                InlineKeyboard = _adminSettings.CurrentValue.ManagersLaundress.Contains(user.TelegramId)
                     ? LaundressConstants.BtnLaundressAdm
                     : LaundressConstants.BtnLaundress,
             };
@@ -102,7 +107,7 @@ namespace IntDorSys.Laundress.Services.Services.Impl
         {
             try
             {
-                if (!AdminConstants.ManagersLaundress.Contains(chatId))
+                if (!_adminSettings.CurrentValue.ManagersLaundress.Contains(chatId))
                 {
                     return;
                 }
@@ -389,7 +394,7 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                 }
 
                 await _telegramService.SendMessageAsync(
-                    AdminConstants.ManagersLaundress,
+                    _adminSettings.CurrentValue.ManagersLaundress,
                     $"{user.FullName} use {time}",
                     ct);
 
@@ -423,7 +428,7 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                     return;
                 }
 
-                await _telegramService.SendMessageAsync(AdminConstants.ManagersLaundress,
+                await _telegramService.SendMessageAsync(_adminSettings.CurrentValue.ManagersLaundress,
                     $"{user.FullName} remove time on {time}",
                     ct);
 

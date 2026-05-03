@@ -52,7 +52,8 @@
     "apply": "Apply",
     "reset": "Reset",
     "copy_success": "Copied to clipboard",
-    "system_error": "System error. Please contact technical support"
+    "system_error": "System error. Please contact technical support",
+    "status_changed": "Status updated successfully"
   },
   "status": {
     "active": "active",
