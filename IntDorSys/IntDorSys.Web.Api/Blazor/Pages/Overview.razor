@@ -3,13 +3,16 @@
 @inject ApiClient Api
 @inherits AuthorizedPageBase
 
-<h1 class="h4 mb-3">Overview</h1>
+<div class="page-header">
+    <h1 class="page-title">Overview</h1>
+    <span class="text-muted">@DateTime.Today.ToString("d MMMM yyyy")</span>
+</div>
 
 @if (!string.IsNullOrWhiteSpace(_error))
 {
     <div class="alert alert-danger">@_error</div>
 }
-else if (_loading)
+else if (_initialLoad)
 {
     <div class="text-center py-4">
         <div class="spinner-border text-primary" role="status"></div>
@@ -20,7 +23,10 @@ else
     <div class="row g-3 mb-4">
         <div class="col-12 col-lg-6">
             <div class="card h-100">
-                <div class="card-header">Today</div>
+                <div class="card-header">
+                    <span>Today</span>
+                    <span class="badge bg-primary ms-2">@_todayModels.Count</span>
+                </div>
                 <div class="card-body p-2">
                     @if (_todayModels.Count == 0)
                     {
@@ -29,11 +35,11 @@ else
                     else
                     {
                         <div class="d-flex flex-column gap-1">
-                            @foreach (var item in _todayModels)
+                            @foreach (var item in _todayModels.OrderBy(x => x.TimeWash))
                             {
-                                <div class="d-flex justify-content-between small">
-                                    <span class="text-muted">@item.TimeWash.ToString("HH:mm")</span>
-                                    <span>@GetUserName(item.SelectUser)</span>
+                                <div class="laund-item">
+                                    <span class="laund-item__time">@item.TimeWash.ToString("HH:mm")</span>
+                                    <span class="laund-item__user">@GetUserName(item.SelectUser)</span>
                                 </div>
                             }
                         </div>
@@ -43,6 +49,7 @@ else
         </div>
         <div class="col-12 col-lg-6">
             <div class="card h-100">
+                <div class="card-header">Analytics</div>
                 <div class="card-body">
                     @if (_points.Count == 0)
                     {
@@ -78,11 +85,13 @@ else
 }
 
 @code {
-    private readonly List<LaundressViewModel> _todayModels = [];
-    private readonly List<ChartPoint> _points = [];
-    private bool _loading = true;
+    private List<LaundressViewModel> _todayModels = new();
+    private List<ChartPoint> _points = new();
+    private bool _initialLoad = true;
     private string? _error;
     private int MaxValue => _points.Count == 0 ? 1 : _points.SelectMany(p => new[] { p.Value1, p.Value2 }).Max();
+    private DateTime _startDate = DateTime.Today;
+    private DateTime _endDate = DateTime.Today.AddDays(1);
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,35 +101,56 @@ else
             return;
         }
 
-        var laundressTask = Api.GetLaundressAsync(DateTime.Today, DateTime.Today, CancellationToken.None);
-        var analyticsTask = Api.GetAnalyticsAsync(CancellationToken.None);
+        await LoadDataAsync();
+    }
 
-        await Task.WhenAll(laundressTask, analyticsTask);
+    private async Task LoadDataAsync()
+    {
+        _error = null;
+        _todayModels = new List<LaundressViewModel>();
+        _points = new List<ChartPoint>();
+        _initialLoad = false;
+        await InvokeAsync(StateHasChanged);
 
-        var laundress = await laundressTask;
-        if (laundress?.Data != null)
+        try
         {
-            var today = DateTime.Today.ToString("d.MM.yyyy");
-            var todayDay = laundress.Data.FirstOrDefault(d => d.Date == today);
-            if (todayDay != null)
+            var laundressTask = Api.GetLaundressAsync(_startDate, _endDate, CancellationToken.None);
+            var analyticsTask = Api.GetAnalyticsAsync(CancellationToken.None);
+
+            await Task.WhenAll(laundressTask, analyticsTask);
+
+            var laundress = await laundressTask;
+            if (laundress?.Data != null)
             {
-                _todayModels.AddRange(todayDay.LaundModels);
+                var today = _startDate.ToString("dd.MM.yyyy");
+                var todayDay = laundress.Data.FirstOrDefault(d => d.Date == today);
+                if (todayDay is not null)
+                {
+                    _todayModels = new List<LaundressViewModel>(todayDay.LaundModels);
+                }
             }
-        }
 
-        var analytics = await analyticsTask;
-        if (analytics?.Data != null)
+            var analytics = await analyticsTask;
+            if (analytics?.Data != null)
+            {
+                _points = new List<ChartPoint>(analytics.Data);
+            }
+
+            _error = laundress?.Errors.FirstOrDefault()?.Message ?? analytics?.Errors.FirstOrDefault()?.Message;
+        }
+        catch (Exception ex)
         {
-            _points.AddRange(analytics.Data);
+            _error = ex.Message;
         }
-
-        _error = laundress?.Errors.FirstOrDefault()?.Message ?? analytics?.Errors.FirstOrDefault()?.Message;
-        _loading = false;
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private static string GetUserName(UserInfoViewModel? user)
     {
         if (user == null) return "—";
-        return string.IsNullOrWhiteSpace(user.FullName) ? user.Username : $"{user.FullName} ({user.Username})";
+        return string.IsNullOrWhiteSpace(user.FullName) ? user.Username : $"{user.FullName}";
     }
 }

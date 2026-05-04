@@ -17,7 +17,7 @@
 {
     <div class="alert alert-danger">@_error</div>
 }
-else if (_loading)
+else if (_initialLoad)
 {
     <div class="text-center py-4">
         <div class="spinner-border text-primary" role="status"></div>
@@ -43,7 +43,7 @@ else
                             </div>
                         </div>
 
-                        @if (report.Files.Count == 0)
+                        @if (report.Files == null || report.Files.Count == 0)
                         {
                             <div class="text-muted small">No photos.</div>
                         }
@@ -101,9 +101,9 @@ else
 }
 
 @code {
-    private readonly List<ReportViewModel> _reports = [];
-    private readonly Dictionary<long, int> _photoIndexes = [];
-    private bool _loading = true;
+    private List<ReportViewModel> _reports = new();
+    private Dictionary<long, int> _photoIndexes = new();
+    private bool _initialLoad = true;
     private string? _error;
     private bool _sortDesc = true;
     private DateTime _startDate = DateTime.Today.AddDays(-7);
@@ -124,18 +124,30 @@ else
 
     private async Task LoadReports()
     {
-        _loading = true;
         _error = null;
-        _reports.Clear();
+        _reports = new List<ReportViewModel>();
+        _initialLoad = false;
+        _photoIndexes = new Dictionary<long, int>();
+        await InvokeAsync(StateHasChanged);
 
-        var response = await Api.GetReportsAsync(_startDate, _endDate.AddDays(1), CancellationToken.None);
-        if (response?.Data != null)
+        try
         {
-            _reports.AddRange(response.Data);
-        }
+            var response = await Api.GetReportsAsync(_startDate, _endDate.AddDays(1), CancellationToken.None);
+            if (response?.Data != null)
+            {
+                _reports = new List<ReportViewModel>(response.Data);
+            }
 
-        _error = response?.Errors.FirstOrDefault()?.Message;
-        _loading = false;
+            _error = response?.Errors.FirstOrDefault()?.Message;
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task ApplyFilter() => await LoadReports();

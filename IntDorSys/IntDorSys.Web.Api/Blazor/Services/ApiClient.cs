@@ -26,7 +26,8 @@ public sealed class ApiClient(HttpClient httpClient, AuthSession auth)
 
             if (result.Data?.AccessToken is { Length: > 0 } token)
             {
-                await auth.LoginAsync(token);
+                var role = result.Data.Role;
+                await auth.LoginAsync(token, role);
             }
 
             return result;

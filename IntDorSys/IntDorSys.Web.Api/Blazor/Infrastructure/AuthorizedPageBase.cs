@@ -11,18 +11,48 @@ public abstract class AuthorizedPageBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await Auth.InitializeAsync();
-        _authChecked = true;
+        if (!_authChecked)
+        {
+            await Auth.InitializeAsync();
+            _authChecked = true;
+        }
 
         if (!Auth.IsLoggedIn)
         {
-            Navigation.NavigateTo("/login", forceLoad: true);
+            Navigation.NavigateTo("/login", forceLoad: false);
         }
-        else if (Navigation.Uri.Contains("/login") || Navigation.Uri == Navigation.BaseUri)
+        else if (IsPublicPage())
         {
-            Navigation.NavigateTo("/overview", forceLoad: true);
+            Navigation.NavigateTo("/overview", forceLoad: false);
         }
     }
 
+    private bool IsPublicPage()
+    {
+        var uri = Navigation.Uri;
+        return uri.Contains("/login") || uri.Contains("/register") || 
+               uri.EndsWith("/") || uri.EndsWith("/overview", StringComparison.OrdinalIgnoreCase);
+    }
+
     protected override bool ShouldRender() => _authChecked;
+}
+
+public abstract class AdminPageBase : AuthorizedPageBase
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        
+        if (!Auth.IsLoggedIn)
+        {
+            Navigation.NavigateTo("/login", forceLoad: false);
+            return;
+        }
+        
+        if (!Auth.IsAdmin)
+        {
+            Navigation.NavigateTo("/overview", forceLoad: false);
+            return;
+        }
+    }
 }

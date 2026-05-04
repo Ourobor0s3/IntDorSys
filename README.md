@@ -1,20 +1,73 @@
 # IntDorSys
 
-Небольшая система управления прачечной: контроль доступа и ведение записей об использовании.
+IntDorSys — система управления прачечной с двумя каналами работы:
+- веб-интерфейс администратора;
+- Telegram-бот для дублирующих административных сценариев.
 
-Управлять можно двумя способами: через **веб-админ-панель** (наглядный интерфейс) и **Telegram-бота** — сценарии администрирования и работы с данными дублируются в боте.
+Проект позволяет управлять пользователями, ролями и событиями использования, а также работать с отчетностью.
 
-## Состав решения
+## Структура репозитория
 
-- **Backend** — решение .NET в каталоге [`IntDorSys/`](IntDorSys/): веб-API, слой данных, сервисы, интеграция с Telegram.
-- **Админ-панель** — Angular-приложение в каталоге [`ui/`](ui/), обращается к API.
+В корне находятся два независимых приложения:
 
-## Сборка и запуск
+- `IntDorSys/` — backend на .NET (API, доменная логика, БД, интеграция с Telegram).
+- `ui/` — admin UI на Angular (работает поверх backend API).
 
-**API:** откройте [`IntDorSys/IntDorSys.sln`](IntDorSys/IntDorSys.sln) в Visual Studio или Rider. Настройки подключения к БД и внешним сервисам — в `appsettings.json` проекта веб-API.
+Ключевые точки входа:
+- backend: `IntDorSys/IntDorSys.Web.Api/Program.cs`;
+- frontend: `ui/src/main.ts`.
 
-Помимо конфигурации не забудьте задать **идентификаторы в Telegram** для администратора и управляющего прачечной в [`IntDorSys/IntDorSys.Core/Constants/AdminConstants.cs`](IntDorSys/IntDorSys.Core/Constants/AdminConstants.cs) (`AdminChatId`, `ManagerLaundressId`).
+## Технологии
 
-**Админ-панель:** из каталога `ui/` установите зависимости (`npm install`) и запустите `npm start` (по умолчанию dev-сервер на порту 4201).
+- Backend: .NET, ASP.NET Core Web API, Entity Framework, Blazor.
+- Frontend: Angular.
+- Интеграции: Telegram Bot API.
 
-**Бот:** настраивается вместе с API (токен и прочие параметры в конфигурации backend).
+## Требования
+
+- .NET SDK (совместимый с решением `IntDorSys.sln`).
+- Node.js и npm (для `ui/`).
+- Доступ к настроенной базе данных.
+
+## Быстрый старт
+
+### 1) Запуск backend API
+
+> Важно: backend-команды запускайте из каталога `IntDorSys/`, чтобы корректно использовался `NuGet.Config`.
+
+```bash
+cd IntDorSys
+dotnet restore IntDorSys.sln --configfile NuGet.Config
+dotnet build IntDorSys.sln
+dotnet run --project IntDorSys.Web.Api
+```
+
+По умолчанию локальный API и Blazor приложение работает на `http://localhost:5050`.
+
+Альтернативно можно использовать скрипт:
+
+```bash
+cd IntDorSys
+web-run.bat
+```
+
+### 2) Запуск admin UI
+
+```bash
+cd ui
+npm install
+npm start
+```
+
+Dev-сервер UI поднимается на `http://localhost:4201`.
+
+## Конфигурация
+
+- Основная конфигурация backend хранится в `IntDorSys/IntDorSys.Web.Api/appsettings.json`.
+- Базовый URL API для UI задается в `ui/src/environments/environment.ts` и по умолчанию указывает на `http://localhost:5050/`.
+
+## База данных и миграции
+
+- Приложение может применять миграции автоматически при старте API (если включено `AutomaticMigrationsEnabled`).
+- Перед запуском проверьте строку подключения и доступность базы данных.
+

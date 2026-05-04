@@ -41,18 +41,34 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <InputText class="form-control" type="password" @bind-Value="_model.Password" />
+                        <div class="input-group">
+                            <InputText class="form-control" type="@(_showPassword ? "text" : "password")" @bind-Value="_model.Password" />
+                            <button type="button" class="btn btn-outline-secondary" @onclick="TogglePassword">
+                                @(_showPassword ? "Hide" : "Show")
+                            </button>
+                        </div>
                         <ValidationMessage For="() => _model.Password" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Confirm Password</label>
-                        <InputText class="form-control" type="password" @bind-Value="_model.ConfirmPassword" />
+                        <div class="input-group">
+                            <InputText class="form-control" type="@(_showConfirmPassword ? "text" : "password")" @bind-Value="_model.ConfirmPassword" />
+                            <button type="button" class="btn btn-outline-secondary" @onclick="ToggleConfirmPassword">
+                                @(_showConfirmPassword ? "Hide" : "Show")
+                            </button>
+                        </div>
                         <ValidationMessage For="() => _model.ConfirmPassword" />
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@_loading">@(_loading ? "Loading..." : "Register")</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@_loading">
+                        @if (_loading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        }
+                        @(_loading ? "Registering..." : "Register")
+                    </button>
                 </EditForm>
                 <div class="text-center">
-                    <button type="button" class="btn btn-link" @onclick="GoToLogin">Already have an account?</button>
+                    <button type="button" class="btn btn-link" @onclick="GoToLogin">Already have an account? Sign in</button>
                 </div>
                 @if (!string.IsNullOrWhiteSpace(_error))
                 {
@@ -71,6 +87,8 @@
     private RegisterForm _model = new();
     private bool _loading;
     private bool _initialized;
+    private bool _showPassword;
+    private bool _showConfirmPassword;
     private string? _error;
     private string? _success;
 
@@ -81,20 +99,27 @@
 
         if (Auth.IsLoggedIn)
         {
-            Navigation.NavigateTo("/overview", forceLoad: true);
+            Navigation.NavigateTo("/overview", forceLoad: false);
         }
     }
 
+    private void TogglePassword() => _showPassword = !_showPassword;
+    private void ToggleConfirmPassword() => _showConfirmPassword = !_showConfirmPassword;
+
     private async Task OnSubmit()
     {
+        if (_loading) return;
+        
         _loading = true;
         _error = null;
         _success = null;
+        await InvokeAsync(StateHasChanged);
 
         if (_model.Password != _model.ConfirmPassword)
         {
             _error = "Passwords do not match";
             _loading = false;
+            await InvokeAsync(StateHasChanged);
             return;
         }
 
@@ -109,6 +134,8 @@
         if (result?.IsSuccess == true)
         {
             _success = "Registration successful! Please wait for confirmation.";
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/login", forceLoad: false);
         }
         else
         {
@@ -116,6 +143,7 @@
         }
 
         _loading = false;
+        await InvokeAsync(StateHasChanged);
     }
 
     private void GoToLogin() => Navigation.NavigateTo("/login");
@@ -124,6 +152,7 @@
     {
         [System.ComponentModel.DataAnnotations.Required]
         [System.ComponentModel.DataAnnotations.EmailAddress]
+        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Email { get; set; } = string.Empty;
 
         [System.ComponentModel.DataAnnotations.Required]

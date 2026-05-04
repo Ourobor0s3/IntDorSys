@@ -1,8 +1,16 @@
 @inherits LayoutComponentBase
 @inject AuthSession Auth
+@inject NavigationManager Navigation
 
 <div class="app-shell">
-    @if (Auth.IsLoggedIn)
+    @if (!Auth.IsLoggedIn)
+    {
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="text-muted mt-2">Loading...</div>
+        </div>
+    }
+    else
     {
         <nav class="app-nav">
             <div class="app-nav__brand">IntDorSys</div>
@@ -13,7 +21,16 @@
                 <NavLink class="nav-link" href="/laundress">Laundress</NavLink>
                 <NavLink class="nav-link" href="/reports">Reports</NavLink>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-danger ms-auto" @onclick="Logout">Logout</button>
+            <button type="button" class="btn btn-sm btn-outline-danger ms-auto" disabled="@_loggingOut" @onclick="Logout">
+                @if (_loggingOut)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                }
+                else
+                {
+                    <text>Logout</text>
+                }
+            </button>
         </nav>
     }
 
@@ -21,8 +38,8 @@
 </div>
 
 @code {
-    [Inject] private NavigationManager Navigation { get; set; } = default!;
     private bool _menuOpen;
+    private bool _loggingOut;
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,7 +50,12 @@
 
     private async Task Logout()
     {
+        if (_loggingOut) return;
+        
+        _loggingOut = true;
+        await InvokeAsync(StateHasChanged);
+
         await Auth.LogoutAsync();
-        Navigation.NavigateTo("/login", forceLoad: true);
+        Navigation.NavigateTo("/login", forceLoad: false);
     }
 }

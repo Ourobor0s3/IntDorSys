@@ -1,4 +1,3 @@
-@page "/"
 @page "/login"
 @page "/auth/login"
 @inject ApiClient Api
@@ -31,7 +30,13 @@
                         <InputText class="form-control" type="password" @bind-Value="_model.Password" />
                         <div class="text-danger small"><ValidationMessage For="() => _model.Password" /></div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@_loading">@(_loading ? "Loading..." : "Sign in")</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@_loading">
+                        @if (_loading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        }
+                        @(_loading ? "Signing in..." : "Sign in")
+                    </button>
                 </EditForm>
                 <div class="text-center">
                     <button type="button" class="btn btn-link" @onclick="GoToRegister">Create account</button>
@@ -58,24 +63,28 @@
 
         if (Auth.IsLoggedIn)
         {
-            Navigation.NavigateTo("/overview", forceLoad: true);
+            Navigation.NavigateTo("/overview", forceLoad: false);
         }
     }
 
     private async Task OnSubmit()
     {
+        if (_loading) return;
+        
         _loading = true;
         _error = null;
+        await InvokeAsync(StateHasChanged);
 
         var result = await Api.LoginAsync(_model.Email, _model.Password, CancellationToken.None);
         if (result?.Data?.AccessToken is { Length: > 0 })
         {
-            Navigation.NavigateTo("/overview", forceLoad: true);
+            Navigation.NavigateTo("/overview", forceLoad: false);
             return;
         }
 
         _error = result?.Errors.FirstOrDefault()?.Message ?? "Login failed";
         _loading = false;
+        await InvokeAsync(StateHasChanged);
     }
 
     private void GoToRegister() => Navigation.NavigateTo("/register");
