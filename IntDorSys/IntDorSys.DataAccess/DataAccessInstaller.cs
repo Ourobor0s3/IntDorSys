@@ -14,7 +14,7 @@ namespace IntDorSys.DataAccess
                 .AddDbContext<AppDataContext>(options =>
                 {
                     options.UseNpgsql(
-                        configuration.GetConnectionString(Convert.ToBoolean(configuration["BuildTest"])
+                        configuration.GetConnectionString(configuration.GetValue<bool>("BuildTest")
                             ? "Test"
                             : "Battle"),
                         builder =>

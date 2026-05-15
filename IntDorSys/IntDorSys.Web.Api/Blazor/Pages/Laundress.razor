@@ -61,8 +61,8 @@ else
     private readonly List<LaundressPageViewModel> _days = [];
     private bool _loading = true;
     private string? _error;
-    private DateTime _startDate = DateTime.Today.AddDays(-1);
-    private DateTime _endDate = DateTime.Today.AddDays(3);
+    private DateTime _startDate = DateTime.Today;
+    private DateTime _endDate = DateTime.Today.AddDays(7);
 
     protected override async Task OnInitializedAsync()
     {

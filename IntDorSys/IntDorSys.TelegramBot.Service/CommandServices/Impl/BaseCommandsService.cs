@@ -13,7 +13,6 @@ namespace IntDorSys.TelegramBot.Service.CommandServices.Impl
 
         public BaseCommandsService(
             IUserService userService,
-            IAdminService adminService,
             ITelegramService telegramService)
         {
             _userService = userService;

@@ -41,14 +41,14 @@ namespace IntDorSys.Laundress.Services.Builders.Impl
         private List<PageLaundressModel> Build(List<LaundModel> launds)
         {
             var res = new List<PageLaundressModel>();
-            var dateList = launds.Select(x => x.TimeWash.ToShortDateString()).Distinct().ToList();
+            var dateList = launds.Select(x => x.TimeWash.ToString("dd.MM.yyyy")).Distinct().ToList();
 
             foreach (var date in dateList)
             {
                 res.Add(new PageLaundressModel
                 {
                     Date = date,
-                    LaundModels = launds.Where(x => x.TimeWash.ToShortDateString().Equals(date)).ToList(),
+                    LaundModels = launds.Where(x => x.TimeWash.ToString("dd.MM.yyyy").Equals(date)).ToList(),
                 });
             }
 

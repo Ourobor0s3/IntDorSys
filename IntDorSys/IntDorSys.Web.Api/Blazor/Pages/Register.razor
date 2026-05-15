@@ -135,11 +135,14 @@
         {
             _success = "Registration successful! Please wait for confirmation.";
             await Task.Delay(2000);
+            _model = new RegisterForm();
             Navigation.NavigateTo("/login", forceLoad: false);
         }
         else
         {
             _error = result?.Errors.FirstOrDefault()?.Message ?? "Registration failed";
+            _model.Password = string.Empty;
+            _model.ConfirmPassword = string.Empty;
         }
 
         _loading = false;

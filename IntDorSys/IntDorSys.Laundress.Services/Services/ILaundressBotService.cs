@@ -108,5 +108,25 @@ namespace IntDorSys.Laundress.Services.Services
         /// <param name="ct"></param>
         /// <returns></returns>
         Task CheckTimeAndSendNotifAsync(CancellationToken ct);
+
+        /// <summary>
+        /// Send occupied times for a specific date for admin delete
+        /// </summary>
+        Task SendTimesForDeleteAsync(long chatId, int messageId, DateTime date, CancellationToken ct);
+
+        /// <summary>
+        /// Delete occupied record by admin
+        /// </summary>
+        Task DelUseTimeByAdminAsync(UserInfo user, DateTime time, CancellationToken ct);
+
+        /// <summary>
+        /// Send dates with occupied records for admin to choose from
+        /// </summary>
+        Task SendDatesForDeleteAsync(long chatId, int messageId = 0, CancellationToken ct = default);
+
+        /// <summary>
+        /// Admin books user on specific time
+        /// </summary>
+        Task AddUserToTimeAsync(UserInfo admin, string userName, DateTime time, CancellationToken ct);
     }
 }

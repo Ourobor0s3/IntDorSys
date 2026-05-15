@@ -3,7 +3,6 @@ using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
 using IntDorSys.Services.Users;
 using Ouro.CommonUtils.Results;
-using Telegram.Bot.Types;
 
 namespace IntDorSys.Services.Builders.Impl
 {
@@ -14,33 +13,6 @@ namespace IntDorSys.Services.Builders.Impl
         public UserInfoBuilder(IUserService service)
         {
             _service = service;
-        }
-
-        public UserInfo Build(
-            User user,
-            string fullName = "",
-            string numberGroup = "",
-            string numberRoom = "",
-            string email = "",
-            string address = "",
-            string phoneNumber = "")
-        {
-            var userInfo = new UserInfo
-            {
-                FullName = fullName,
-                NumGroup = numberGroup,
-                NumRoom = numberRoom,
-                Email = email,
-                Password = "",
-                Address = address,
-                PhoneNumber = phoneNumber,
-                Username = GetUsername(user),
-                TelegramId = user.Id,
-                LanguageCode = user.LanguageCode,
-                IsBot = user.IsBot,
-            };
-
-            return userInfo;
         }
 
         public UserInfoModel Build(UserInfo userInfo)
@@ -66,14 +38,15 @@ namespace IntDorSys.Services.Builders.Impl
             var result = new DataResult<List<UserInfoModel>>();
 
             var users = await _service.GetListUsersAsync(ct);
+
+            if (!users.IsSuccess || users.Data is null)
+            {
+                return result.WithError("Not found");
+            }
+
             var res = users.Data.Select(Build).ToList();
-
-            return !users.IsSuccess ? result.WithError("Not found") : result.WithData(res);
+            return result.WithData(res);
         }
 
-        public string GetUsername(User user)
-        {
-            return user.Username != null ? "@" + user.Username : $"{user.Id}";
-        }
     }
 }

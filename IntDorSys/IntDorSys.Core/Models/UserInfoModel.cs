@@ -37,7 +37,7 @@ namespace IntDorSys.Core.Models
         /// <summary>
         ///     Register date for system (click start)
         /// </summary>
-        public string RegisterDate { get; set; }
+        public string? RegisterDate { get; set; }
 
         /// <summary>
         ///     Is blocked user for system

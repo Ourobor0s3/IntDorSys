@@ -5,19 +5,26 @@ namespace IntDorSys.Web.Api.Controllers.Base
 {
     public class ProtectedApiController : ApiController
     {
+        private long? _userId;
+        
         protected long UserId
         {
             get
             {
-                // claim 'sub' means 'nameidentifier'
-                var userId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-
-                if (string.IsNullOrEmpty(userId))
+                if (_userId.HasValue)
                 {
-                    throw new InvalidOperationException("Unable to get claim 'sub'");
+                    return _userId.Value;
                 }
 
-                return long.Parse(userId);
+                var userIdClaim = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+                
+                if (string.IsNullOrEmpty(userIdClaim?.Value) || !long.TryParse(userIdClaim.Value, out var userId))
+                {
+                    throw new UnauthorizedAccessException("Invalid or missing user claim");
+                }
+
+                _userId = userId;
+                return userId;
             }
         }
     }

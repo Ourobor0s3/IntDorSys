@@ -15,6 +15,7 @@
             [MessageKeyConstants.GetUsers] = "😎 Доступ есть",
             [MessageKeyConstants.GetBlockedUsers] = "🤬 Доступа нет",
             [MessageKeyConstants.AllRecords] = "📝 Все записи",
+            [MessageKeyConstants.DeleteRecords] = "🗑️ Удалить записи",
             [MessageKeyConstants.CreateNotification] = "Отправлен запрос на подтверждение",
             [MessageKeyConstants.GetUserInfo] =
                 "Чтобы получить доступ, ответьте на это сообщение (функция <Ответить>) введя свои ФИО (Отчество, если имеется), номер группы, номер комнаты\nПример: Иванов Иван Иванович, 3114, 1511",
@@ -43,6 +44,7 @@
         public const string GetBlockedUsers = "getBlockedUsers";
         public const string MyRecords = "myRecords";
         public const string AllRecords = "allRecords";
+        public const string DeleteRecords = "deleteRecords";
         public const string CreateNotification = "createNotification";
         public const string GetUserInfo = "getUserInfo";
         public const string NotCorrect = "notCorrect";
@@ -60,6 +62,7 @@
         public static readonly string AllFreeRecords = MessageConstants.GetValue(MessageKeyConstants.AllFreeRecords);
         public static readonly string MyRecords = MessageConstants.GetValue(MessageKeyConstants.MyRecords);
         public static readonly string AllRecords = MessageConstants.GetValue(MessageKeyConstants.AllRecords);
+        public static readonly string DeleteRecords = MessageConstants.GetValue(MessageKeyConstants.DeleteRecords);
         public static readonly string GetUsers = MessageConstants.GetValue(MessageKeyConstants.GetUsers);
         public static readonly string GetBlockedUsers = MessageConstants.GetValue(MessageKeyConstants.GetBlockedUsers);
 

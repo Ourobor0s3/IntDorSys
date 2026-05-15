@@ -11,6 +11,16 @@ namespace IntDorSys.Security.Models
         public string AccessToken { get; set; } = string.Empty;
 
         /// <summary>
+        ///     Refresh token
+        /// </summary>
+        public string RefreshToken { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     User role
+        /// </summary>
+        public string? Role { get; set; }
+
+        /// <summary>
         /// </summary>
         public long ExpiresIn { get; set; }
     }

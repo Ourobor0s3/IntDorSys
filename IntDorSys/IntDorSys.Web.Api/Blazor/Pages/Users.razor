@@ -113,6 +113,7 @@ else
     private UserInfoViewModel? _confirmUser;
     private string? _toast;
     private bool _busy;
+    private IEnumerable<UserInfoViewModel>? _cachedUsers;
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,10 +132,16 @@ else
         }
         _error = response?.Errors.FirstOrDefault()?.Message;
         _loading = false;
+        _cachedUsers = null;
     }
 
     private IEnumerable<UserInfoViewModel> FilteredUsers()
     {
+        if (_cachedUsers != null)
+        {
+            return _cachedUsers;
+        }
+
         IEnumerable<UserInfoViewModel> query = _users;
 
         if (_showWithNameOnly)
@@ -147,19 +154,33 @@ else
             var q = _query.Trim();
             query = query.Where(x =>
                 (x.FullName?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                x.Username.Contains(q, StringComparison.OrdinalIgnoreCase));
+                (x.Username?.Contains(q, StringComparison.OrdinalIgnoreCase) ?? false));
         }
 
-        return _sortKey switch
+        _cachedUsers = _sortKey switch
         {
-            "id" => _sortDesc ? query.OrderByDescending(x => x.Id) : query.OrderBy(x => x.Id),
-            "status" => _sortDesc ? query.OrderByDescending(x => x.IsBlocked) : query.OrderBy(x => x.IsBlocked),
-            _ => _sortDesc ? query.OrderByDescending(x => x.FullName ?? x.Username) : query.OrderBy(x => x.FullName ?? x.Username),
+            "id" => _sortDesc ? query.OrderByDescending(x => x.Id).ToList() : query.OrderBy(x => x.Id).ToList(),
+            "status" => _sortDesc ? query.OrderByDescending(x => x.IsBlocked).ToList() : query.OrderBy(x => x.IsBlocked).ToList(),
+            _ => _sortDesc ? query.OrderByDescending(x => x.FullName ?? x.Username).ToList() : query.OrderBy(x => x.FullName ?? x.Username).ToList(),
         };
+
+        return _cachedUsers;
     }
 
-    private void ToggleSortDir() => _sortDesc = !_sortDesc;
-    private void ToggleNameFilter() => _showWithNameOnly = !_showWithNameOnly;
+    private void InvalidateCache() => _cachedUsers = null;
+
+    private void ToggleSortDir()
+    {
+        _sortDesc = !_sortDesc;
+        InvalidateCache();
+    }
+
+    private void ToggleNameFilter()
+    {
+        _showWithNameOnly = !_showWithNameOnly;
+        InvalidateCache();
+    }
+
     private void OpenConfirm(UserInfoViewModel user) => _confirmUser = user;
     private void CloseConfirm() => _confirmUser = null;
 
@@ -171,7 +192,6 @@ else
         CloseConfirm();
 
         _busy = true;
-        await InvokeAsync(StateHasChanged);
 
         var newStatus = user.IsBlocked ? 0 : -1;
         var result = await Api.ChangeUserStatusAsync(user.Id, newStatus, CancellationToken.None);
@@ -187,10 +207,8 @@ else
             _toast = result?.Errors.FirstOrDefault()?.Message ?? "Failed to update status";
         }
 
-        await Task.Delay(2000);
-        _toast = null;
+        _ = ClearToastAsync(2000);
         _busy = false;
-        await InvokeAsync(StateHasChanged);
     }
 
     private async Task CopyUsername(string username)
@@ -201,10 +219,14 @@ else
         await JS.InvokeVoidAsync("navigator.clipboard.writeText", username);
         _toast = "Copied";
 
-        await Task.Delay(1500);
-        _toast = null;
+        _ = ClearToastAsync(1500);
         _busy = false;
-        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ClearToastAsync(int ms)
+    {
+        await Task.Delay(ms);
+        _toast = null;
     }
 
     private static string FormatDate(string dateStr)

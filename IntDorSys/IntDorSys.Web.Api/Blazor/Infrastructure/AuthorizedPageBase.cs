@@ -7,34 +7,18 @@ public abstract class AuthorizedPageBase : ComponentBase
 {
     [Inject] protected AuthSession Auth { get; set; } = default!;
     [Inject] protected NavigationManager Navigation { get; set; } = default!;
-    private bool _authChecked;
+    protected bool IsAuthorized { get; private set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (!_authChecked)
-        {
-            await Auth.InitializeAsync();
-            _authChecked = true;
-        }
+        await Auth.InitializeAsync();
+        IsAuthorized = Auth.IsLoggedIn;
 
-        if (!Auth.IsLoggedIn)
+        if (!IsAuthorized)
         {
             Navigation.NavigateTo("/login", forceLoad: false);
         }
-        else if (IsPublicPage())
-        {
-            Navigation.NavigateTo("/overview", forceLoad: false);
-        }
     }
-
-    private bool IsPublicPage()
-    {
-        var uri = Navigation.Uri;
-        return uri.Contains("/login") || uri.Contains("/register") || 
-               uri.EndsWith("/") || uri.EndsWith("/overview", StringComparison.OrdinalIgnoreCase);
-    }
-
-    protected override bool ShouldRender() => _authChecked;
 }
 
 public abstract class AdminPageBase : AuthorizedPageBase

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IntDorSys.DataAccess\IntDorSys.DataAccess.csproj" />
+    <ProjectReference Include="..\IntDorSys.Laundress.Services\IntDorSys.Laundress.Services.csproj" />
     <ProjectReference Include="..\IntDorSys.Security\IntDorSys.Security.csproj" />
     <ProjectReference Include="..\IntDorSys.Services\IntDorSys.Services.csproj" />
     <ProjectReference Include="..\IntDorSys.TelegramBot.Service\IntDorSys.TelegramBot.Service.csproj" />

@@ -42,7 +42,7 @@ public sealed class ApiClient(HttpClient httpClient, AuthSession auth)
     {
         try
         {
-            var response = await httpClient.PostAsJsonAsync("register", new RegisterRequest
+            var response = await httpClient.PostAsJsonAsync("account", new RegisterRequest
             {
                 Email = email,
                 FullName = fullName,
@@ -78,11 +78,11 @@ public sealed class ApiClient(HttpClient httpClient, AuthSession auth)
         var query = new List<string>();
         if (startDate.HasValue)
         {
-            query.Add($"startDate={Uri.EscapeDataString(startDate.Value.ToString("o"))}");
+            query.Add($"startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-dd"))}");
         }
         if (endDate.HasValue)
         {
-            query.Add($"endDate={Uri.EscapeDataString(endDate.Value.ToString("o"))}");
+            query.Add($"endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-dd"))}");
         }
         if (query.Count > 0)
         {
@@ -99,12 +99,12 @@ public sealed class ApiClient(HttpClient httpClient, AuthSession auth)
         var query = new List<string>();
         if (startDate.HasValue)
         {
-            query.Add($"startDate={Uri.EscapeDataString(startDate.Value.ToString("o"))}");
+            query.Add($"startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-dd"))}");
         }
 
         if (endDate.HasValue)
         {
-            query.Add($"endDate={Uri.EscapeDataString(endDate.Value.ToString("o"))}");
+            query.Add($"endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-dd"))}");
         }
 
         if (query.Count > 0)

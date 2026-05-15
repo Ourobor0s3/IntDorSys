@@ -217,6 +217,54 @@ namespace IntDorSys.Laundress.Services.Services.Impl
         }
 
         /// <inheritdoc />
+        public async Task SendDatesForDeleteAsync(long chatId, int messageId = 0, CancellationToken ct = default)
+        {
+            try
+            {
+                var dates = (await _laund.GetTimeByFilterAsync(new LaundressFilterModel
+                        {
+                            IsOccupiedRecords = true,
+                        },
+                        ct))
+                    .Data
+                    .Select(x => x.TimeWash.Date)
+                    .Distinct()
+                    .OrderBy(x => x);
+
+                var inlineKeyboard = dates.Select(x => new[]
+                        { KeyboardButtons.InlineButton("DelDate", x.ToShortDateString(), x.ToLongDateString()) })
+                    .ToList();
+
+                var message = inlineKeyboard.Count != 0
+                    ? "Выберите дату для удаления записи:"
+                    : "Нет занятых записей";
+
+                inlineKeyboard.Add([
+                    KeyboardButtons.InlineButton(MessageKeyConstants.Back, $"{MessageText.Back}", MessageText.Back),
+                ]);
+                var sendMessage = new BotResponceMessage
+                {
+                    Message = message,
+                    InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
+                };
+
+                if (messageId != 0)
+                {
+                    await _telegramService.EditMessageTextAsync(chatId, messageId, sendMessage, ct);
+                }
+                else
+                {
+                    await _telegramService.SendResponseMessageAsync(chatId, sendMessage, ct);
+                }
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error in SendDatesForDeleteAsync method");
+                throw;
+            }
+        }
+
+        /// <inheritdoc />
         public async Task SendFreeDateAsync(long chatId, int messageId = 0, CancellationToken ct = default)
         {
             try
@@ -438,6 +486,128 @@ namespace IntDorSys.Laundress.Services.Services.Impl
             catch (Exception ex)
             {
                 _logger.LogError("{ex}, Error in attempt to Get edit domain", ex);
+                throw;
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task SendTimesForDeleteAsync(long chatId, int messageId, DateTime date, CancellationToken ct)
+        {
+            try
+            {
+                var times = (await _laund.GetTimeByFilterAsync(new LaundressFilterModel
+                        {
+                            SearchDate = date.Date,
+                        },
+                        ct))
+                    .Data
+                    .Where(x => x.SelectUserId != null)
+                    .OrderBy(x => x.TimeWash)
+                    .ToList();
+
+                var inlineKeyboard = times.Select(x => new[]
+                        { KeyboardButtons.InlineButton("DelUseTime", x.TimeWash.ToString(CultureInfo.CurrentCulture), $"{x.TimeWash.ToShortDateString()} {x.TimeWash.ToShortTimeString()} ({GetShortName(x.SelectUser?.FullName)})") })
+                    .ToList();
+
+                var message = inlineKeyboard.Count != 0
+                    ? $"Занятые записи на {date.ToShortDateString()}:"
+                    : "Занятых записей нет";
+
+                inlineKeyboard.Add([
+                    KeyboardButtons.InlineButton(MessageKeyConstants.Back, MessageText.Back, MessageText.Back),
+                ]);
+
+                await _telegramService.EditMessageTextAsync(chatId,
+                    messageId,
+                    new BotResponceMessage
+                    {
+                        Message = message,
+                        InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
+                    },
+                    ct);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error in SendTimesForDeleteAsync method");
+                throw;
+            }
+        }
+
+        private static string GetShortName(string? fullName)
+        {
+            if (string.IsNullOrEmpty(fullName)) return "неизвестно";
+            var parts = fullName.Split(' ');
+            return parts.Length >= 2 ? $"{parts[0]} {parts[1][0]}." : parts[0];
+        }
+
+        /// <inheritdoc />
+        public async Task DelUseTimeByAdminAsync(UserInfo user, DateTime time, CancellationToken ct)
+        {
+            try
+            {
+                var res = await _laund.RemoveUseTimeAsync(user.Id, time, true, ct);
+                if (res.IsSuccess)
+                {
+                    _logger.LogInformation("Admin {user} delete use time: {time}", user.Id, time);
+                    await _telegramService.SendMessageAsync(user.TelegramId, $"Запись на {time} удалена", ct);
+                }
+                else
+                {
+                    _logger.LogError("Admin {user} failed delete use time: {time}, error: {error}",
+                        user.Id, time, res.GetErrorsString());
+                    await _telegramService.SendMessageAsync(user.TelegramId, res.GetErrorsString(), ct);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{ex}, Error in DelUseTimeByAdminAsync", ex);
+                throw;
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task AddUserToTimeAsync(UserInfo admin, string userName, DateTime time, CancellationToken ct)
+        {
+            try
+            {
+                var user = _db.Set<UserInfo>()
+                    .FirstOrDefault(x =>
+                        (x.FullName != null && x.FullName.Contains(userName)) ||
+                        (x.Username != null && x.Username.Contains(userName)));
+
+                if (user == null)
+                {
+                    await _telegramService.SendMessageAsync(admin.TelegramId, $"Пользователь '{userName}' не найден", ct);
+                    return;
+                }
+
+                var wash = _db.Set<UseLaundress>()
+                    .Include(x => x.SelectUser)
+                    .FirstOrDefault(x => x.TimeWash == time);
+
+                if (wash == null)
+                {
+                    await _telegramService.SendMessageAsync(admin.TelegramId, $"Слот на {time} не найден", ct);
+                    return;
+                }
+
+                if (wash.SelectUserId != null)
+                {
+                    await _telegramService.SendMessageAsync(admin.TelegramId, $"Слот на {time} уже занят ({wash.SelectUser?.FullName})", ct);
+                    return;
+                }
+
+                wash.SelectUser = user;
+                _db.AddOrUpdateEntity(wash);
+                await _db.SaveChangesAsync(ct);
+
+                await _telegramService.SendMessageAsync(admin.TelegramId, $"{user.FullName} записан на {time}", ct);
+                await _telegramService.SendMessageAsync(user.TelegramId, $"Администратор записал тебя на {time}", ct);
+                _logger.LogInformation("Admin {admin} booked {user} on {time}", admin.Id, user.Id, time);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("{ex}, Error in AddUserToTimeAsync", ex);
                 throw;
             }
         }

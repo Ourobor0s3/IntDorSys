@@ -17,6 +17,7 @@ namespace IntDorSys.Web.Api.Requests
         /// </summary>
         [Required]
         [PasswordPropertyText]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
         [RegularExpression("[A-Za-z0-9!@#$%^&*()_+-=\\[\\]{};':\"\\\\|,.<>\\/?]+")]
         required public string Password { get; set; }
     }

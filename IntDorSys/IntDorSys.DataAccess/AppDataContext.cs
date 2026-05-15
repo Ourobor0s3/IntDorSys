@@ -76,7 +76,7 @@ namespace IntDorSys.DataAccess
 
         public void AddOrUpdateEntity<T>(T entity) where T : class, IEntity
         {
-            if (entity.Id is int and > 0 or long and > 0)
+            if (entity.Id is long and > 0)
             {
                 Set<T>().Update(entity);
             }

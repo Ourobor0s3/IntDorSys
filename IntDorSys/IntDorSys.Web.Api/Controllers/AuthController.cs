@@ -2,12 +2,14 @@ using IntDorSys.Security.Models;
 using IntDorSys.Security.Services;
 using IntDorSys.Web.Api.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Ouro.CommonUtils.Results;
 using Ouro.WebApiUtils;
 
 namespace IntDorSys.Web.Api.Controllers
 {
     [Route("token")]
+    [EnableRateLimiting("AuthLimit")]
     public sealed class AuthController : ApiController
     {
         /// <summary>

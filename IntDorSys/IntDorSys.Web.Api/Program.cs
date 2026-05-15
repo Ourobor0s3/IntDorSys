@@ -14,6 +14,8 @@ using IntDorSys.TelegramBot.Service.MessageServices;
 using Ouro.TelegramBot.Core;
 using ServicesInstaller = IntDorSys.TelegramBot.Service.ServicesInstaller;
 using IntDorSys.Web.Api.Blazor.Services;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 namespace IntDorSys.Web.Api
 {
@@ -35,6 +37,21 @@ namespace IntDorSys.Web.Api
 
             builder.Services
                 .AddHealthChecks();
+
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.AddPolicy("AuthLimit", context =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "default",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 0
+                        }));
+            });
 
             builder.Services
                 .AddRazorComponents()
@@ -58,14 +75,18 @@ namespace IntDorSys.Web.Api
                     };
                 });
 
+            var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
+                ?? ["http://localhost:4201", "http://localhost:5050"];
+
             builder.Services
                 .AddCors(options =>
                 {
-                    options.AddPolicy("AllowAll",
+                    options.AddPolicy("Default",
                         policyBuilder => policyBuilder
-                            .AllowAnyOrigin()
+                            .WithOrigins(allowedOrigins)
                             .AllowAnyMethod()
-                            .AllowAnyHeader());
+                            .AllowAnyHeader()
+                            .AllowCredentials());
                 });
 
             builder.Services
@@ -76,7 +97,6 @@ namespace IntDorSys.Web.Api
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                    options.JsonSerializerOptions.IncludeFields = true;
                 });
 
 
@@ -89,12 +109,13 @@ namespace IntDorSys.Web.Api
                 .AddCoreConfiguration(builder.Configuration);
 
 
-            builder.Services
+builder.Services
                 .ConfigureTelegramBot(isBattle
                     ? builder.Configuration.GetSection(ConfigSectionNames.TelegramBattleSection)
                     : builder.Configuration.GetSection(ConfigSectionNames.TelegramTestSection))
                 .AddTelegramServices();
 
+#pragma warning disable ASP0000 // Disabling warning for service provider pattern required by bot setup
             var serviceProvider = builder.Services.BuildServiceProvider();
             builder.Services
                 .AddBotHostServices(
@@ -104,6 +125,7 @@ namespace IntDorSys.Web.Api
                         serviceProvider.GetRequiredService<IAuthService>(),
                         serviceProvider.GetRequiredService<ICommandService>())
                 );
+#pragma warning restore ASP0000
 
             var app = builder.Build();
 
@@ -111,20 +133,16 @@ namespace IntDorSys.Web.Api
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseCors(policyBuilder =>
-            {
-                policyBuilder
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowAnyOrigin();
-            });
+            app.UseCors("Default");
+            app.UseHttpsRedirection();
 
 
             app.UseHealthChecks("/health");
 
-            app.UseAuthentication();
+app.UseAuthentication();
             app.UseAuthorization();
             app.UseAntiforgery();
+            app.UseRateLimiter();
 
             app.MapControllers();
             app.MapRazorComponents<Blazor.App>()

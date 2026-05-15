@@ -78,5 +78,14 @@ namespace IntDorSys.Services.Users
         /// <param name="ct">Cancellation token</param>
         /// <returns></returns>
         Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, CancellationToken ct);
+
+        /// <summary>
+        ///     Update user password hash
+        /// </summary>
+        /// <param name="userId">User identifier</param>
+        /// <param name="passwordHash">New password hash</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns></returns>
+        Task<DataResult<UserInfo>> UpdatePasswordAsync(long userId, string passwordHash, CancellationToken ct);
     }
 }

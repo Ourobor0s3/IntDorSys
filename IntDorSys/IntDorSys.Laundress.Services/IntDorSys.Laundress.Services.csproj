@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MimeKit" Version="4.12.0" />
+    <PackageReference Include="MimeKit" Version="4.14.0" />
     <PackageReference Include="Ouro.DatabaseUtils" Version="1.0.0" />
     <PackageReference Include="Ouro.QuartzCore" Version="1.0.0" />
     <PackageReference Include="Ouro.TelegramBot.Core" Version="1.0.0" />

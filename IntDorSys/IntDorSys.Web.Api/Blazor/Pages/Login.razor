@@ -70,10 +70,9 @@
     private async Task OnSubmit()
     {
         if (_loading) return;
-        
+
         _loading = true;
         _error = null;
-        await InvokeAsync(StateHasChanged);
 
         var result = await Api.LoginAsync(_model.Email, _model.Password, CancellationToken.None);
         if (result?.Data?.AccessToken is { Length: > 0 })
@@ -83,19 +82,19 @@
         }
 
         _error = result?.Errors.FirstOrDefault()?.Message ?? "Login failed";
+        _model.Password = string.Empty;
         _loading = false;
-        await InvokeAsync(StateHasChanged);
     }
 
     private void GoToRegister() => Navigation.NavigateTo("/register");
 
     private sealed class LoginForm
     {
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.EmailAddress]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [System.ComponentModel.DataAnnotations.Required]
+        [Required]
         public string Password { get; set; } = string.Empty;
     }
 }

@@ -21,8 +21,10 @@ namespace IntDorSys.Services.Users.Impl
         {
             var result = new DataResult<UserInfo>();
 
+            var normalizedEmail = email.ToUpperInvariant();
             var user = await _db.Set<UserInfo>()
-                .SingleOrDefaultAsync(x => x.Email.ToLower() == email.ToLower(), ct);
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Email.ToUpper() == normalizedEmail, ct);
 
             return user == null
                 ? result.WithError("Not found")
@@ -35,6 +37,7 @@ namespace IntDorSys.Services.Users.Impl
             var result = new DataResult<UserInfo>();
 
             var userReg = await _db.Set<UserInfo>()
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.TelegramId == id, ct);
             return userReg == null
                 ? result.WithError("Not found")
@@ -47,6 +50,7 @@ namespace IntDorSys.Services.Users.Impl
             var result = new DataResult<UserInfo>();
 
             var userReg = await _db.Set<UserInfo>()
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id, ct);
             return userReg == null
                 ? result.WithError("Not found")
@@ -69,7 +73,7 @@ namespace IntDorSys.Services.Users.Impl
                     LanguageCode = user.LanguageCode,
                     IsBot = user.IsBot,
                     Email = "",
-                    Password = "",
+                    Password = "TelegramUser.NoPassword", // Placeholder - cannot be used to authenticate
                 };
 
                 _db.AddOrUpdateEntity(userInfo);
@@ -125,6 +129,24 @@ namespace IntDorSys.Services.Users.Impl
         {
             var result = new DataResult<UserInfo>();
 
+            // Для веб-регистрации без TelegramId
+            if (user.TelegramId == 0)
+            {
+                var normalizedEmail = user.Email.ToUpperInvariant();
+                var existingUser = await _db.Set<UserInfo>()
+                    .FirstOrDefaultAsync(u => u.Email.ToUpper() == normalizedEmail, ct);
+
+                if (existingUser != null)
+                {
+                    return result.WithError("Email already registered");
+                }
+
+                user.Username = user.Email.Split('@')[0];
+                _db.AddOrUpdateEntity(user);
+                await _db.SaveChangesAsync(ct);
+                return result.WithData(user);
+            }
+
             var userReg = await _db.Set<UserInfo>()
                 .FirstOrDefaultAsync(u => u.TelegramId == user.TelegramId, ct);
 
@@ -138,9 +160,10 @@ namespace IntDorSys.Services.Users.Impl
                 return result.WithError("Unable to create, use a different telegram");
             }
 
+            var userEmail = user.Email.ToUpperInvariant();
             var userExists = await _db.Set<UserInfo>()
                 .AnyAsync(
-                    u => u.Email.ToLower() == user.Email.ToLower(),
+                    u => u.Email.ToUpper() == userEmail,
                     ct);
 
             if (userExists)
@@ -173,6 +196,7 @@ namespace IntDorSys.Services.Users.Impl
             var res = new DataResult<List<UserInfo>>();
 
             var users = await _db.Set<UserInfo>()
+                .AsNoTracking()
                 .Where(x => x.FullName != "")
                 .OrderBy(x => x.FullName)
                 .ToListAsync(ct);
@@ -197,6 +221,25 @@ namespace IntDorSys.Services.Users.Impl
             _db.AddOrUpdateEntity(user);
             await _db.SaveChangesAsync(ct);
             return res.WithData(true);
+        }
+
+        public async Task<DataResult<UserInfo>> UpdatePasswordAsync(long userId, string passwordHash, CancellationToken ct)
+        {
+            var res = new DataResult<UserInfo>();
+
+            var user = await _db.Set<UserInfo>()
+                .FirstOrDefaultAsync(x => x.Id == userId, ct);
+
+            if (user == null)
+            {
+                return res.WithError("User not found");
+            }
+
+            user.Password = passwordHash;
+
+            _db.AddOrUpdateEntity(user);
+            await _db.SaveChangesAsync(ct);
+            return res.WithData(user);
         }
 
         private string GetUsername(User user)

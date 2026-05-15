@@ -27,9 +27,12 @@ namespace IntDorSys.Web.Api.Controllers
 
             var registrationData = new RegistrationData
             {
-                TelegramId = request.TelegramId,
+                TelegramId = request.TelegramId ?? 0,
                 Email = request.Email,
                 Password = request.Password,
+                FullName = request.FullName,
+                NumGroup = request.NumGroup,
+                NumRoom = request.NumRoom,
             };
 
             var registerResult = await authService.RegisterUserAsync(

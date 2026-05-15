@@ -7,7 +7,7 @@ using Ouro.CommonUtils.Base.Entities;
 using Ouro.CommonUtils.Results;
 using Ouro.WebApiUtils;
 
-namespace IntDorSys.Laundress.Services.Controllers
+namespace IntDorSys.Web.Api.Controllers.Laundress
 {
     [Route("laund")]
     public sealed class LaundressController : ApiController

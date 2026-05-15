@@ -12,7 +12,6 @@ namespace IntDorSys.Services.FileStorage.Impl
         private readonly ILogger<FileService> _logger;
 
         private readonly string _storagePath;
-        private readonly string _virtualPath;
 
         public FileService(
             ILogger<FileService> logger,
@@ -23,8 +22,7 @@ namespace IntDorSys.Services.FileStorage.Impl
 
             const string relativePath = "FileFolderStorage";
 
-            _virtualPath ??= "../";
-            _storagePath ??= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+            _storagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
         }
 
         public async Task<DataResult<FileInfo>> GetAsync(Guid id, CancellationToken ct)

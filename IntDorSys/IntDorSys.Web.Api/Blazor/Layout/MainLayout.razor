@@ -3,14 +3,7 @@
 @inject NavigationManager Navigation
 
 <div class="app-shell">
-    @if (!Auth.IsLoggedIn)
-    {
-        <div class="text-center py-4">
-            <div class="spinner-border text-primary" role="status"></div>
-            <div class="text-muted mt-2">Loading...</div>
-        </div>
-    }
-    else
+    @if (Auth.IsLoggedIn)
     {
         <nav class="app-nav">
             <div class="app-nav__brand">IntDorSys</div>
@@ -44,6 +37,12 @@
     protected override async Task OnInitializedAsync()
     {
         await Auth.InitializeAsync();
+        _loggingOut = false;
+    }
+
+    protected override void OnParametersSet()
+    {
+        _loggingOut = false;
     }
 
     private void ToggleMenu() => _menuOpen = !_menuOpen;

@@ -13,5 +13,10 @@ namespace IntDorSys.Laundress.Core.Models.Filters
         ///     Search for unoccupied records
         /// </summary>
         public bool IsUnoccupiedRecords { get; set; }
+
+        /// <summary>
+        ///     Search for occupied records
+        /// </summary>
+        public bool IsOccupiedRecords { get; set; }
     }
 }

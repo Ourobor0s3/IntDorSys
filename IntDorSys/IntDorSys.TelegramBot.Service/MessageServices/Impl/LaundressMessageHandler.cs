@@ -90,19 +90,46 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
                                     break;
                             }
                             break;
-                        case "/rmlaund" when specialMessage.Length == 2:
-                            await _laundBot.DeleteLaundAsync(userInfo, DateTime.Parse(specialMessage[1]), ct);
-                            break;
-                        case "/rmlaund" when specialMessage.Length == 4:
-                            for (var i = int.Parse(specialMessage[2]); i <= int.Parse(specialMessage[3]); i += 2)
+                        case "/rmlaund":
+                            switch (specialMessage.Length)
                             {
-                                await _laundBot.DeleteLaundAsync(userInfo,
-                                    DateTime.Parse($"{specialMessage[1]} {i}:00:00"),
-                                    ct);
+                                case 2:
+                                    await _laundBot.DeleteLaundAsync(userInfo, DateTime.Parse(specialMessage[1]), ct);
+                                    break;
+                                case 4:
+                                    for (var i = int.Parse(specialMessage[2]); i <= int.Parse(specialMessage[3]); i += 2)
+                                    {
+                                        await _laundBot.DeleteLaundAsync(userInfo,
+                                            DateTime.Parse($"{specialMessage[1]} {i}:00:00"),
+                                            ct);
+                                    }
+                                    break;
+                                case 5:
+                                    var startDay = DateTime.Parse(specialMessage[1]);
+                                    var dayCountDel = int.Parse(specialMessage[2]);
+                                    var startHour = int.Parse(specialMessage[3]);
+                                    var endHour = int.Parse(specialMessage[4]);
+                                    for (var i = 0; i < dayCountDel; i++)
+                                    {
+                                        var date = startDay.AddDays(i).ToShortDateString();
+                                        for (var h = startHour; h <= endHour; h += 2)
+                                        {
+                                            await _laundBot.DeleteLaundAsync(userInfo,
+                                                DateTime.Parse($"{date} {h}:00:00"),
+                                                ct);
+                                        }
+                                    }
+                                    break;
                             }
                             break;
                         case "/unuse" when specialMessage.Length == 2:
                             await _laundBot.UnUseLaundAsync(userInfo, DateTime.Parse(specialMessage[1]), ct);
+                            break;
+                        case "/rmuse" when specialMessage.Length == 2:
+                            await _laundBot.DelUseTimeByAdminAsync(userInfo, DateTime.Parse(specialMessage[1]), ct);
+                            break;
+                        case "/setuser" when specialMessage.Length == 3:
+                            await _laundBot.AddUserToTimeAsync(userInfo, specialMessage[1], DateTime.Parse(specialMessage[2]), ct);
                             break;
                     }
                 }

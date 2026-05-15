@@ -50,10 +50,18 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                                 callbackQuery.Message?.MessageId ?? 0,
                                 ct);
                         }
-                        else if (listCallback[1].Equals(MessageText.AllRecords)
+else if (listCallback[1].Equals(MessageText.AllRecords)
                               && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
                         {
                             await _laundBot.SendAllTimeAsync(
+                                userInfo.TelegramId,
+                                callbackQuery.Message?.MessageId ?? 0,
+                                ct);
+                        }
+                        else if (listCallback[1].Equals(MessageText.DeleteRecords)
+                              && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
+                        {
+                            await _laundBot.SendDatesForDeleteAsync(
                                 userInfo.TelegramId,
                                 callbackQuery.Message?.MessageId ?? 0,
                                 ct);
@@ -77,6 +85,17 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                     case "DeleteUserTime":
                         await _laundBot.RemoveTimeByUserAsync(userInfo, DateTime.Parse(listCallback[1]), ct);
                         await _laundBot.SendUseTimeByUserAsync(userInfo, callbackQuery.Message!.MessageId, ct);
+                        break;
+                    case "DelDate":
+                        await _laundBot.SendTimesForDeleteAsync(
+                            userInfo.TelegramId,
+                            callbackQuery.Message!.MessageId,
+                            DateTime.Parse(listCallback[1]),
+                            ct);
+                        break;
+                    case "DelUseTime":
+                        await _laundBot.DelUseTimeByAdminAsync(userInfo, DateTime.Parse(listCallback[1]), ct);
+                        await _laundBot.SendDatesForDeleteAsync(userInfo.TelegramId, callbackQuery.Message!.MessageId, ct);
                         break;
 
                     case MessageKeyConstants.Back:

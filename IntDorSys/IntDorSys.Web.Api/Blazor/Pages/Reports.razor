@@ -30,7 +30,7 @@ else if (_reports.Count == 0)
 else
 {
     <div class="row g-3">
-        @foreach (var report in SortedReports())
+        @foreach (var report in _sortedReports)
         {
             var currentIndex = GetCurrentPhotoIndex(report);
             <div class="col-12 col-lg-6">
@@ -102,6 +102,7 @@ else
 
 @code {
     private List<ReportViewModel> _reports = new();
+    private List<ReportViewModel> _sortedReports = new();
     private Dictionary<long, int> _photoIndexes = new();
     private bool _initialLoad = true;
     private string? _error;
@@ -136,6 +137,9 @@ else
             if (response?.Data != null)
             {
                 _reports = new List<ReportViewModel>(response.Data);
+                _sortedReports = _sortDesc 
+                    ? _reports.OrderByDescending(r => r.CreatedAt).ToList()
+                    : _reports.OrderBy(r => r.CreatedAt).ToList();
             }
 
             _error = response?.Errors.FirstOrDefault()?.Message;
@@ -159,10 +163,13 @@ else
         await LoadReports();
     }
 
-    private void ToggleSort() => _sortDesc = !_sortDesc;
-
-    private IEnumerable<ReportViewModel> SortedReports() =>
-        _sortDesc ? _reports.OrderByDescending(r => r.CreatedAt) : _reports.OrderBy(r => r.CreatedAt);
+    private void ToggleSort()
+    {
+        _sortDesc = !_sortDesc;
+        _sortedReports = _sortDesc
+            ? _reports.OrderByDescending(r => r.CreatedAt).ToList()
+            : _reports.OrderBy(r => r.CreatedAt).ToList();
+    }
 
     private int GetCurrentPhotoIndex(ReportViewModel report)
     {
@@ -221,7 +228,11 @@ else
             {
                 while (_timer != null && await _timer.WaitForNextTickAsync(_cts.Token))
                 {
-                    await InvokeAsync(LoadReports);
+                    try
+                    {
+                        await InvokeAsync(LoadReports);
+                    }
+                    catch (ObjectDisposedException) { }
                 }
             }
             catch (OperationCanceledException) { }

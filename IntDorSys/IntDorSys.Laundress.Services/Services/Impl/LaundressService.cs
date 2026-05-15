@@ -47,7 +47,7 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                     DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal,
                     out var startDate))
             {
-                query = query.Where(x => x.TimeWash >= startDate.AddHours(3).Date);
+                query = query.Where(x => x.TimeWash >= startDate.Date);
             }
             else
             {
@@ -61,7 +61,7 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                     DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal,
                     out var endDate))
             {
-                var endOfDay = endDate.Date.AddDays(2).AddTicks(-1);
+                var endOfDay = endDate.Date.AddDays(1).AddTicks(-1);
                 query = query.Where(x => x.TimeWash <= endOfDay);
             }
 
@@ -79,6 +79,12 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                 query = query
                     .Where(x => x.SelectUser == null)
                     .Where(x => x.TimeWash >= DateTime.Now);
+            }
+
+            // Только занятые записи
+            if (filter?.IsOccupiedRecords == true)
+            {
+                query = query.Where(x => x.SelectUser != null);
             }
 
             var records = await query

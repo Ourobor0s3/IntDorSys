@@ -1,14 +1,11 @@
-using System.Globalization;
 using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
-using IntDorSys.Laundress.Core.Models.Filters;
 using IntDorSys.Services.Users;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Extensions;
 using Ouro.TelegramBot.Core.Constants;
 using Ouro.TelegramBot.Core.Models;
 using Ouro.TelegramBot.Core.Services;
@@ -113,11 +110,11 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                 var res = (await _userService.ChangeUserStatus(forUserId, newStatus, ct)).Data;
                 if (res)
                 {
-                    await _telegramService.SendMessageAsync(userId, $"User {user.FullName ?? user.Username} updated status to {newStatus.GetDisplayName()}", ct);
+                    await _telegramService.SendMessageAsync(userId, $"User {user.FullName ?? user.Username} updated status to {newStatus}", ct);
                 }
                 else
                 {
-                    await _telegramService.SendMessageAsync(userId, $"User {user.FullName ?? user.Username} not updated status to {newStatus.GetDisplayName()}", ct);
+                    await _telegramService.SendMessageAsync(userId, $"User {user.FullName ?? user.Username} not updated status to {newStatus}", ct);
                 }
             }
             catch (Exception)
