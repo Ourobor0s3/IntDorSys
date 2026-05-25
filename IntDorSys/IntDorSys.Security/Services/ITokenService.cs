@@ -5,6 +5,6 @@ namespace IntDorSys.Security.Services
 {
     public interface ITokenService
     {
-        AuthToken IssueToken(UserInfo user);
+        Task<AuthToken> IssueTokenAsync(UserInfo user);
     }
 }

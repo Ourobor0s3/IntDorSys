@@ -2,30 +2,31 @@ using IntDorSys.Core.Constants;
 using IntDorSys.Core.Settings;
 using IntDorSys.Laundress.Services.Services;
 using IntDorSys.Services.Users;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 
 namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
 {
-    /// <inheritdoc />
     internal sealed class LaundressCallbackHandler : ILaundressCallbackHandler
     {
         private readonly ILaundressBotService _laundBot;
         private readonly IUserService _userService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
+        private readonly ILogger<LaundressCallbackHandler> _logger;
 
-        /// <inheritdoc cref="ILaundressCallbackHandler" />
         public LaundressCallbackHandler(
             ILaundressBotService laundBot,
             IUserService userService,
-            IOptionsMonitor<AdminSettings> adminSettings)
+            IOptionsMonitor<AdminSettings> adminSettings,
+            ILogger<LaundressCallbackHandler> logger)
         {
             _laundBot = laundBot;
             _userService = userService;
             _adminSettings = adminSettings;
+            _logger = logger;
         }
 
-        /// <inheritdoc />
         public async Task HandleAsync(CallbackQuery callbackQuery, CancellationToken ct = default)
         {
             try
@@ -110,9 +111,9 @@ else if (listCallback[1].Equals(MessageText.AllRecords)
                         break;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignored
+                _logger.LogError(ex, "Error handling laundress callback from user {UserId}", callbackQuery.From.Id);
             }
         }
     }

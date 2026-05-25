@@ -1,18 +1,14 @@
-FROM node:20.9-alpine as node
+FROM node:20-alpine AS node
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-
 RUN npm ci
 
 COPY . .
+RUN npm run build
 
-# build admin
-RUN npm run build && \
-    cp -r /app/dist/endless/ /app
-
-FROM nginx:alpine3.20
-COPY --from=node /app /usr/share/nginx/html
+FROM nginx:alpine
+COPY --from=node /app/dist/endless /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

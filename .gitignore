@@ -156,3 +156,5 @@ $RECYCLE.BIN/
 .DS_Store
 .idea
 .opencode
+tmp_ouro/
+.env

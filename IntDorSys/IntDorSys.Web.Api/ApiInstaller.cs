@@ -4,13 +4,14 @@ using NLog.Web;
 
 namespace IntDorSys.Web.Api
 {
-    internal static class ApiInstaller1
+    internal static class ApiInstaller
     {
         public static WebApplicationBuilder ConfigureAppConfiguration(this WebApplicationBuilder builder)
         {
             builder.Configuration.Sources.Clear();
             builder.Configuration.AddJsonFile("appsettings.json", false, true);
-            builder.Configuration.AddJsonFile("appsettings.local.json", false, true);
+            builder.Configuration.AddJsonFile("appsettings.local.json", true, true);
+            builder.Configuration.AddEnvironmentVariables();
 
             return builder;
         }

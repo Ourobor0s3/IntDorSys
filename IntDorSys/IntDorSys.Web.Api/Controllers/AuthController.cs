@@ -36,7 +36,7 @@ namespace IntDorSys.Web.Api.Controllers
                 HttpContext.RequestAborted);
             return !authResult.IsSuccess
                 ? result.WithErrors(authResult.Errors)
-                : result.WithData(tokenService.IssueToken(authResult.Data));
+                : result.WithData(await tokenService.IssueTokenAsync(authResult.Data));
         }
     }
 }

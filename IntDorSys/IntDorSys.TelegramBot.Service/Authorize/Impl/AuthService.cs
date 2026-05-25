@@ -30,14 +30,19 @@ namespace IntDorSys.TelegramBot.Service.Authorize.Impl
         /// <inheritdoc />
         public async Task<bool> AuthUser(Update update, CancellationToken ct)
         {
-            var user = update.Message != null ? update.Message.From : update.CallbackQuery!.From;
-            var userInfo = (await _userService.CreateOrUpdateTgInfoAsync(user!, ct)).Data;
+            var user = update.Message?.From ?? update.CallbackQuery?.From;
+            if (user == null)
+            {
+                return false;
+            }
+
+            var userInfo = (await _userService.CreateOrUpdateTgInfoAsync(user, ct)).Data;
             var message = update.Message ?? update.CallbackQuery?.Message;
 
             if (userInfo is { IsConfirm: false, FullName: "" or null })
             {
                 var messageReply = message?.ReplyToMessage;
-                if (messageReply == null || !messageReply.Text!.Equals(MessageText.GetUserInfo))
+                if (messageReply == null || messageReply.Text != MessageText.GetUserInfo)
                 {
                     await _telegramService.SendMessageAsync(userInfo.TelegramId, MessageText.GetUserInfo, ct);
                 }

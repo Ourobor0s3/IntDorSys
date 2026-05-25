@@ -5,7 +5,6 @@ using IntDorSys.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Ouro.TelegramBot.Core.Extensions;
 using Ouro.TelegramBot.Core.Models;
 using Ouro.TelegramBot.Core.Services;
@@ -33,6 +32,12 @@ namespace IntDorSys.TelegramBot.Service.AdminServices.Impl
 
         public async Task SendUsersNotificationAsync(UserInfo userInfo, CancellationToken ct)
         {
+            if (_adminSettings.CurrentValue.AdminsChatId.Contains(userInfo.TelegramId))
+            {
+                await AutoConfirmAsync(userInfo, ct);
+                return;
+            }
+
             var sendMessage = new BotResponceMessage
             {
                 Message = $"New user {userInfo.TelegramId} : {userInfo.Username}\nFull name: {userInfo.FullName
@@ -46,48 +51,51 @@ namespace IntDorSys.TelegramBot.Service.AdminServices.Impl
 
         public async Task UpdateNotificateUserAsync(long userId, CancellationToken ct)
         {
-            try
+            var userInfo = await _dbContext.Set<UserInfo>()
+                .FirstOrDefaultAsync(x => x.TelegramId == userId, ct);
+
+            if (userInfo == null)
             {
-                var userInfo = await _dbContext.Set<UserInfo>()
-                    .FirstOrDefaultAsync(x => x.TelegramId == userId, ct);
-
-                if (userInfo == null)
-                {
-                    return;
-                }
-
-                var userRoles = await _dbContext.Set<UserRoles>()
-                    .FirstOrDefaultAsync(x => x.KeyRoles == UserRoleKeys.Student && x.UserId == userId, ct);
-
-                if (userRoles == null)
-                {
-                    userRoles = new UserRoles
-                    {
-                        UserId = userId,
-                        User = userInfo,
-                        KeyRoles = UserRoleKeys.Student,
-                    };
-                    _dbContext.AddOrUpdateEntity(userRoles);
-                }
-
-                userInfo.IsConfirm = true;
-                _dbContext.AddOrUpdateEntity(userInfo);
-                await _dbContext.SaveChangesAsync(ct);
-
-                _logger.LogInformation("User {name} has been confirmed (telegram_id: {id})",
-                    userInfo.FullName,
-                    userInfo.TelegramId);
-                await _telegramService.SendMessageAsync(_adminSettings.CurrentValue.AdminChatId,
-                    $"User {userInfo.FullName}({userInfo.Username}) confirm!",
-                    ct);
-                await _telegramService.SendMessageAsync(userInfo.TelegramId, MessageText.ConfirmTg, ct);
+                return;
             }
-            catch (Exception ex)
+
+            await ConfirmUserAsync(userInfo, UserRoleKeys.Student, ct);
+
+            await _telegramService.SendMessageAsync(_adminSettings.CurrentValue.AdminChatId,
+                $"User {userInfo.FullName}({userInfo.Username}) confirm!",
+                ct);
+        }
+
+        private async Task AutoConfirmAsync(UserInfo userInfo, CancellationToken ct)
+        {
+            await ConfirmUserAsync(userInfo, UserRoleKeys.Admin, ct);
+            await ConfirmUserAsync(userInfo, UserRoleKeys.Student, ct);
+
+            _logger.LogInformation("User {name} (telegram_id: {id}) auto-confirmed as Admin, Student",
+                userInfo.FullName, userInfo.TelegramId);
+
+            await _telegramService.SendMessageAsync(userInfo.TelegramId, MessageText.ConfirmTg, ct);
+        }
+
+        private async Task ConfirmUserAsync(UserInfo userInfo, string roleKey, CancellationToken ct)
+        {
+            var userRoles = await _dbContext.Set<UserRoles>()
+                .FirstOrDefaultAsync(x => x.KeyRoles == roleKey && x.UserId == userInfo.Id, ct);
+
+            if (userRoles == null)
             {
-                _logger.LogError($"{nameof(Exception)} UpdateNotificationUser: {JsonConvert.SerializeObject(userId)
-                }\r\n" +
-                                 $"{ex.Message}{ex.InnerException?.Message}{ex.StackTrace}");
+                userRoles = new UserRoles
+                {
+                    UserId = userInfo.Id,
+                    User = userInfo,
+                    KeyRoles = roleKey,
+                };
+                _dbContext.AddOrUpdateEntity(userRoles);
             }
+
+            userInfo.IsConfirm = true;
+            _dbContext.AddOrUpdateEntity(userInfo);
+            await _dbContext.SaveChangesAsync(ct);
         }
     }
 }

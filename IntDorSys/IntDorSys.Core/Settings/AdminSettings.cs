@@ -6,6 +6,6 @@ namespace IntDorSys.Core.Settings
         public required long ManagerLaundressId { get; set; }
 
         public List<long> AdminsChatId => [AdminChatId];
-        public List<long> ManagersLaundress => [AdminChatId, ManagerLaundressId];
+        public List<long> ManagersLaundress => new List<long> { AdminChatId, ManagerLaundressId }.Distinct().ToList();
     }
 }

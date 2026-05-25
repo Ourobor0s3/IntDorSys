@@ -75,11 +75,14 @@ namespace IntDorSys.Laundress.Services.Services.Impl
             {
                 var appointments = Enumerable.Range(start, end - start + 1)
                     .Where(i => i % 2 == 0)
-                    .Select(i => new UseLaundress
+                    .Select(i =>
                     {
-                        CreatedUserId = crUser.Id,
-                        CreatedUser = crUser,
-                        TimeWash = DateTime.Parse($"{date} {i}:00"),
+                        var dt = DateTime.Parse($"{date} {i}:00");
+                        return new UseLaundress
+                        {
+                            CreatedUserId = crUser.Id,
+                            TimeWash = dt,
+                        };
                     })
                     .ToList();
 

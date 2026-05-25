@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace IntDorSys.Web.Api.Requests
@@ -16,7 +15,7 @@ namespace IntDorSys.Web.Api.Requests
         ///     Not hashed password
         /// </summary>
         [Required]
-        [PasswordPropertyText]
+        [DataType(DataType.Password)]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
         [RegularExpression("[A-Za-z0-9!@#$%^&*()_+-=\\[\\]{};':\"\\\\|,.<>\\/?]+")]
         required public string Password { get; set; }

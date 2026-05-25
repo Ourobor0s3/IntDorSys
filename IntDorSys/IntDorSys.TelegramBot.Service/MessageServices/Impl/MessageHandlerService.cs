@@ -43,8 +43,9 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
             if (userRoles.Contains(UserRoleKeys.Student))
             {
                 await _usersHandler.HandleAsync(message, ct);
-                await _laundressHandler.HandleAsync(message, ct);
             }
+
+            await _laundressHandler.HandleAsync(message, ct);
         }
     }
 }

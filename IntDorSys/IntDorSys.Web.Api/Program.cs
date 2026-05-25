@@ -13,7 +13,7 @@ using IntDorSys.TelegramBot.Service.CommandServices;
 using IntDorSys.TelegramBot.Service.MessageServices;
 using Ouro.TelegramBot.Core;
 using ServicesInstaller = IntDorSys.TelegramBot.Service.ServicesInstaller;
-using IntDorSys.Web.Api.Blazor.Services;
+// using IntDorSys.Web.Api.Blazor.Services;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 
@@ -53,27 +53,27 @@ namespace IntDorSys.Web.Api
                         }));
             });
 
-            builder.Services
-                .AddRazorComponents()
-                .AddInteractiveServerComponents();
+            // builder.Services
+            //     .AddRazorComponents()
+            //     .AddInteractiveServerComponents();
 
-            builder.Services
-                .AddHttpContextAccessor()
-                .AddScoped<AuthSession>()
-                .AddScoped<ApiClient>()
-                .AddScoped(sp =>
-                {
-                    var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
-                    var request = httpContext?.Request;
-                    var baseUri = request == null
-                        ? "http://localhost:5050/"
-                        : $"{request.Scheme}://{request.Host}/";
+            // builder.Services
+            //     .AddHttpContextAccessor()
+            //     .AddScoped<AuthSession>()
+            //     .AddScoped<ApiClient>()
+            //     .AddScoped(sp =>
+            //     {
+            //         var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+            //         var request = httpContext?.Request;
+            //         var baseUri = request == null
+            //             ? "http://localhost:5050/"
+            //             : $"{request.Scheme}://{request.Host}/";
 
-                    return new HttpClient
-                    {
-                        BaseAddress = new Uri(baseUri),
-                    };
-                });
+            //         return new HttpClient
+            //         {
+            //             BaseAddress = new Uri(baseUri),
+            //         };
+            //     });
 
             var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
                 ?? ["http://localhost:4201", "http://localhost:5050"];
@@ -130,7 +130,7 @@ builder.Services
             var app = builder.Build();
 
             app.MigrateDb();
-            app.UseStaticFiles();
+            // app.UseStaticFiles();
 
             app.UseRouting();
             app.UseCors("Default");
@@ -141,12 +141,12 @@ builder.Services
 
 app.UseAuthentication();
             app.UseAuthorization();
-            app.UseAntiforgery();
+            // app.UseAntiforgery();
             app.UseRateLimiter();
 
             app.MapControllers();
-            app.MapRazorComponents<Blazor.App>()
-                .AddInteractiveServerRenderMode();
+            // app.MapRazorComponents<Blazor.App>()
+            //     .AddInteractiveServerRenderMode();
 
             app.Run();
         }

@@ -41,10 +41,7 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                 await _adminHandler.HandleAsync(callbackQuery, ct);
             }
 
-            if (userRoles.Contains(UserRoleKeys.Student))
-            {
-                await _laundressHandler.HandleAsync(callbackQuery, ct);
-            }
+            await _laundressHandler.HandleAsync(callbackQuery, ct);
         }
     }
 }
