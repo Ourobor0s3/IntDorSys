@@ -66,7 +66,6 @@ Dev-сервер UI поднимается на `http://localhost:4201`.
 - Основная конфигурация backend хранится в `IntDorSys/IntDorSys.Web.Api/appsettings.json`.
 - Базовый URL API для UI задается в `ui/src/environments/environment.ts` и по умолчанию указывает на `http://localhost:5050/`.
 
-
 ## База данных и миграции
 
 - Приложение может применять миграции автоматически при старте API (если включено `AutomaticMigrationsEnabled`).
