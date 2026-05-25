@@ -50,6 +50,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: ghcr.io/${GHCR_USER:-ourobor0s3}/intdorsys-frontend:latest
     build:
       context: ./ui
       dockerfile: Dockerfile
