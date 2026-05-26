@@ -47,6 +47,7 @@ export class NavService {
             title: 'menu.laundress',
             type: 'link',
             image: menuitems[laundressRoute],
+            roles: ['admin', 'user'],
         },
         {
             path: '/' + reportsRoute,
@@ -59,6 +60,7 @@ export class NavService {
             title: 'menu.users',
             type: 'link',
             image: menuitems[userInfoRoute],
+            roles: ['admin'],
         },
     ];
     HEADERBUTTONS: HeaderButtonModel[] = [];

@@ -14,12 +14,15 @@ import { ReportModel } from "../../shared/model/report.model";
     styleUrls: ['./reports.component.scss'],
 })
 export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy {
-    reportList?: ReportModel[];
+    reportList: ReportModel[] = [];
+    sortedReports: ReportModel[] = [];
     timerId: any;
-    isAutoRefresh: boolean = true;
     filter: BaseFilterModel = new BaseFilterModel();
     startDate: Date = new Date();
     endDate: Date = new Date();
+    sortDesc: boolean = true;
+    lightboxReport: ReportModel | null = null;
+    lightboxIndex: number = 0;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -39,6 +42,7 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
     ngOnInit() {
         let t = this;
         t.loadData();
+        t.startAutoRefresh();
         t.dataReloadService.dataReload$
             .pipe(takeUntil(t.destroy$))
             .subscribe(() => {
@@ -48,41 +52,80 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
 
     loadData() {
         let t = this;
-        t.searchTimeLaund();
-    }
-
-    searchTimeLaund(isRunLoading: boolean = true) {
-        let t = this;
-        if (isRunLoading) {
-            t.setLoading(true);
-            t.disableAutoRefresh()
-        }
-
+        t.setLoading(true);
         t.filter.startDate = t.startDate.toISOString();
         t.filter.endDate = t.endDate.toISOString();
 
         t.laundService.getReports(t.filter)
             .then(res => {
-                t.reportList = res.data;
+                t.reportList = res.data ?? [];
+                t.applySort();
             })
             .catch((err) => {
                 console.log(err);
             })
             .finally(() => {
-                if (isRunLoading)
-                    t.setLoading(false);
-                if (t.isAutoRefresh)
-                    t.timerId = setTimeout(() => t.searchTimeLaund(false), 1000 * 60);
+                t.setLoading(false);
             });
     }
 
-    public disableAutoRefresh() {
-        this.isAutoRefresh = false;
-        clearTimeout(this.timerId);
+    searchReports() {
+        let t = this;
+        t.filter.startDate = t.startDate.toISOString();
+        t.filter.endDate = t.endDate.toISOString();
+
+        t.laundService.getReports(t.filter)
+            .then(res => {
+                t.reportList = res.data ?? [];
+                t.applySort();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    applySort() {
+        let t = this;
+        t.sortedReports = t.sortDesc
+            ? [...t.reportList].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            : [...t.reportList].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    }
+
+    toggleSort() {
+        this.sortDesc = !this.sortDesc;
+        this.applySort();
+    }
+
+    startAutoRefresh() {
+        let t = this;
+        clearTimeout(t.timerId);
+        t.timerId = setTimeout(() => {
+            t.searchReports();
+            t.startAutoRefresh();
+        }, 60000);
+    }
+
+    openLightbox(report: ReportModel, index: number) {
+        this.lightboxReport = report;
+        this.lightboxIndex = index;
+    }
+
+    closeLightbox() {
+        this.lightboxReport = null;
+    }
+
+    lightboxNext() {
+        if (!this.lightboxReport || this.lightboxReport.files.length === 0) return;
+        this.lightboxIndex = (this.lightboxIndex + 1) % this.lightboxReport.files.length;
+    }
+
+    lightboxPrev() {
+        if (!this.lightboxReport || this.lightboxReport.files.length === 0) return;
+        this.lightboxIndex = (this.lightboxIndex - 1 + this.lightboxReport.files.length) % this.lightboxReport.files.length;
     }
 
     ngOnDestroy(): void {
-        this.disableAutoRefresh();
+        clearTimeout(this.timerId);
         this.destroy$.next();
         this.destroy$.complete();
     }

@@ -14,7 +14,7 @@ export interface User {
 interface AuthData {
     accessToken: string;
     refreshToken: string;
-    //expiresAt: Date;
+    role?: string;
 }
 
 @Injectable({
@@ -68,6 +68,7 @@ export class AuthService {
                 tap((data) => {
                     const accessToken = (data as any)?.data?.accessToken;
                     const refreshToken = (data as any)?.data?.refreshToken ?? "";
+                    const role = (data as any)?.data?.role ?? "";
                     if (!accessToken) {
                         console.error('Access token not found in response');
                         return;
@@ -76,12 +77,16 @@ export class AuthService {
                     const tokenObj: AuthData = {
                         accessToken: accessToken,
                         refreshToken: refreshToken,
-                        //expiresAt
+                        role: role,
                     };
                     this.authData = tokenObj;
                 }),
             )
             .toPromise();
+    }
+
+    isAdmin(): boolean {
+        return this.authData?.role === 'admin';
     }
 
     logout(): void {

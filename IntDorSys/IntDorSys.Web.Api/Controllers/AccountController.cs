@@ -4,6 +4,7 @@ using IntDorSys.Web.Api.Controllers.Base;
 using IntDorSys.Web.Api.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Web.Api.Controllers
@@ -19,6 +20,7 @@ namespace IntDorSys.Web.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
+        [EnableRateLimiting("AuthLimit")]
         public async Task<Result> Post(
             [FromBody] NewUserRequest request,
             [FromServices] IAuthService authService)
@@ -30,9 +32,6 @@ namespace IntDorSys.Web.Api.Controllers
                 TelegramId = request.TelegramId ?? 0,
                 Email = request.Email,
                 Password = request.Password,
-                FullName = request.FullName,
-                NumGroup = request.NumGroup,
-                NumRoom = request.NumRoom,
             };
 
             var registerResult = await authService.RegisterUserAsync(

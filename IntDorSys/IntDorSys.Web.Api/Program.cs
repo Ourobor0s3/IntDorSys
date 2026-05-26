@@ -139,10 +139,10 @@ builder.Services
 
             app.UseHealthChecks("/health");
 
-app.UseAuthentication();
+            app.UseRateLimiter();
+            app.UseAuthentication();
             app.UseAuthorization();
             // app.UseAntiforgery();
-            app.UseRateLimiter();
 
             app.MapControllers();
             // app.MapRazorComponents<Blazor.App>()

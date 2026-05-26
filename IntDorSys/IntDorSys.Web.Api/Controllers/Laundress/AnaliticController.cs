@@ -1,5 +1,6 @@
 using IntDorSys.Laundress.Core.Models.Filters;
 using IntDorSys.Laundress.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ouro.CommonUtils.Results;
 using Ouro.WebApiUtils;
@@ -7,6 +8,7 @@ using Ouro.WebApiUtils;
 namespace IntDorSys.Web.Api.Controllers.Laundress
 {
     [Route("analitic")]
+    [Authorize]
     public class AnaliticController : ApiController
     {
         [HttpGet("laund")]

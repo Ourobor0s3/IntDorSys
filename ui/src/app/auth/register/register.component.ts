@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { BaseComponent } from "../../shared/component/base/base.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from "@ngx-translate/core";
-import { AccountService } from "../../shared/services/account.service";
+import { AccountService, IRegister } from "../../shared/services/account.service";
 import { ValidationUtils } from "../../shared/utils/validationUtils";
 
 @Component({
@@ -30,9 +30,9 @@ export class RegisterComponent extends BaseComponent {
         let t = this;
         t.regForm = fb.group(
             {
-                telegram: ['', [Validators.required]],
+                telegram: [''],
                 email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
-                password: ['', [Validators.required, Validators.pattern(t.passwordPattern)]],
+                password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(t.passwordPattern)]],
                 passwordConfirm: ['', [Validators.required]],
             },
             {
@@ -65,8 +65,15 @@ export class RegisterComponent extends BaseComponent {
         }
 
         t.setLoading(true);
-        let regCreds = {
-            telegramId: t.telegram.value,
+        let rawTelegram: string = t.telegram.value;
+        let parsedTelegram: number | null = rawTelegram ? Number(rawTelegram) : null;
+        if (rawTelegram && isNaN(parsedTelegram!)) {
+            t.showError('Telegram ID must be a number');
+            t.setLoading(false);
+            return;
+        }
+        let regCreds: IRegister = {
+            telegramId: parsedTelegram,
             email: t.email.value,
             password: t.password.value,
         };

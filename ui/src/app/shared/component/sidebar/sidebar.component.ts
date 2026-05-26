@@ -7,6 +7,7 @@ import { DataReloadService } from "../../services/dataReload.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { UserInfoModel } from "../../model/userInfo.model";
 import { UserService } from "../../services/user.service";
+import { AuthService } from '../../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -26,6 +27,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         private userService: UserService,
         protected navService: NavService,
         private dataReloadService: DataReloadService,
+        private authService: AuthService,
         private translate: TranslateService,
     ) {
         super(translate, modalService);
@@ -80,9 +82,11 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     loadData() {
     }
 
-    needHidden(navRoles: string[] | undefined) {
-        var t = this;
-        return false;
+    needHidden(navRoles: string[] | undefined): boolean {
+        if (!navRoles || navRoles.length === 0) return false;
+        const userRole = this.authService.authData?.role;
+        if (!userRole) return true;
+        return !navRoles.includes(userRole);
     }
 
     updateActiveTabs(url: string) {

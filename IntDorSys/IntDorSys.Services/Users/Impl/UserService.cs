@@ -21,7 +21,7 @@ namespace IntDorSys.Services.Users.Impl
         {
             var result = new DataResult<UserInfo>();
 
-            var normalizedEmail = email.ToUpperInvariant();
+            var normalizedEmail = email.ToUpper();
             var user = await _db.Set<UserInfo>()
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Email.ToUpper() == normalizedEmail, ct);
@@ -109,7 +109,7 @@ namespace IntDorSys.Services.Users.Impl
         {
             var result = new DataResult<UserInfo>();
             var userInfo = await _db.Set<UserInfo>()
-                .FirstOrDefaultAsync(u => u.TelegramId == newInfo.TelegramId, ct);
+                .FirstOrDefaultAsync(u => u.Id == newInfo.Id, ct);
             if (userInfo == null)
             {
                 return result.WithError("Not found");
@@ -132,7 +132,7 @@ namespace IntDorSys.Services.Users.Impl
             // Для веб-регистрации без TelegramId
             if (user.TelegramId == 0)
             {
-                var normalizedEmail = user.Email.ToUpperInvariant();
+                var normalizedEmail = user.Email.ToUpper();
                 var existingUser = await _db.Set<UserInfo>()
                     .FirstOrDefaultAsync(u => u.Email.ToUpper() == normalizedEmail, ct);
 
@@ -160,7 +160,7 @@ namespace IntDorSys.Services.Users.Impl
                 return result.WithError("Unable to create, use a different telegram");
             }
 
-            var userEmail = user.Email.ToUpperInvariant();
+            var userEmail = user.Email.ToUpper();
             var userExists = await _db.Set<UserInfo>()
                 .AnyAsync(
                     u => u.Email.ToUpper() == userEmail,
@@ -176,7 +176,7 @@ namespace IntDorSys.Services.Users.Impl
 
             _db.AddOrUpdateEntity(userReg);
             await _db.SaveChangesAsync(ct);
-            return result.WithData(user);
+            return result.WithData(userReg);
         }
 
         /// <inheritdoc />

@@ -5,7 +5,7 @@ import { IResponse } from "../interface/responce";
 const accountApiUrl = 'account/';
 
 export interface IRegister {
-    telegramId: string;
+    telegramId: number | null;
     email: string;
     password: string;
 }

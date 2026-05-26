@@ -83,9 +83,11 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         this.destroy$.complete();
     }
 
-    needHidden(navRoles: string[] | undefined) {
-        var t = this;
-        return false;
+    needHidden(navRoles: string[] | undefined): boolean {
+        if (!navRoles || navRoles.length === 0) return false;
+        const userRole = this.authService.authData?.role;
+        if (!userRole) return true;
+        return !navRoles.includes(userRole);
     }
 
     toggletNavActive(item: any) {

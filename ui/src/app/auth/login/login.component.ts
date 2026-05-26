@@ -56,10 +56,12 @@ export class LoginComponent extends BaseComponent {
 
         t.authService.login(loginCred)
             .then(res => {
-                if (res.errors[0] != null) {
+                if (res.isSuccess) {
+                    t.navigateTab(overviewRoute);
+                } else if (res.errors && res.errors.length > 0) {
                     t.showError(res.errors[0].message);
                 } else {
-                    t.navigateTab(overviewRoute);
+                    console.error('Login failed with unknown error', res);
                 }
             })
             .catch((e) => {

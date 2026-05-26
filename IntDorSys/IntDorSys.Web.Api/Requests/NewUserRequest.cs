@@ -18,23 +18,6 @@ namespace IntDorSys.Web.Api.Requests
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
-        ///     User full name
-        /// </summary>
-        [Required]
-        [StringLength(100)]
-        public string FullName { get; set; } = string.Empty;
-
-        /// <summary>
-        ///     User group number
-        /// </summary>
-        public string? NumGroup { get; set; }
-
-        /// <summary>
-        ///     User room number
-        /// </summary>
-        public string? NumRoom { get; set; }
-
-        /// <summary>
         ///     Not hashed password
         /// </summary>
         [Required]

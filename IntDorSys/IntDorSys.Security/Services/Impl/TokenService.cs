@@ -25,7 +25,7 @@ namespace IntDorSys.Security.Services.Impl
             _handler = new JwtSecurityTokenHandler();
             _creds = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Value.Secret)),
-                SecurityAlgorithms.HmacSha256Signature);
+                SecurityAlgorithms.HmacSha256);
         }
 
         public async Task<AuthToken> IssueTokenAsync(UserInfo user)

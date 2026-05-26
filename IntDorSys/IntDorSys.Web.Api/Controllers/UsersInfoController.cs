@@ -3,12 +3,14 @@ using IntDorSys.Core.Models;
 using IntDorSys.Services.Builders;
 using IntDorSys.Services.Users;
 using IntDorSys.Web.Api.Controllers.Base;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Web.Api.Controllers
 {
     [Route("users-info")]
+    [Authorize]
     public sealed class UsersInfoController : ProtectedApiController
     {
         [HttpGet]
@@ -18,6 +20,7 @@ namespace IntDorSys.Web.Api.Controllers
         }
 
         [HttpPut("change-status/{userId}")]
+        [Authorize(Roles = "Admin")]
         public Task<DataResult<bool>> ChangeStatus(
             long userId,
             [FromBody] UserStatus newStatus,

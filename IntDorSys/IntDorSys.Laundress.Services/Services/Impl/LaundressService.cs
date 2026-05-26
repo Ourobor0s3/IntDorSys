@@ -184,10 +184,59 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                 return res.WithError($"Not found time {timeWash.ToString(CultureInfo.CurrentCulture)}");
             }
 
+            if (wash.SelectUserId == null)
+            {
+                return res.WithError("Slot is already free");
+            }
+
             wash.SelectUser = null;
-            _db.AddOrUpdateEntity(wash);
+            wash.SelectUserId = null;
             await _db.SaveChangesAsync(ct);
             return res.WithData(true);
+        }
+
+        /// <inheritdoc />
+        public async Task<DataResult<int>> CreateTimeRangeAsync(DateTime date, int startHour, int endHour, long createdUserId, CancellationToken ct)
+        {
+            var res = new DataResult<int>();
+            var dateBase = date.Date;
+            var created = 0;
+
+            for (var hour = startHour; hour <= endHour; hour += 2)
+            {
+                var timeWash = dateBase.AddHours(hour);
+
+                var wash = await _db.Set<UseLaundress>()
+                    .FirstOrDefaultAsync(x => x.TimeWash == timeWash, ct);
+
+                if (wash != null)
+                {
+                    continue;
+                }
+
+                wash = new UseLaundress
+                {
+                    TimeWash = timeWash,
+                    CreatedUserId = createdUserId,
+                };
+
+                _db.Set<UseLaundress>().Add(wash);
+                created++;
+            }
+
+            if (created > 0)
+            {
+                try
+                {
+                    await _db.SaveChangesAsync(ct);
+                }
+                catch (DbUpdateException)
+                {
+                    // some slots may have been created concurrently
+                }
+            }
+
+            return res.WithData(created);
         }
     }
 }

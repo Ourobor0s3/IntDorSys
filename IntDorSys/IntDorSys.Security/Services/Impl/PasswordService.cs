@@ -26,7 +26,7 @@ namespace IntDorSys.Security.Services.Impl
         /// <inheritdoc />
         public async Task<Result> ChangePasswordAsync(PasswordChangeData request, CancellationToken ct)
         {
-            var result = new DataResult<string>();
+            var result = new Result();
 
             var userResult = await _userService.GetAsync(request.UserId, ct);
 

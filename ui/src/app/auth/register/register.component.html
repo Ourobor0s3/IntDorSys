@@ -9,22 +9,14 @@
           <img alt="Telegram Icon" height="20" src="/assets/image/fields/telegram.svg" width="20">
         </span>
         <input
-          [attr.aria-describedby]="'telegramId-error'"
           [attr.aria-label]="'Telegram ID' | lang"
-          [attr.aria-required]="true"
           autofocus
           class="form-control"
           formControlName="telegram"
           id="telegram-field"
-          placeholder="{{ 'Telegram ID' | lang }}"
-          required
+          placeholder="{{ 'Telegram ID' | lang }} ({{ 'common.optional' | lang }})"
           type="text"
         >
-      </div>
-      <div *ngIf="elemIsInvalid(regForm.controls.telegram)"
-           class="invalid-feedback d-block"
-           id="telegramId-error">
-        {{ textErrorStr(regForm.controls.telegram) | lang }}
       </div>
     </div>
 

@@ -1,0 +1,232 @@
+.laundress-page {
+  padding: 0 0 1.5rem;
+}
+
+.page-header {
+  margin-bottom: 1.25rem;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+}
+
+.edit-toolbar {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border-radius: 10px;
+  border: 1px solid #bbf7d0;
+  display: flex;
+  align-items: center;
+}
+
+/* Empty / Loading states */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+/* Cards grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1rem;
+}
+
+.day-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.card-header-custom {
+  padding: 0.875rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slot-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9ca3af;
+  background: #f3f4f6;
+  padding: 0.15rem 0.6rem;
+  border-radius: 20px;
+}
+
+.card-body-custom {
+  padding: 0.25rem 0;
+}
+
+/* Individual slot row */
+.slot-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.5rem 1.25rem;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s;
+  flex-wrap: wrap;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #fafafa;
+  }
+
+  &.slot-expired {
+    opacity: 0.45;
+  }
+
+  &.slot-editing {
+    background: #fffbeb;
+  }
+}
+
+.slot-time {
+  flex-shrink: 0;
+}
+
+.time-badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4b5563;
+  background: #f3f4f6;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  min-width: 54px;
+  text-align: center;
+}
+
+.slot-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &.avatar-free {
+    background: #d1fae5;
+    color: #059669;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-meta {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.user-name-free {
+  color: #059669;
+}
+
+/* Compact status indicator */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.dot-occupied {
+    background: #f59e0b;
+  }
+
+  &.dot-free {
+    background: #10b981;
+  }
+}
+
+.status-text {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #6b7280;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Actions row — always wraps to new line in edit mode */
+.slot-actions {
+  width: 100%;
+  display: flex;
+  gap: 0.35rem;
+  justify-content: flex-end;
+  padding-top: 0.35rem;
+  border-top: 1px dashed #e5e7eb;
+  margin-top: 0.15rem;
+}
+
+.action-btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

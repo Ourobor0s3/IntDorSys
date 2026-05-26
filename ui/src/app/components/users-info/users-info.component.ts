@@ -18,7 +18,12 @@ import { USER_STATUS_STYLES } from "../../shared/constants/statusStyle";
 })
 export class UserInfoComponent extends BaseComponent implements OnInit, OnDestroy {
     userList?: UserInfoModel[];
+    filteredUsers?: UserInfoModel[];
     modalRef?: NgbModalRef;
+    query: string = '';
+    sortKey: string = 'name';
+    sortDesc: boolean = false;
+    showWithNameOnly: boolean = true;
     protected readonly UserStatus = UserStatus;
     private destroy$ = new Subject<void>();
 
@@ -55,12 +60,61 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
 
         t.userService.getUsers().then(res => {
             t.userList = res.data;
+            t.applyFilter();
         }).catch((err) => {
                 console.log(err);
             })
             .finally(() => {
                 t.setLoading(false);
             });
+    }
+
+    applyFilter() {
+        let t = this;
+        if (!t.userList) { t.filteredUsers = []; return; }
+
+        let result = [...t.userList];
+
+        if (t.showWithNameOnly) {
+            result = result.filter(x => !!x.fullName);
+        }
+
+        if (t.query) {
+            let q = t.query.trim().toLowerCase();
+            result = result.filter(x =>
+                (x.fullName && x.fullName.toLowerCase().includes(q)) ||
+                (x.username && x.username.toLowerCase().includes(q))
+            );
+        }
+
+        switch (t.sortKey) {
+            case 'id':
+                result.sort((a, b) => t.sortDesc ? b.id - a.id : a.id - b.id);
+                break;
+            case 'status':
+                result.sort((a, b) => t.sortDesc
+                    ? Number(b.isBlocked) - Number(a.isBlocked)
+                    : Number(a.isBlocked) - Number(b.isBlocked));
+                break;
+            default:
+                result.sort((a, b) => {
+                    let nameA = (a.fullName || a.username || '').toLowerCase();
+                    let nameB = (b.fullName || b.username || '').toLowerCase();
+                    return t.sortDesc ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
+                });
+        }
+
+        t.filteredUsers = result;
+    }
+
+    toggleSortDir() {
+        this.sortDesc = !this.sortDesc;
+        this.applyFilter();
+    }
+
+    toggleNameFilter() {
+        this.showWithNameOnly = !this.showWithNameOnly;
+        this.applyFilter();
     }
 
     ngOnDestroy(): void {

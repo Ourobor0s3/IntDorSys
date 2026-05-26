@@ -1,6 +1,9 @@
 {
   "Register": "Register",
   "Telegram": "Telegram ID",
+  "Full name": "Full name",
+  "Group": "Group",
+  "Room": "Room",
   "Password": "Password",
   "Login": "Login",
   "Registered": "Registered",
@@ -24,7 +27,8 @@
     "mismatch": "Password mismatch",
     "passwordConfirmation": {
       "notMatch": "Passwords does not match"
-    }
+    },
+    "telegramIdMustBeNumber": "Telegram ID must be a number"
   },
   "menu": {
     "home": "Home",
@@ -41,6 +45,7 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "close": "Close",
+    "optional": "optional",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
@@ -84,7 +89,10 @@
     "unblock_user": "Unblock user",
     "confirm_block": "Are you sure you want to block this user?",
     "confirm_unblock": "Are you sure you want to unblock this user?",
-    "confirm_delete": "Are you sure you want to delete this user?"
+    "confirm_delete": "Are you sure you want to delete this user?",
+    "sort_desc": "Desc",
+    "sort_asc": "Asc",
+    "with_name": "With Name"
   },
   "home": {
     "welcome": "Welcome to the Laundry control panel",
@@ -105,7 +113,33 @@
     "status": "Status",
     "available": "Available",
     "in_use": "In use",
-    "maintenance": "Maintenance"
+    "maintenance": "Maintenance",
+    "free": "Free",
+    "book": "Book",
+    "unbook": "Unbook",
+    "delete": "Delete",
+    "edit_mode_on": "Edit mode ON",
+    "edit_mode_off": "Edit mode OFF",
+    "add_time_slot": "Add time slot",
+    "create_time_slot": "Create time slot",
+    "date": "Date",
+    "time": "Time",
+    "book_user": "Book user",
+    "select_user": "Select user",
+    "select_user_placeholder": "-- Select user --",
+    "select_user_required": "Please select a user",
+    "create_success": "Time slot created successfully",
+    "book_success": "User booked successfully",
+    "unbook_success": "User unbooked successfully",
+    "delete_success": "Time slot deleted successfully",
+    "confirm_unbook": "Remove user from this slot?",
+    "confirm_delete_slot": "Delete this time slot?",
+    "hour": "Hour",
+    "minute": "Minute",
+    "hour_from": "From hour",
+    "hour_to": "To hour",
+    "range_hint": "Slots will be created every even hour in the selected range",
+    "edit_hint": "Book, unbook or delete time slots"
   },
   "messages": {
     "no_data": "no data available",
@@ -117,6 +151,13 @@
     "used_time_records": "Used time records",
     "time": "Time",
     "count": "Count"
+  },
+  "reports": {
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "no_photos": "No photos.",
+    "prev": "Prev",
+    "next": "Next"
   },
   "language": {
     "en": "English",

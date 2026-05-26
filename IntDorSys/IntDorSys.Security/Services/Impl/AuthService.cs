@@ -42,41 +42,18 @@ namespace IntDorSys.Security.Services.Impl
             {
                 Email = registrationData.Email,
                 Password = null!,
-                Username = null!,
+                Username = registrationData.Email.Split('@')[0],
                 TelegramId = registrationData.TelegramId,
                 LanguageCode = "En",
-                FullName = registrationData.FullName,
-                NumGroup = registrationData.NumGroup,
-                NumRoom = registrationData.NumRoom,
             };
 
             newUser.Password = _passwordHasher.HashPassword(newUser, registrationData.Password);
 
             var user = await _userService.CreateAsync(newUser, ct);
 
-            if (!user.IsSuccess)
-            {
-                return result.WithErrors(user.Errors);
-            }
-
-            if (!string.IsNullOrWhiteSpace(registrationData.FullName) ||
-                !string.IsNullOrWhiteSpace(registrationData.NumGroup) ||
-                !string.IsNullOrWhiteSpace(registrationData.NumRoom))
-            {
-                var userForUpdate = user.Data!;
-                userForUpdate.FullName = registrationData.FullName;
-                userForUpdate.NumGroup = registrationData.NumGroup;
-                userForUpdate.NumRoom = registrationData.NumRoom;
-
-                var updateResult = await _userService.UpdateUserInfo(userForUpdate, ct);
-
-                if (updateResult.IsSuccess && updateResult.Data != null)
-                {
-                    return result.WithData(updateResult.Data);
-                }
-            }
-
-            return result.WithData(user.Data);
+            return !user.IsSuccess
+                ? result.WithErrors(user.Errors)
+                : result.WithData(user.Data);
         }
 
         /// <inheritdoc />

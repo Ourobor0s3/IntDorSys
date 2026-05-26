@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { FormsModule } from "@angular/forms";
 
 import { UserInfoRoutingModule } from './users-info-routing.module';
 import { UserInfoComponent } from './users-info.component';
@@ -12,6 +13,7 @@ import { SharedModule } from "../../shared/shared.component";
     ],
     imports: [
         CommonModule,
+        FormsModule,
         UserInfoRoutingModule,
         NgOptimizedImage,
         SharedModule,

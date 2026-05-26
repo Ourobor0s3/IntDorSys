@@ -1,55 +1,184 @@
-<div>
-  <div class="row mt-3 custom-filter theme-form">
-    <!--Start date-->
-    <div class="col-auto selector pr-0">
-      <label>{{ 'laundress.start_date' | lang }}</label>
-      <input #dps="bsDatepicker" (click)="calendarClick('#bsCalendarStart')"
-             (onShown)="setCalendarWidth('#bsCalendarStart')"
-             [(bsValue)]="startDate" [bsConfig]="bsConfig"
-             [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
-             bsDatepicker class="form-control input-datepicker min-w-250" id="bsCalendarStart"
-             style="height: 45px" type="text">
-    </div>
-
-    <!--End date-->
-    <div class="col-auto selector pr-0">
-      <label>{{ 'laundress.end_date' | lang }}</label>
-      <input #dpe="bsDatepicker" (click)="calendarClick('#bsCalendarEnd')"
-             (onShown)="setCalendarWidth('#bsCalendarEnd')" [(bsValue)]="endDate"
-             [bsConfig]="bsConfig" [ngClass]="{'iconShow' : dpe.isOpen }"
-             [readonly]="true" bsDatepicker class="form-control input-datepicker min-w-250" id="bsCalendarEnd"
-             style="height: 45px" type="text">
-    </div>
-
-    <!-- Find button -->
-    <div class="col selector align-self-end">
-      <button (click)="searchTimeLaund()" class="btn btn-primary btn-find" type="button">
-        {{ 'laundress.filter' | lang }}
+<div class="laundress-page">
+  <!-- Header section -->
+  <div class="page-header">
+    <div class="filter-row">
+      <div class="row g-2 align-items-end flex-grow-1">
+        <div class="col-auto">
+          <label class="form-label-sm text-muted">{{ 'laundress.start_date' | lang }}</label>
+          <input #dps="bsDatepicker"
+                 (click)="calendarClick('#bsCalendarStart')"
+                 (onShown)="setCalendarWidth('#bsCalendarStart')"
+                 [(bsValue)]="startDate" [bsConfig]="bsConfig"
+                 [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
+                 bsDatepicker class="form-control form-control-sm input-datepicker"
+                 id="bsCalendarStart" type="text">
+        </div>
+        <div class="col-auto">
+          <label class="form-label-sm text-muted">{{ 'laundress.end_date' | lang }}</label>
+          <input #dpe="bsDatepicker"
+                 (click)="calendarClick('#bsCalendarEnd')"
+                 (onShown)="setCalendarWidth('#bsCalendarEnd')"
+                 [(bsValue)]="endDate" [bsConfig]="bsConfig"
+                 [ngClass]="{'iconShow' : dpe.isOpen }" [readonly]="true"
+                 bsDatepicker class="form-control form-control-sm input-datepicker"
+                 id="bsCalendarEnd" type="text">
+        </div>
+        <div class="col-auto">
+          <button (click)="searchTimeLaund()" class="btn btn-sm btn-primary px-3" type="button">
+            {{ 'laundress.filter' | lang }}
+          </button>
+        </div>
+      </div>
+      <button *ngIf="isAdmin"
+              (click)="toggleEditMode()"
+              [class.btn-outline-primary]="!isEditMode"
+              [class.btn-primary]="isEditMode"
+              class="btn btn-sm ms-2" type="button">
+        {{ (isEditMode ? 'laundress.edit_mode_on' : 'laundress.edit_mode_off') | lang }}
       </button>
     </div>
-  </div>
-</div>
 
-<div *ngIf="laundList == null" class="text-center p-4 no-data">
-  <p class="text-muted">{{ 'common.no_data' | lang }}</p>
-</div>
-<div *ngIf="laundList != null" class="row row-cols-1 row-cols-sm-2 g-3">
-  <div *ngFor="let laund of laundList" class="col">
-    <div class="card mb-0 h-100 card-info">
-      <div class="card-body">
-        <span class="card-header">{{ laund.date }}</span>
-        <div *ngIf="laund.laundModels == null" class="text-center p-3">
-          <p class="text-muted">{{ 'common.no_data' | lang }}</p>
-        </div>
-        <div *ngIf="laund.laundModels != null">
-          <div *ngFor="let l of laund.laundModels" class="card-item">
-            <div>
-              <span class="time">{{ l.timeWash | date:'HH:mm' }}</span> -
-              <span class="user-name">{{ l.selectUser?.fullName }}</span>
-            </div>
+    <!-- Admin toolbar -->
+    <div *ngIf="isEditMode" class="edit-toolbar">
+      <button (click)="openCreateModal(createModal)" class="btn btn-sm btn-success" type="button">
+        + {{ 'laundress.add_time_slot' | lang }}
+      </button>
+      <span class="text-muted ms-2 small">{{ 'laundress.edit_hint' | lang }}</span>
+    </div>
+  </div>
+
+  <!-- Loading / Empty states -->
+  <div *ngIf="laundList == null" class="empty-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">{{ 'common.loading' | lang }}</span>
+    </div>
+  </div>
+  <div *ngIf="laundList && laundList.length === 0" class="empty-state">
+    <p class="text-muted">{{ 'common.no_data' | lang }}</p>
+  </div>
+
+  <!-- Cards grid -->
+  <div *ngIf="laundList && laundList.length > 0" class="cards-grid">
+    <div *ngFor="let laund of laundList" class="day-card">
+      <div class="card-header-custom">
+        {{ laund.date }}
+        <span class="slot-count">{{ laund.laundModels?.length || 0 }} slots</span>
+      </div>
+      <div class="card-body-custom">
+        <ng-container *ngIf="!laund.laundModels || laund.laundModels.length === 0">
+          <div class="text-center py-3">
+            <p class="text-muted small mb-0">{{ 'common.no_data' | lang }}</p>
+          </div>
+        </ng-container>
+        <div *ngFor="let l of laund.laundModels" class="slot-row"
+             [class.slot-expired]="isSlotExpired(l.timeWash)"
+             [class.slot-editing]="isEditMode && !isSlotExpired(l.timeWash)">
+          <!-- Time -->
+          <div class="slot-time">
+            <span class="time-badge">{{ l.timeWash | date:'HH:mm' }}</span>
+          </div>
+
+          <!-- User / Status -->
+          <div class="slot-info">
+            <ng-container *ngIf="l.selectUser; else freeSlot">
+              <div class="user-avatar" [title]="l.selectUser.fullName || l.selectUser.username">
+                {{ (l.selectUser.fullName || l.selectUser.username || '?') | slice:0:1 | uppercase }}
+              </div>
+              <div class="user-details">
+                <span class="user-name">{{ l.selectUser.fullName || l.selectUser.username }}</span>
+                <span class="user-meta" *ngIf="l.selectUser.numGroup">{{ l.selectUser.numGroup }}</span>
+              </div>
+              <span class="status-dot dot-occupied"></span>
+              <span class="status-text">{{ 'laundress.in_use' | lang }}</span>
+            </ng-container>
+            <ng-template #freeSlot>
+              <div class="user-avatar avatar-free">+</div>
+              <div class="user-details">
+                <span class="user-name user-name-free">{{ 'laundress.free' | lang }}</span>
+              </div>
+              <span class="status-dot dot-free"></span>
+              <span class="status-text">{{ 'laundress.available' | lang }}</span>
+            </ng-template>
+          </div>
+
+          <!-- Edit actions -->
+          <div *ngIf="isEditMode && !isSlotExpired(l.timeWash)" class="slot-actions">
+            <ng-container *ngIf="!l.selectUser; else occupiedActions">
+              <button (click)="openBookModal(bookModal, l.timeWash)"
+                      class="btn btn-sm btn-outline-success action-btn"
+                      title="{{ 'laundress.book' | lang }}">
+                {{ 'laundress.book' | lang }}
+              </button>
+            </ng-container>
+            <ng-template #occupiedActions>
+              <button (click)="confirmUnbook(l.timeWash, l.selectUser.id)"
+                      class="btn btn-sm btn-outline-warning action-btn"
+                      title="{{ 'laundress.unbook' | lang }}">
+                {{ 'laundress.unbook' | lang }}
+              </button>
+            </ng-template>
+            <button (click)="confirmDelete(l.timeWash)"
+                    class="btn btn-sm btn-outline-danger action-btn"
+                    title="{{ 'common.delete' | lang }}">
+              {{ 'common.delete' | lang }}
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Create Time Slot Range Modal -->
+<ng-template #createModal let-modal>
+  <div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">{{ 'laundress.create_time_slot' | lang }}</h5>
+    <button (click)="modal.dismiss()" aria-label="Close" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label class="form-label fw-medium">{{ 'laundress.date' | lang }}</label>
+      <input [(ngModel)]="newTimeWashDate" class="form-control" type="date">
+    </div>
+    <div class="row g-2">
+      <div class="col">
+        <label class="form-label fw-medium">{{ 'laundress.hour_from' | lang }}</label>
+        <select [(ngModel)]="newTimeRangeStartHour" class="form-select">
+          <option *ngFor="let h of evenHours" [value]="h">{{ h }}:00</option>
+        </select>
+      </div>
+      <div class="col">
+        <label class="form-label fw-medium">{{ 'laundress.hour_to' | lang }}</label>
+        <select [(ngModel)]="newTimeRangeEndHour" class="form-select">
+          <option *ngFor="let h of evenHours" [value]="h">{{ h }}:00</option>
+        </select>
+      </div>
+    </div>
+    <small class="text-muted mt-2 d-block">{{ 'laundress.range_hint' | lang }}</small>
+  </div>
+  <div class="modal-footer border-0 pt-0">
+    <button (click)="modal.dismiss()" class="btn btn-light" type="button">{{ 'common.cancel' | lang }}</button>
+    <button (click)="createTimeSlotRange(modal)" class="btn btn-success" type="button">{{ 'common.save' | lang }}</button>
+  </div>
+</ng-template>
+
+<!-- Book User Modal -->
+<ng-template #bookModal let-modal>
+  <div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold">{{ 'laundress.book_user' | lang }}</h5>
+    <button (click)="modal.dismiss()" aria-label="Close" class="btn-close" type="button"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-2">
+      <label class="form-label fw-medium">{{ 'laundress.select_user' | lang }}</label>
+      <select [(ngModel)]="selectedUserId" class="form-select">
+        <option [value]="0">{{ 'laundress.select_user_placeholder' | lang }}</option>
+        <option *ngFor="let u of users" [value]="u.id">{{ u.fullName || u.username }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="modal-footer border-0 pt-0">
+    <button (click)="modal.dismiss()" class="btn btn-light" type="button">{{ 'common.cancel' | lang }}</button>
+    <button (click)="bookUser(modal)" class="btn btn-primary" type="button">{{ 'common.save' | lang }}</button>
+  </div>
+</ng-template>

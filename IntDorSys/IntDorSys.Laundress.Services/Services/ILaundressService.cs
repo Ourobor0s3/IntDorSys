@@ -54,5 +54,16 @@ namespace IntDorSys.Laundress.Services.Services
         /// <param name="ct">Cancellation token</param>
         /// <returns></returns>
         Task<DataResult<bool>> UseTimeAsync(long userId, DateTime timeWash, CancellationToken ct);
+
+        /// <summary>
+        ///     Create time slots for a range of even hours
+        /// </summary>
+        /// <param name="date">Date for slots</param>
+        /// <param name="startHour">Starting hour (even)</param>
+        /// <param name="endHour">Ending hour (even, inclusive)</param>
+        /// <param name="createdUserId">User who creates the slots</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns></returns>
+        Task<DataResult<int>> CreateTimeRangeAsync(DateTime date, int startHour, int endHour, long createdUserId, CancellationToken ct);
     }
 }

@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { authRoute, laundressRoute, overviewRoute, reportsRoute, userInfoRoute } from "../constants/routes";
+import { laundressRoute, overviewRoute, reportsRoute, userInfoRoute } from "../constants/routes";
 
 export const mainContent: Routes = [
     {
@@ -31,11 +31,5 @@ export const mainContent: Routes = [
         loadChildren: () =>
             import('../../components/reports/reports.module')
                 .then(m => m.ReportsModule),
-    },
-    {
-        path: authRoute + '/:subpageRoute',
-        loadChildren: () => import('../../app.module')
-            .then((m) => m.AppModule),
-        data: { animation: 'Auth' },
     },
 ];
