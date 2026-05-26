@@ -1,3 +1,4 @@
+/* Home-specific styles */
 .home-page {
   padding: 0 0 1.5rem;
 }
@@ -93,8 +94,6 @@
   white-space: nowrap;
 }
 
-.chart-card {
-  .home-card-body {
-    min-height: 250px;
-  }
+.chart-card .home-card-body {
+  min-height: 250px;
 }

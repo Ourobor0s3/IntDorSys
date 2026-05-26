@@ -1,50 +1,45 @@
 <div class="laundress-page">
-  <!-- Header section -->
-  <div class="page-header">
-    <div class="filter-row">
-      <div class="row g-2 align-items-end flex-grow-1">
-        <div class="col-auto">
-          <label class="form-label-sm text-muted">{{ 'laundress.start_date' | lang }}</label>
-          <input #dps="bsDatepicker"
-                 (click)="calendarClick('#bsCalendarStart')"
-                 (onShown)="setCalendarWidth('#bsCalendarStart')"
-                 [(bsValue)]="startDate" [bsConfig]="bsConfig"
-                 [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
-                 bsDatepicker class="form-control form-control-sm input-datepicker"
-                 id="bsCalendarStart" type="text">
-        </div>
-        <div class="col-auto">
-          <label class="form-label-sm text-muted">{{ 'laundress.end_date' | lang }}</label>
-          <input #dpe="bsDatepicker"
-                 (click)="calendarClick('#bsCalendarEnd')"
-                 (onShown)="setCalendarWidth('#bsCalendarEnd')"
-                 [(bsValue)]="endDate" [bsConfig]="bsConfig"
-                 [ngClass]="{'iconShow' : dpe.isOpen }" [readonly]="true"
-                 bsDatepicker class="form-control form-control-sm input-datepicker"
-                 id="bsCalendarEnd" type="text">
-        </div>
-        <div class="col-auto">
-          <button (click)="searchTimeLaund()" class="btn btn-sm btn-primary px-3" type="button">
-            {{ 'laundress.filter' | lang }}
-          </button>
-        </div>
-      </div>
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label class="filter-label">{{ 'laundress.start_date' | lang }}</label>
+      <input #dps="bsDatepicker"
+             (click)="calendarClick('#bsCalendarStart')"
+             (onShown)="setCalendarWidth('#bsCalendarStart')"
+             [(bsValue)]="startDate" [bsConfig]="bsConfig"
+             [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
+             bsDatepicker class="form-control form-control-sm input-datepicker"
+             id="bsCalendarStart" type="text">
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">{{ 'laundress.end_date' | lang }}</label>
+      <input #dpe="bsDatepicker"
+             (click)="calendarClick('#bsCalendarEnd')"
+             (onShown)="setCalendarWidth('#bsCalendarEnd')"
+             [(bsValue)]="endDate" [bsConfig]="bsConfig"
+             [ngClass]="{'iconShow' : dpe.isOpen }" [readonly]="true"
+             bsDatepicker class="form-control form-control-sm input-datepicker"
+             id="bsCalendarEnd" type="text">
+    </div>
+    <div class="filter-actions">
+      <button (click)="searchTimeLaund()" class="btn btn-sm btn-primary px-3" type="button">
+        {{ 'laundress.filter' | lang }}
+      </button>
       <button *ngIf="isAdmin"
               (click)="toggleEditMode()"
               [class.btn-outline-primary]="!isEditMode"
               [class.btn-primary]="isEditMode"
-              class="btn btn-sm ms-2" type="button">
+              class="btn btn-sm" type="button">
         {{ (isEditMode ? 'laundress.edit_mode_on' : 'laundress.edit_mode_off') | lang }}
       </button>
     </div>
+  </div>
 
-    <!-- Admin toolbar -->
-    <div *ngIf="isEditMode" class="edit-toolbar">
-      <button (click)="openCreateModal(createModal)" class="btn btn-sm btn-success" type="button">
-        + {{ 'laundress.add_time_slot' | lang }}
-      </button>
-      <span class="text-muted ms-2 small">{{ 'laundress.edit_hint' | lang }}</span>
-    </div>
+  <!-- Edit toolbar -->
+  <div *ngIf="isEditMode" class="edit-toolbar">
+    <button (click)="openCreateModal(createModal)" class="btn btn-sm btn-success" type="button">
+      + {{ 'laundress.add_time_slot' | lang }}
+    </button>
+    <span class="text-muted ms-2 small">{{ 'laundress.edit_hint' | lang }}</span>
   </div>
 
   <!-- Loading / Empty states -->
