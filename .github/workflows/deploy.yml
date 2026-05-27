@@ -37,5 +37,5 @@ jobs:
           script: |
             cd /opt/intdorsys
             git pull
-            docker-compose down
-            docker-compose up -d --build
+            docker compose down
+            docker compose up -d --build
