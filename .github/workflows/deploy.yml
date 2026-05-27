@@ -37,4 +37,5 @@ jobs:
           script: |
             cd /opt/intdorsys
             git pull
-            docker-compose up -d --build
+            docker rm -f intdorsys-backend 2>/dev/null || true
+            docker-compose up -d --build --force-recreate
