@@ -49,7 +49,3 @@ import 'zone.js'; // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
-// for ethers.js
-import { Buffer } from 'buffer';
-
-(window as any).Buffer = Buffer;

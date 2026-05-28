@@ -12,6 +12,12 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   border: 1px solid #f0f0f0;
   margin-bottom: 1.25rem;
+
+  [data-bs-theme="dark"] & {
+    background: var(--app-card-bg, #1e1e2d);
+    border-color: var(--app-card-border, #2a2a3d);
+    box-shadow: var(--app-card-shadow, 0 1px 3px rgba(0,0,0,0.3));
+  }
 }
 
 .filter-group {
@@ -22,7 +28,7 @@
 
 .filter-label {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--app-text-muted, #6b7280);
   font-weight: 500;
 }
 
@@ -43,4 +49,9 @@
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   border: 1px solid #f0f0f0;
+
+  [data-bs-theme="dark"] & {
+    background: var(--app-card-bg, #1e1e2d);
+    border-color: var(--app-card-border, #2a2a3d);
+  }
 }

@@ -1,15 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input } from '@angular/core';
 import { HeaderButtonModel } from "../../model/headerButton.model";
-import { EventService } from "../../services/event.service";
-import { NavService } from "../../services/nav.service";
 
 @Component({
     selector: 'app-section-header',
     templateUrl: './section-header.component.html',
     styleUrls: ['./section-header.component.scss'],
 })
-export class SectionHeaderComponent implements OnInit {
+export class SectionHeaderComponent {
 
     @Input()
     public title: string | undefined;
@@ -20,15 +17,5 @@ export class SectionHeaderComponent implements OnInit {
     public secondButton: HeaderButtonModel = new HeaderButtonModel();
     @Input()
     public showInput: boolean = false;
-
-    constructor(
-        private router: Router,
-        private eventService: EventService,
-        private navService: NavService,
-    ) {
-    }
-
-    ngOnInit(): void {
-    }
 
 }

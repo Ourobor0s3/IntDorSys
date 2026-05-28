@@ -1,95 +1,85 @@
-/* Сообщение об отсутствии данных */
-.no-data {
-    text-align: center;
-    font-style: italic;
-    color: #888;
-    padding: 2rem 0;
-    font-size: 1.05rem;
+:root {
+  --table-wrapper-bg: #fff;
+  --table-wrapper-border: #f0f0f0;
+  --table-wrapper-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --table-header-bg: #f9fafb;
+  --table-header-color: #6b7280;
+  --table-header-border: #f3f4f6;
+  --table-row-border: #f9fafb;
+  --table-row-hover: #f9fafb;
+  --table-cell-color: #343a40;
+  --table-link-color: #2563eb;
 }
 
-/* Обёртка таблицы */
-.custom-table {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 1rem;
-    border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.table-wrapper {
+  overflow-x: auto;
+  background: var(--table-wrapper-bg);
+  border-radius: 12px;
+  box-shadow: var(--table-wrapper-shadow);
+  border: 1px solid var(--table-wrapper-border);
 }
 
-/* Таблица */
-.custom-table table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 0.95rem;
-    color: #2c2c2c;
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
 }
 
-/* Заголовки */
-.custom-table thead th {
-    background-color: #f0f2f5;
-    padding: 14px 16px;
-    font-weight: 600;
-    text-align: left;
-    border-bottom: 2px solid #e0e0e0;
-    white-space: nowrap;
+.users-table th,
+.users-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Центрированные заголовки */
-.custom-table thead th.text-center {
-    text-align: center;
+.users-table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--table-header-color);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--table-header-bg);
+  border-bottom: 1px solid var(--table-header-border);
 }
 
-/* Строки */
-.custom-table tbody tr {
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
+.users-table tbody tr {
+  border-bottom: 1px solid var(--table-row-border);
+  transition: background 0.15s;
 }
 
-/* Чередование строк */
-.custom-table tbody tr:nth-child(odd) {
-    background-color: #fcfcfc;
+.users-table tbody tr:last-child {
+  border-bottom: none;
 }
 
-/* Ховер эффект */
-.custom-table tbody tr:hover {
-    background-color: #f4f9ff;
+.users-table tbody tr:hover {
+  background: var(--table-row-hover);
 }
 
-/* Ячейки */
-.custom-table tbody td {
-    padding: 12px 16px;
-    vertical-align: middle;
-    white-space: nowrap;
+.users-table .col-num { width: 40px; text-align: center; }
+.users-table .col-name { min-width: 120px; max-width: 200px; }
+.users-table .col-email { min-width: 120px; max-width: 180px; }
+.users-table .col-group { width: 60px; text-align: center; }
+.users-table .col-room { width: 60px; text-align: center; }
+.users-table .col-status { width: 100px; }
+.users-table .col-action { width: 44px; text-align: center; }
+.users-table .col-date { min-width: 110px; }
+.users-table .col-confirm { width: 60px; }
+
+.copy-link {
+  cursor: pointer;
+  color: var(--table-link-color);
 }
 
-/* Центрирование нужных ячеек */
-.custom-table tbody td.text-center,
-.custom-table tbody td:nth-child(8) {
-    text-align: center;
+.copy-link:hover {
+  text-decoration: underline;
 }
 
-/* Иконки */
-.custom-table tbody td img {
-    cursor: pointer;
-    height: 14px;
-    transition: transform 0.2s ease;
-}
-
-.custom-table tbody td img:hover {
-    transform: scale(1.1);
-    opacity: 0.85;
-}
-
-/* Адаптивность: скрытие неважных колонок на телефонах */
-@media (max-width: 768px) {
-    .custom-table thead th:not(:first-child):not(.text-center),
-    .custom-table tbody td:not(:first-child):not(.text-center):not(:last-child) {
-        display: none;
-    }
-
-    .custom-table tbody td.text-center {
-        text-align: right;
-    }
+.status-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
 }

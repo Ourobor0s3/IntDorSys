@@ -110,20 +110,16 @@ namespace IntDorSys.Laundress.Services.Services.Impl
 
             var files = await filesQuery.ToListAsync(ct);
 
-            if (files.Count == 0)
-            {
-                _logger.LogError("FileServices.GetAsync error => Files not found.");
-                return result.WithError("Файлы не найдены.");
-            }
-
             foreach (var file in files)
             {
                 file.FilePath = $"{_link.BackUrl}/file/{file.Guid}";
             }
 
-            var filesByGroup = files
-                .GroupBy(f => f.GroupId)
-                .ToDictionary(g => g.Key!, g => g.ToList());
+            var filesByGroup = files.Count == 0
+                ? new Dictionary<string, List<FileInfo>>()
+                : files
+                    .GroupBy(f => f.GroupId)
+                    .ToDictionary(g => g.Key!, g => g.ToList());
 
             // Получение отчётов
             var reportsQuery = _db.Set<Report>()
@@ -172,10 +168,12 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                 return;
             }
 
-            var report = new Report
+            var repGroupId = message.ReplyToMessage.MediaGroupId
+                     ?? message.ReplyToMessage.Photo?[^1].FileId;
+    var report = new Report
             {
                 UserId = user.Id,
-                GroupId = message.ReplyToMessage.MediaGroupId,
+                GroupId = repGroupId,
                 Description = message.ReplyToMessage.Caption ?? message.ReplyToMessage.Text,
             };
 
@@ -199,7 +197,8 @@ namespace IntDorSys.Laundress.Services.Services.Impl
             using var memoryStream = new MemoryStream();
             await _botClient.DownloadFile(file, memoryStream, ct);
 
-            await _fileService.SaveAsync(filePath!, memoryStream, message.MediaGroupId, ct);
+            var groupId = message.MediaGroupId ?? photoSize.FileId;
+    await _fileService.SaveAsync(filePath!, memoryStream, groupId, ct);
         }
     }
 }

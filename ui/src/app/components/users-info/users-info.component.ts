@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { Subject, takeUntil } from "rxjs";
 import { DataReloadService } from "../../shared/services/dataReload.service";
@@ -10,6 +10,7 @@ import { UsersInfoService } from "../../shared/services/user-info.service";
 import { TranslateService } from '@ngx-translate/core';
 import { UserStatus } from "../../shared/enums/UserStatus";
 import { USER_STATUS_STYLES } from "../../shared/constants/statusStyle";
+import { LoadingService } from "../../shared/services/loading.service";
 
 @Component({
     selector: 'app-users-info',
@@ -28,15 +29,15 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
     private destroy$ = new Subject<void>();
 
     constructor(
-        @Inject(LOCALE_ID) public locale: string,
         private modalService: NgbModal,
         private userService: UsersInfoService,
         private dataReloadService: DataReloadService,
         private clipboardService: ClipboardService,
         private modal: NgbModal,
         private translate: TranslateService,
+        private loading: LoadingService,
     ) {
-        super(translate, modal);
+        super(translate, modal, loading);
     }
 
     ngOnInit() {
@@ -62,7 +63,7 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
             t.userList = res.data;
             t.applyFilter();
         }).catch((err) => {
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 t.setLoading(false);
@@ -128,6 +129,10 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         t.showToast(t.translate.instant('common.copy_success'));
     }
 
+    trackByUser(index: number, item: UserInfoModel): number {
+        return item.id ?? index;
+    }
+
     getStatusStyle(status: UserStatus) {
         return USER_STATUS_STYLES[status];
     }
@@ -152,8 +157,8 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
                     t.searchUsers();
                 });
             })
-            .catch(() => {
-                // Console errors off
+            .catch((err) => {
+                console.error(err);
             });
     }
 }

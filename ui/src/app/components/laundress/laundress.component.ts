@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { LaundressService } from "../../shared/services/laundress.service";
 import { PageLaundressModel } from "../../shared/model/laundress.model";
@@ -11,6 +11,7 @@ import { UsersInfoService } from "../../shared/services/user-info.service";
 import { UserInfoModel } from "../../shared/model/userInfo.model";
 import { UserService } from "../../shared/services/user.service";
 import { AuthService } from "../../shared/services/auth.service";
+import { LoadingService } from "../../shared/services/loading.service";
 
 @Component({
     selector: 'app-laundress',
@@ -34,11 +35,10 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
 
     newTimeWashDate: string = '';
     newTimeRangeStartHour: number = 8;
-    newTimeRangeEndHour: number = 10;
+    newTimeRangeEndHour: number = 22;
     evenHours: number[] = [8, 10, 12, 14, 16, 18, 20, 22];
 
     constructor(
-        @Inject(LOCALE_ID) public locale: string,
         private laundService: LaundressService,
         private dataReloadService: DataReloadService,
         private modal: NgbModal,
@@ -46,10 +46,11 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         private usersInfoService: UsersInfoService,
         private userService: UserService,
         private authService: AuthService,
+        private loading: LoadingService,
     ) {
-        super(translate, modal);
+        super(translate, modal, loading);
         let t = this;
-        let dateBE = t.GetCurrentDateWithDelta();
+        let dateBE = t.getCurrentDateWithDelta();
         t.startDate = dateBE.dateStart;
         t.endDate = dateBE.dateEnd;
     }
@@ -85,7 +86,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
                 t.laundList = res.data;
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 if (isRunLoading)
@@ -108,14 +109,14 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
             .then(res => {
                 t.users = res.data ?? [];
             })
-            .catch(err => console.log(err));
+            .catch(err => console.error(err));
     }
 
     openCreateModal(content: any) {
         let now = new Date();
         this.newTimeWashDate = now.toISOString().split('T')[0];
         this.newTimeRangeStartHour = 8;
-        this.newTimeRangeEndHour = 10;
+        this.newTimeRangeEndHour = 22;
         this.modal.open(content, { centered: true, backdrop: 'static', size: 'sm' });
     }
 
@@ -186,7 +187,10 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
                     })
                     .catch(err => t.showResponseError(err));
             })
-            .catch(() => {});
+            .catch((err) => {
+                t.showError(t.translate.instant('common.operation_cancelled'));
+                console.error(err);
+            });
     }
 
     confirmDelete(timeWash: string) {
@@ -206,7 +210,10 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
                     })
                     .catch(err => t.showResponseError(err));
             })
-            .catch(() => {});
+            .catch((err) => {
+                t.showError(t.translate.instant('common.operation_cancelled'));
+                console.error(err);
+            });
     }
 
     isSlotExpired(timeWash: string): boolean {
@@ -222,5 +229,21 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.disableAutoRefresh();
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    trackByDate(index: number, item: any): string {
+        return item.date || index;
+    }
+
+    trackBySlot(index: number, item: any): string {
+        return item.timeWash || index;
+    }
+
+    trackByUser(index: number, item: any): string {
+        return item.id || index;
+    }
+
+    trackByHour(index: number, item: any): number {
+        return item;
     }
 }

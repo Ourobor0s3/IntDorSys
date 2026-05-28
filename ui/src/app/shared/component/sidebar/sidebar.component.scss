@@ -7,14 +7,3 @@
         padding-left: 10px;
     }
 }
-
-.scroll-container {
-    max-height: 100vh;
-    overflow: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.scroll-container::-webkit-scrollbar {
-    display: none;
-}

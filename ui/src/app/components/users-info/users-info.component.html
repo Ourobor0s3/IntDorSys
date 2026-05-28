@@ -38,7 +38,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let user of filteredUsers; let i = index">
+      <tr *ngFor="let user of filteredUsers; trackBy: trackByUser; let i = index">
         <td class="col-num">{{ i + 1 }}</td>
         <td class="col-name cell-ellipsis" [title]="user.fullName">{{ user.fullName }}</td>
         <td class="col-email">

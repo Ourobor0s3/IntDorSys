@@ -1,21 +1,22 @@
-import { EventEmitter, Injectable, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { HeaderButtonModel } from "../model/headerButton.model";
 
 @Injectable({
     providedIn: 'root',
 })
 export class EventService {
-    @Output() LangChangeEvent = new EventEmitter<string>();
-    @Output() NotifCountEvent = new EventEmitter<any>();
-    @Output() SubpageEvent = new EventEmitter<HeaderButtonModel>();
-    @Output() ShowUploadButtonEvent = new EventEmitter<boolean>();
-    @Output() SubscriptionUpgrade = new EventEmitter<void>();
+    readonly LangChangeEvent = new Subject<string>();
+    readonly NotifCountEvent = new Subject<any>();
+    readonly SubpageEvent = new Subject<HeaderButtonModel>();
+    readonly ShowUploadButtonEvent = new Subject<boolean>();
+    readonly SubscriptionUpgrade = new Subject<void>();
     private arrIntervals: any = [];
     private funcImpl: any[] = [];
     private arrForLogOut: any = [];
 
     Langchanged(msg: string) {
-        this.LangChangeEvent.emit(msg);
+        this.LangChangeEvent.next(msg);
     }
 
     public addFuncToArrayOfIntervals(func: () => void, interval: number) {

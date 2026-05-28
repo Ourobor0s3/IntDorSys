@@ -1,4 +1,4 @@
-import { Component, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ChildrenOutletContexts, NavigationEnd, Router } from "@angular/router";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { filter, Subscription } from "rxjs";
@@ -30,9 +30,7 @@ interface StyleConfig {
     ],
 })
 export class AppComponent extends BaseComponent implements OnDestroy {
-    title = "ui";
     modalRef: NgbModalRef;
-    private intervals: Promise<any>[] = [];
     private eventSubscription: Subscription;
     private readonly styleConfigs: StyleConfig[] = [
         { name: 'main', preload: false },
@@ -42,7 +40,6 @@ export class AppComponent extends BaseComponent implements OnDestroy {
     constructor(
         private modalService: NgbModal,
         private contexts: ChildrenOutletContexts,
-        private renderer: Renderer2,
         private router: Router,
         private translate: TranslateService,
         private authService: AuthService,
@@ -50,27 +47,7 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         private userService: UserService,
     ) {
         super(translate, modalService);
-        let t = this;
-        t.initializeApp();
-
-        t.eventSubscription = t.router.events.subscribe((event) => {
-            let intervals: Promise<any>[] = [];
-
-            if (t.authService.isLoggedIn()) {
-                if (!t.userService.get() && !t.eventService.isFuncArrIncludes(t.userService.refreshUser)) {
-                    intervals.push(t.userService.init());
-                    t.eventService.addFuncToArrayOfIntervals(t.userService.refreshUser, 1000 * 60 * 5);
-                }
-
-            }
-            Promise.all(intervals).then(
-                (value) => {
-                },
-                (reason) => {
-                    // t.authService.SignOut();
-                },
-            );
-        })
+        this.initializeApp();
     }
 
     ngOnDestroy(): void {
@@ -83,13 +60,6 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         return this.contexts.getContext('primary')?.route?.snapshot?.data?.['animation'];
     }
 
-    disableMockScreen(): void {
-        const mockScreen = document.getElementById('mockScreen');
-        if (mockScreen) {
-            mockScreen.style.display = 'none';
-        }
-    }
-
     private initializeApp(): void {
         // Initialize language
         this.translate.use(languages[Language.EN].shortName);
@@ -99,35 +69,21 @@ export class AppComponent extends BaseComponent implements OnDestroy {
 
         // Setup router events
         this.setupRouterEvents();
-
-        // Handle mock screen
-        this.handleMockScreen();
     }
 
     private setupRouterEvents(): void {
         this.eventSubscription = this.router.events.pipe(
             filter(event => event instanceof NavigationEnd),
         ).subscribe(() => {
-            Promise.all(this.intervals).catch(error => {
-                console.error('Navigation error:', error);
-                // Handle navigation error if needed
-            });
+            if (this.authService.isLoggedIn()) {
+                if (!this.userService.get() && !this.eventService.isFuncArrIncludes(this.userService.refreshUser)) {
+                    this.userService.init();
+                    this.eventService.addFuncToArrayOfIntervals(this.userService.refreshUser, 1000 * 60 * 5);
+                }
+            }
         });
     }
 
-    private handleMockScreen(): void {
-        const disableMock = () => {
-            const mockScreen = document.getElementById('mockScreen');
-            if (mockScreen) {
-                mockScreen.style.display = 'none';
-            }
-        };
-
-        window.onload = disableMock;
-        setTimeout(disableMock, 3000);
-    }
-
-    // Create style sheet append in head
     private createStyle(styleName: string, preload = false): void {
         const link = document.createElement('link');
         link.type = 'text/css';
@@ -136,8 +92,12 @@ export class AppComponent extends BaseComponent implements OnDestroy {
 
         if (preload) {
             link.as = 'style';
-            link.setAttribute('onload', "this.rel='stylesheet'");
+            link.onload = () => { link.rel = 'stylesheet'; };
         }
+
+        link.onerror = () => {
+            console.warn(`Failed to load style: ${styleName}.css`);
+        };
 
         document.head.appendChild(link);
     }

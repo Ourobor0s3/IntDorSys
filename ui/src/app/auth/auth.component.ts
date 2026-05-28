@@ -6,10 +6,10 @@ import { transition, trigger, useAnimation } from '@angular/animations';
 import { fadeIn } from 'ng-animate';
 import { authRoute } from '../shared/constants/routes';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { UserService } from "../shared/services/user.service";
 import { TranslateService } from '@ngx-translate/core';
 import { Language } from '../shared/enums/language';
 import { languages } from '../shared/constants/languages';
+import { ThemeService } from '../shared/services/theme.service';
 
 @Component({
     selector: 'app-auth',
@@ -23,53 +23,52 @@ import { languages } from '../shared/constants/languages';
 })
 export class AuthComponent extends BaseComponent implements OnInit {
     subpagesMenu: Subpages[] = authSubpages;
-    currentActiveTab: any;
-    currentYear: any;
+    currentActiveTab: Subpages | undefined;
+    currentYear: number = new Date().getFullYear();
+    isDarkMode = false;
 
     constructor(
         private activateRoute: ActivatedRoute,
         private router: Router,
-        private userService: UserService,
         private modal: NgbModal,
         private translate: TranslateService,
+        private themeService: ThemeService,
     ) {
         super(translate, modal);
-        let t = this;
-        t.router.routeReuseStrategy.shouldReuseRoute = function () {
-            return false;
-        };
-        t.currentYear = new Date().getFullYear();
-        t.translate.setDefaultLang(languages[Language.EN].shortName);
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this.translate.setDefaultLang(languages[Language.EN].shortName);
     }
 
     ngOnInit(): void {
-        let t = this;
-        let subpageRoute = t.activateRoute.snapshot.paramMap.get('subpageRoute');
-        t.currentActiveTab = t.subpagesMenu.find((tab) => tab.route == subpageRoute);
-        if (!subpageRoute || !t.currentActiveTab) {
-            t.navigateTab(t.subpagesMenu[0].route);
+        this.isDarkMode = this.themeService.getTheme() === 'dark';
+        const subpageRoute = this.activateRoute.snapshot.paramMap.get('subpageRoute');
+        const found = this.subpagesMenu.find((tab) => tab.route == subpageRoute);
+
+        if (!subpageRoute || !found) {
+            this.navigateTab(this.subpagesMenu[0].route);
+            return;
         }
-        t.activateTab(t.currentActiveTab);
+
+        this.currentActiveTab = found;
+        found.isActive = true;
+    }
+
+    toggleTheme(): void {
+        this.themeService.toggle();
+        this.isDarkMode = this.themeService.getTheme() === 'dark';
     }
 
     ngOnDestroy() {
-        if (!!this.currentActiveTab)
+        if (this.currentActiveTab) {
             this.currentActiveTab.isActive = false;
+        }
     }
 
     navigateTab(route: string) {
-        let t = this;
-        t.router.navigateByUrl('/' + authRoute + '/' + route);
+        this.router.navigateByUrl('/' + authRoute + '/' + route);
     }
 
-    getCurrentState() {
+    getCurrentState(): number {
         return this.subpagesMenu.findIndex(page => page.isActive);
-    }
-
-    public activateTab(item: any) {
-        let t = this;
-        let currentTab = t.subpagesMenu.find((val) => val.route == item.route);
-        currentTab!.isActive = true;
-        t.currentActiveTab = currentTab;
     }
 }

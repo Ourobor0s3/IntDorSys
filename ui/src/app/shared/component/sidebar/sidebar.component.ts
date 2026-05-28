@@ -3,7 +3,6 @@ import { BaseComponent } from "../base/base.component";
 import { NavigationEnd, NavigationStart, Router } from "@angular/router";
 import { NavService, Page } from "../../services/nav.service";
 import { Subject, takeUntil } from "rxjs";
-import { DataReloadService } from "../../services/dataReload.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { UserInfoModel } from "../../model/userInfo.model";
 import { UserService } from "../../services/user.service";
@@ -26,7 +25,6 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         private modalService: NgbModal,
         private userService: UserService,
         protected navService: NavService,
-        private dataReloadService: DataReloadService,
         private authService: AuthService,
         private translate: TranslateService,
     ) {
@@ -65,21 +63,12 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     ngOnInit(): void {
-        this.loadData();
-        this.dataReloadService.dataReload$
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(() => {
-                this.loadData();
-            });
     }
 
     ngOnDestroy() {
         let t = this;
         t.destroy$.next();
         t.destroy$.complete();
-    }
-
-    loadData() {
     }
 
     needHidden(navRoles: string[] | undefined): boolean {
@@ -149,5 +138,9 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
 
     collapseSidebar() {
         this.navService.collapseSidebar = !this.navService.collapseSidebar;
+    }
+
+    trackByMenuItem(index: number, item: any): string {
+        return item.path || index;
     }
 }

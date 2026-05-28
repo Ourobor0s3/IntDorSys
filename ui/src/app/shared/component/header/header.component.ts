@@ -10,6 +10,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EventService } from '../../services/event.service';
+import { ThemeService } from '../../services/theme.service';
+import { LoadingService } from '../../services/loading.service';
 import { UserInfoModel } from "../../model/userInfo.model";
 import { UserService } from "../../services/user.service";
 import { DataReloadService } from "../../services/dataReload.service";
@@ -28,6 +30,7 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     getUser: () => UserInfoModel;
     user: UserInfoModel = new UserInfoModel();
     isMobileMenuOpen = false;
+    isDarkMode = false;
     protected menuItems: Page[] | undefined;
     private destroy$ = new Subject<void>();
 
@@ -40,29 +43,36 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         private userService: UserService,
         private navService: NavService,
         private eventService: EventService,
+        private themeService: ThemeService,
+        private loading: LoadingService,
     ) {
-        super(translate, modalService);
+        super(translate, modalService, loading);
         const t = this;
         t.initializeLanguage();
         t.getUser = () => this.userService.get() ?? new UserInfoModel();
-
-        let items = t.navService.mainItems;
-        items.subscribe(menuItems => {
-            this.menuItems = menuItems;
-            this.router.events.subscribe((event) => {
-                if (event instanceof NavigationEnd) {
-                    t.updateActiveTabs(event.url);
-                    if (event.url != t.navService.currentUrl) {
-                        t.navService.previousUrl = t.navService.currentUrl;
-                        t.navService.currentUrl = event.url;
-                    }
-                }
-            })
-        });
     }
 
     ngOnInit(): void {
-        // Subscribe to language changes
+        this.isDarkMode = this.themeService.getTheme() === 'dark';
+
+        this.navService.mainItems
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(menuItems => {
+                this.menuItems = menuItems;
+            });
+
+        this.router.events
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((event) => {
+                if (event instanceof NavigationEnd) {
+                    this.updateActiveTabs(event.url);
+                    if (event.url != this.navService.currentUrl) {
+                        this.navService.previousUrl = this.navService.currentUrl;
+                        this.navService.currentUrl = event.url;
+                    }
+                }
+            });
+
         this.translate.onLangChange
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
@@ -70,12 +80,13 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
                 this.updateCurrentLanguageInfo();
             });
 
-        this.loadData();
         this.dataReloadService.dataReload$
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
                 this.loadData();
             });
+
+        this.loadData();
     }
 
     ngOnDestroy() {
@@ -90,21 +101,22 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         return !navRoles.includes(userRole);
     }
 
-    toggletNavActive(item: any) {
-        let t = this;
-        if (item.path == t.router.url) {
+    toggletNavActive(item: Page): void {
+        if (item.path === this.router.url) {
             return;
         }
 
-        t.menuItems!.forEach((a): any => {
-            if (t.menuItems!.includes(item))
-                a.active = false
-            if (!a.children) return false
-            a.children.forEach(b => {
-                if (a.children!.includes(item)) {
-                    b.active = false
-                }
-            })
+        this.menuItems!.forEach(a => {
+            if (this.menuItems!.includes(item)) {
+                a.active = false;
+            }
+            if (a.children) {
+                a.children.forEach(b => {
+                    if (a.children!.includes(item)) {
+                        b.active = false;
+                    }
+                });
+            }
         });
         item.active = !item.active;
     }
@@ -204,6 +216,19 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         if (langInfo) {
             this.currentLanguageInfo = langInfo;
         }
+    }
+
+    toggleTheme() {
+        this.themeService.toggle();
+        this.isDarkMode = !this.isDarkMode;
+    }
+
+    trackByLang(index: number, lang: LanguageInfo): string {
+        return lang.shortName;
+    }
+
+    trackByMenuItem(index: number, item: Page): string {
+        return item.path || String(index);
     }
 
     private async refreshUser() {

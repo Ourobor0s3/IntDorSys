@@ -43,7 +43,6 @@ namespace IntDorSys.TelegramBot.Service
                 .ConfigureDumpSettings(configuration.GetSection("DumpSettings"));
 
 
-
             return services;
         }
 
