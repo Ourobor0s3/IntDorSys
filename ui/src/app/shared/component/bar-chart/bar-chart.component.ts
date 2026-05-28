@@ -3,6 +3,7 @@ import { Chart, registerables } from "chart.js";
 import { ChartData } from "../../model/chartData.model";
 import { TranslateService } from '@ngx-translate/core';
 import { EventService } from '../../services/event.service';
+import { ThemeService } from '../../services/theme.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -15,30 +16,38 @@ export class BarChartComponent implements OnInit, OnDestroy {
     @Input() public chartInfo: ChartData[];
 
     public chart: any;
+    private currentTheme: 'light' | 'dark' = 'light';
     private destroy$ = new Subject<void>();
 
     constructor(
         private translate: TranslateService,
         private eventService: EventService,
+        private themeService: ThemeService,
     ) {
     }
 
     ngOnInit(): void {
+        this.currentTheme = this.themeService.getTheme();
         Chart.register(...registerables);
         this.createChart();
 
-        // Subscribe to language changes
         this.eventService.LangChangeEvent
             .pipe(takeUntil(this.destroy$))
-            .subscribe((lang) => {
+            .subscribe(() => {
                 this.updateChartLabels();
             });
 
-        // Also subscribe to the TranslateService's onLangChange event
         this.translate.onLangChange
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
                 this.updateChartLabels();
+            });
+
+        this.themeService.theme$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((theme) => {
+                this.currentTheme = theme;
+                this.updateChartTheme();
             });
     }
 
@@ -51,6 +60,15 @@ export class BarChartComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    private chartTheme() {
+        const isDark = this.currentTheme === 'dark';
+        return {
+            text: isDark ? '#e4e4e7' : '#374151',
+            muted: isDark ? '#9ca3af' : '#6b7280',
+            grid: isDark ? '#2a2a3d' : '#e5e7eb',
+        };
     }
 
     setupCanvasDPI(canvas: HTMLCanvasElement) {
@@ -76,7 +94,6 @@ export class BarChartComponent implements OnInit, OnDestroy {
         const dataValue1 = this.chartInfo.map(data => data.value1);
         const dataValue2 = this.chartInfo.map(data => data.value2);
 
-        // Destroy existing chart if it exists
         if (this.chart) {
             this.chart.destroy();
         }
@@ -84,23 +101,25 @@ export class BarChartComponent implements OnInit, OnDestroy {
         const canvas = document.getElementById('custom-chart') as HTMLCanvasElement;
         this.setupCanvasDPI(canvas);
 
+        const t = this.chartTheme();
+
         new Chart(canvas, {
-            type: 'bar', // Тип диаграммы
+            type: 'bar',
             data: {
-                labels: labels, // Метки оси X
+                labels: labels,
                 datasets: [
                     {
-                        label: this.translate.instant('chart.all_time_records'), // Первая метрика
+                        label: this.translate.instant('chart.all_time_records'),
                         data: dataValue1,
-                        backgroundColor: 'blue',
-                        borderColor: 'blue',
+                        backgroundColor: '#6366f1',
+                        borderColor: '#6366f1',
                         borderWidth: 1,
                     },
                     {
-                        label: this.translate.instant('chart.used_time_records'), // Вторая метрика
+                        label: this.translate.instant('chart.used_time_records'),
                         data: dataValue2,
-                        backgroundColor: 'limegreen',
-                        borderColor: 'limegreen',
+                        backgroundColor: '#22c55e',
+                        borderColor: '#22c55e',
                         borderWidth: 1,
                     },
                 ],
@@ -112,20 +131,37 @@ export class BarChartComponent implements OnInit, OnDestroy {
                     legend: {
                         display: true,
                         position: 'top',
+                        labels: {
+                            color: t.text,
+                        },
                     },
                 },
                 scales: {
                     x: {
+                        ticks: {
+                            color: t.muted,
+                        },
+                        grid: {
+                            color: t.grid,
+                        },
                         title: {
                             display: true,
                             text: this.translate.instant('chart.time'),
+                            color: t.text,
                         },
                     },
                     y: {
                         beginAtZero: true,
+                        ticks: {
+                            color: t.muted,
+                        },
+                        grid: {
+                            color: t.grid,
+                        },
                         title: {
                             display: true,
                             text: this.translate.instant('chart.count'),
+                            color: t.text,
                         },
                     },
                 },
@@ -135,31 +171,34 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     updateChartLabels() {
         if (this.chart) {
-            // Получаем актуальные переводы
             const allTimeRecordsLabel = this.translate.instant('chart.all_time_records');
             const usedTimeRecordsLabel = this.translate.instant('chart.used_time_records');
             const timeAxisLabel = this.translate.instant('chart.time');
             const countAxisLabel = this.translate.instant('chart.count');
 
-            console.log('Translated labels:', {
-                allTimeRecordsLabel,
-                usedTimeRecordsLabel,
-                timeAxisLabel,
-                countAxisLabel,
-            });
-
-            // Обновляем метки наборов данных
             this.chart.data.datasets[0].label = allTimeRecordsLabel;
             this.chart.data.datasets[1].label = usedTimeRecordsLabel;
 
-            // Обновляем заголовки осей
             this.chart.options.scales.x.title.text = timeAxisLabel;
             this.chart.options.scales.y.title.text = countAxisLabel;
 
-            // Обновляем чарт с принудительным перерисовыванием
-            this.chart.update('none'); // 'none' означает без анимации для мгновенного обновления
+            this.chart.update('none');
         } else {
             console.warn('Chart is not initialized yet');
+        }
+    }
+
+    private updateChartTheme() {
+        if (this.chart) {
+            const t = this.chartTheme();
+            this.chart.options.scales.x.ticks.color = t.muted;
+            this.chart.options.scales.x.grid.color = t.grid;
+            this.chart.options.scales.x.title.color = t.text;
+            this.chart.options.scales.y.ticks.color = t.muted;
+            this.chart.options.scales.y.grid.color = t.grid;
+            this.chart.options.scales.y.title.color = t.text;
+            this.chart.options.plugins.legend.labels.color = t.text;
+            this.chart.update('none');
         }
     }
 }

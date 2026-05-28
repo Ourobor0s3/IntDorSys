@@ -10,6 +10,7 @@ import { UsersInfoService } from "../../shared/services/user-info.service";
 import { TranslateService } from '@ngx-translate/core';
 import { UserStatus } from "../../shared/enums/UserStatus";
 import { USER_STATUS_STYLES } from "../../shared/constants/statusStyle";
+import { LoadingService } from "../../shared/services/loading.service";
 
 @Component({
     selector: 'app-users-info',
@@ -35,8 +36,9 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         private clipboardService: ClipboardService,
         private modal: NgbModal,
         private translate: TranslateService,
+        private loading: LoadingService,
     ) {
-        super(translate, modal);
+        super(translate, modal, loading);
     }
 
     ngOnInit() {
@@ -126,6 +128,10 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         let t = this;
         t.clipboardService.copy(text);
         t.showToast(t.translate.instant('common.copy_success'));
+    }
+
+    trackByUser(index: number, item: UserInfoModel): number {
+        return item.id ?? index;
     }
 
     getStatusStyle(status: UserStatus) {

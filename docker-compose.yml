@@ -47,6 +47,8 @@ services:
       Quartz__Enabled: "true"
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
+    volumes:
+      - filestorage:/app/FileFolderStorage
     restart: unless-stopped
 
   frontend:
@@ -62,3 +64,4 @@ services:
 
 volumes:
   pgdata:
+  filestorage:

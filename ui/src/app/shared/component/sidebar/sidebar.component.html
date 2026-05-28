@@ -12,7 +12,7 @@
 
   <div class="d-flex flex-column h-100">
     <ul class="nav nav-pills d-flex flex-column gap-2">
-      <li *ngFor="let menuItem of menuItems"
+      <li *ngFor="let menuItem of menuItems; trackBy: trackByMenuItem"
           [hidden]="needHidden(menuItem.roles)"
           class="nav-item">
         <a (click)="toggletNavActive(menuItem)"

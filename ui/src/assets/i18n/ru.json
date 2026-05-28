@@ -1,6 +1,7 @@
 {
   "Register": "Регистрация",
-  "TelegramId": "Телеграм ID",
+  "Telegram": "Телеграм ID",
+  "errors.telegramIdMustBeNumber": "Telegram ID должен быть числом",
   "Full name": "Полное имя",
   "Group": "Группа",
   "Room": "Комната",
@@ -161,6 +162,10 @@
   "language": {
     "en": "Английский",
     "ru": "Русский"
+  },
+  "theme": {
+    "light": "Светлая тема",
+    "dark": "Темная тема"
   },
   "user_status": {
     "-1": "Заблокирован",

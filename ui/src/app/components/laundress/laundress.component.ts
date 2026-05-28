@@ -11,6 +11,7 @@ import { UsersInfoService } from "../../shared/services/user-info.service";
 import { UserInfoModel } from "../../shared/model/userInfo.model";
 import { UserService } from "../../shared/services/user.service";
 import { AuthService } from "../../shared/services/auth.service";
+import { LoadingService } from "../../shared/services/loading.service";
 
 @Component({
     selector: 'app-laundress',
@@ -34,7 +35,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
 
     newTimeWashDate: string = '';
     newTimeRangeStartHour: number = 8;
-    newTimeRangeEndHour: number = 10;
+    newTimeRangeEndHour: number = 22;
     evenHours: number[] = [8, 10, 12, 14, 16, 18, 20, 22];
 
     constructor(
@@ -46,8 +47,9 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         private usersInfoService: UsersInfoService,
         private userService: UserService,
         private authService: AuthService,
+        private loading: LoadingService,
     ) {
-        super(translate, modal);
+        super(translate, modal, loading);
         let t = this;
         let dateBE = t.GetCurrentDateWithDelta();
         t.startDate = dateBE.dateStart;
@@ -115,7 +117,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         let now = new Date();
         this.newTimeWashDate = now.toISOString().split('T')[0];
         this.newTimeRangeStartHour = 8;
-        this.newTimeRangeEndHour = 10;
+        this.newTimeRangeEndHour = 22;
         this.modal.open(content, { centered: true, backdrop: 'static', size: 'sm' });
     }
 
@@ -222,5 +224,21 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.disableAutoRefresh();
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    trackByDate(index: number, item: any): string {
+        return item.date || index;
+    }
+
+    trackBySlot(index: number, item: any): string {
+        return item.timeWash || index;
+    }
+
+    trackByUser(index: number, item: any): string {
+        return item.id || index;
+    }
+
+    trackByHour(index: number, item: any): number {
+        return item;
     }
 }

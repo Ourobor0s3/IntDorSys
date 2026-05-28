@@ -5,3 +5,476 @@
 
 @import './assets/scss/_generic.scss';
 @import './assets/scss/_common.scss';
+
+/* ============================================
+   Dark mode overrides (Bootstrap 5.3 data-bs-theme)
+   ============================================ */
+[data-bs-theme="dark"] {
+  --app-card-bg: #1e1e2d;
+  --app-card-border: #2a2a3d;
+  --app-card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --app-text-primary: #e4e4e7;
+  --app-text-muted: #9ca3af;
+  --app-border-color: #2a2a3d;
+  --app-hover-bg: #26263a;
+  --app-header-bg: #1a1a2e;
+  --app-sidebar-bg: #16162a;
+  --app-body-bg: #12121e;
+
+  --modal-bg: #1e1e2d;
+  --secondary-color: #9ca3af;
+
+  /* Variables for main.css compatibility */
+  --light-color: var(--app-body-bg);
+  --card-bg: var(--app-card-bg);
+  --box-shadow: var(--app-card-shadow);
+  --border: var(--app-border-color);
+  --form-border: var(--app-border-color);
+  --form-bg: var(--app-card-bg);
+  --border-color: var(--app-border-color);
+  --text-muted: var(--app-text-muted);
+  --header-color: #1a1a2e;
+  --body-bg: var(--app-body-bg);
+  --dark-color: #e4e4e7;
+
+  body {
+    background-color: var(--app-body-bg);
+    color: var(--app-text-primary);
+  }
+
+  .page-main-header {
+    background: var(--app-header-bg) !important;
+    border-bottom: 1px solid var(--app-border-color);
+
+    .text-dark {
+      color: var(--app-text-primary) !important;
+    }
+  }
+
+  .sidebar {
+    background: var(--app-sidebar-bg) !important;
+    border-right: 1px solid var(--app-border-color);
+    
+    .nav-link {
+      color: var(--app-text-muted);
+
+      &.active {
+        background: rgba(99, 102, 241, 0.15);
+        color: #818cf8;
+      }
+
+      &:hover {
+        background: var(--app-hover-bg);
+      }
+    }
+  }
+
+  .mobile-menu {
+    background: var(--app-sidebar-bg);
+
+    .text-dark {
+      color: var(--app-text-primary) !important;
+    }
+  }
+
+  .mobile-menu-overlay {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .dropdown-menu {
+    background: var(--app-card-bg);
+    border-color: var(--app-border-color);
+  }
+
+  .dropdown-item {
+    color: var(--app-text-primary);
+
+    &:hover {
+      background: var(--app-hover-bg);
+    }
+  }
+
+  .btn-primary {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: #fff;
+
+    &:hover {
+      background: #4f46e5;
+      border-color: #4f46e5;
+    }
+
+    &:disabled {
+      background: #373757;
+      border-color: var(--app-border-color);
+    }
+  }
+
+  .btn-outline-primary {
+    border-color: #6366f1;
+    color: #818cf8;
+
+    &:hover {
+      background: #6366f1;
+      color: #fff;
+    }
+  }
+
+  .btn-outline-secondary {
+    border-color: var(--app-border-color);
+    color: var(--app-text-muted);
+
+    &:hover {
+      background: var(--app-hover-bg);
+      color: var(--app-text-primary);
+    }
+  }
+
+  .btn-light {
+    background: var(--app-card-bg);
+    border-color: var(--app-border-color);
+    color: var(--app-text-primary);
+
+    &:hover {
+      background: var(--app-hover-bg);
+    }
+  }
+
+  .modal-content {
+    background: var(--app-card-bg);
+    border-color: var(--app-border-color);
+  }
+
+  .modal-header,
+  .modal-footer {
+    border-color: var(--app-border-color);
+  }
+
+  .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+
+  .form-control,
+  .form-select {
+    background: #1a1a2e !important;
+    border-color: var(--app-border-color) !important;
+    color: var(--app-text-primary) !important;
+
+    &:focus {
+      background: #1a1a2e !important;
+      border-color: #6366f1 !important;
+      color: var(--app-text-primary) !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+    }
+  }
+
+  .input-group-text {
+    background: var(--app-card-bg);
+    border-color: var(--app-border-color);
+    color: var(--app-text-muted);
+  }
+
+  .card {
+    background: var(--app-card-bg);
+    border-color: var(--app-border-color);
+  }
+
+  .table {
+    color: var(--app-text-primary);
+
+    --bs-table-bg: transparent;
+    --bs-table-hover-bg: var(--app-hover-bg);
+    --bs-table-striped-bg: rgba(255,255,255,0.02);
+    --bs-table-border-color: var(--app-border-color);
+  }
+
+  .toast-notification {
+    background: var(--app-card-bg);
+    color: var(--app-text-primary);
+    border: 1px solid var(--app-border-color);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  .page-footer {
+    border-top-color: var(--app-border-color);
+    color: var(--app-text-muted);
+    background: var(--app-header-bg);
+  }
+
+  .footer-copyright {
+    background-color: var(--app-header-bg) !important;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.4);
+    color: var(--app-text-muted);
+  }
+
+  /* ============ Home (dashboard) ============ */
+  .home-card {
+    background: var(--app-card-bg) !important;
+    border-color: var(--app-card-border) !important;
+    box-shadow: var(--app-card-shadow) !important;
+  }
+
+  .home-card-header {
+    color: var(--app-text-primary) !important;
+    border-bottom-color: var(--app-border-color) !important;
+  }
+
+  .slot-item {
+    border-bottom-color: var(--app-border-color) !important;
+  }
+
+  .slot-time {
+    color: var(--app-text-muted) !important;
+  }
+
+  .slot-separator {
+    color: var(--app-border-color) !important;
+  }
+
+  .slot-user {
+    color: var(--app-text-primary) !important;
+  }
+
+  /* ============ Laundress ============ */
+  .edit-toolbar {
+    background: linear-gradient(135deg, #0d2d1a, #0a1f12) !important;
+    border-color: #166534 !important;
+  }
+
+  .day-card {
+    background: var(--app-card-bg, #1e1e2d) !important;
+    border-color: var(--app-card-border, #2a2a3d) !important;
+    box-shadow: var(--app-card-shadow, 0 1px 3px rgba(0,0,0,0.3)) !important;
+  }
+
+  .day-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+    border-color: #6366f1 !important;
+  }
+
+  .card-header-custom {
+    color: var(--app-text-primary, #e4e4e7) !important;
+    border-color: var(--app-border-color, #2a2a3d) !important;
+  }
+
+  .slot-count {
+    background: #2a2a3d !important;
+    color: #9ca3af !important;
+  }
+
+  .slot-row {
+    border-color: var(--app-border-color, #2a2a3d) !important;
+  }
+
+  .slot-row:hover {
+    background: var(--app-hover-bg, #26263a) !important;
+    border-left-color: #818cf8 !important;
+  }
+
+  .slot-row.slot-editing {
+    background: #1a1a2e !important;
+  }
+
+  .time-badge {
+    background: #2a2a3d !important;
+    color: #a1a1aa !important;
+  }
+
+  .slot-row:hover .time-badge {
+    background: #373757 !important;
+  }
+
+  .user-name {
+    color: var(--app-text-primary, #e4e4e7) !important;
+  }
+
+  .user-name-free {
+    color: #34d399 !important;
+  }
+
+  .status-text {
+    color: #9ca3af !important;
+  }
+
+  .slot-actions {
+    border-color: var(--app-border-color, #2a2a3d) !important;
+  }
+
+  /* ============ Reports ============ */
+  .report-card {
+    background: var(--app-card-bg) !important;
+    border-color: var(--app-card-border) !important;
+    box-shadow: var(--app-card-shadow) !important;
+  }
+
+  .report-username {
+    color: #818cf8 !important;
+  }
+
+  .dot {
+    background: var(--app-border-color) !important;
+  }
+
+  .dot.dot-active {
+    background: #818cf8 !important;
+  }
+
+  .report-no-photos {
+    color: var(--app-text-muted) !important;
+  }
+
+  .report-description {
+    color: var(--app-text-muted) !important;
+  }
+
+  .report-date {
+    color: var(--app-text-muted) !important;
+  }
+
+  /* ============ Users info table ============ */
+  .table-wrapper {
+    background: var(--app-card-bg) !important;
+    border-color: var(--app-card-border) !important;
+    box-shadow: var(--app-card-shadow) !important;
+  }
+
+  .users-table th,
+  .users-table td {
+    color: var(--app-text-primary) !important;
+  }
+
+  .users-table thead th {
+    color: var(--app-text-muted) !important;
+    background: var(--app-hover-bg) !important;
+    border-bottom-color: var(--app-border-color) !important;
+  }
+
+  .users-table tbody tr {
+    border-bottom-color: var(--app-border-color) !important;
+  }
+
+  .users-table tbody tr:hover {
+    background: var(--app-hover-bg) !important;
+  }
+
+  .copy-link {
+    color: #818cf8 !important;
+  }
+
+  /* ============ Auth page ============ */
+  .auth-container {
+    background-color: var(--app-body-bg);
+  }
+
+  .auth-container .card {
+    background-color: var(--app-card-bg);
+    box-shadow: var(--app-card-shadow);
+  }
+
+  .auth-container .card:hover {
+    box-shadow: var(--app-card-shadow);
+  }
+
+  .auth-footer {
+    background-color: rgba(18, 18, 30, 0.9);
+  }
+
+  .auth-form h2 {
+    color: var(--app-text-primary);
+  }
+
+  .auth-form .form-label {
+    color: var(--app-text-muted);
+  }
+
+  .auth-form .input-group-text {
+    background: #1e1e2d;
+    border-color: var(--app-border-color);
+  }
+
+  .auth-form .input-group:focus-within {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  }
+
+  .auth-form .input-group:focus-within .input-group-text {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
+  }
+
+  .auth-form .form-control {
+    background: #1a1a2e;
+    border-color: var(--app-border-color);
+    border-left: none;
+    color: var(--app-text-primary);
+  }
+
+  .auth-form .form-control:focus {
+    background: #1a1a2e;
+    border-color: #6366f1;
+    color: var(--app-text-primary);
+    box-shadow: none;
+  }
+
+  .auth-form .btn-outline-secondary {
+    border-color: var(--app-border-color);
+    color: var(--app-text-muted);
+  }
+
+  .auth-form .btn-outline-secondary:hover {
+    background: var(--app-hover-bg);
+    color: var(--app-text-primary);
+  }
+
+  .auth-form .btn-primary {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: #fff;
+  }
+
+  .auth-form .btn-primary:hover:not(:disabled) {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+
+  .auth-form .btn-primary:disabled {
+    background: #373757;
+    border-color: var(--app-border-color);
+  }
+
+  .auth-form a {
+    color: #818cf8;
+  }
+
+  .auth-form a:hover {
+    color: #a5b4fc;
+  }
+
+  .auth-form a::after {
+    background-color: #a5b4fc;
+  }
+
+  .auth-form .invalid-feedback {
+    color: #f87171;
+  }
+
+  .auth-form .text-muted {
+    color: var(--app-text-muted) !important;
+  }
+
+  .auth-form .input-group-text img,
+  .auth-form .btn-outline-secondary img {
+    filter: brightness(1.5);
+  }
+
+  /* ============ Auth theme toggle ============ */
+  .auth-theme-toggle {
+    border-color: #374151 !important;
+    background: #1e1e2d !important;
+    color: #e4e4e7 !important;
+
+    &:hover {
+      background: #26263a !important;
+    }
+  }
+}

@@ -10,6 +10,7 @@ import { UserService } from "../shared/services/user.service";
 import { TranslateService } from '@ngx-translate/core';
 import { Language } from '../shared/enums/language';
 import { languages } from '../shared/constants/languages';
+import { ThemeService } from '../shared/services/theme.service';
 
 @Component({
     selector: 'app-auth',
@@ -25,6 +26,7 @@ export class AuthComponent extends BaseComponent implements OnInit {
     subpagesMenu: Subpages[] = authSubpages;
     currentActiveTab: any;
     currentYear: any;
+    isDarkMode = false;
 
     constructor(
         private activateRoute: ActivatedRoute,
@@ -32,6 +34,7 @@ export class AuthComponent extends BaseComponent implements OnInit {
         private userService: UserService,
         private modal: NgbModal,
         private translate: TranslateService,
+        private themeService: ThemeService,
     ) {
         super(translate, modal);
         let t = this;
@@ -43,6 +46,7 @@ export class AuthComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.isDarkMode = this.themeService.getTheme() === 'dark';
         let t = this;
         let subpageRoute = t.activateRoute.snapshot.paramMap.get('subpageRoute');
         t.currentActiveTab = t.subpagesMenu.find((tab) => tab.route == subpageRoute);
@@ -50,6 +54,11 @@ export class AuthComponent extends BaseComponent implements OnInit {
             t.navigateTab(t.subpagesMenu[0].route);
         }
         t.activateTab(t.currentActiveTab);
+    }
+
+    toggleTheme(): void {
+        this.themeService.toggle();
+        this.isDarkMode = this.themeService.getTheme() === 'dark';
     }
 
     ngOnDestroy() {

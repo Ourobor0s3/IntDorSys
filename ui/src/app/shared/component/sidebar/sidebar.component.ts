@@ -150,4 +150,8 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     collapseSidebar() {
         this.navService.collapseSidebar = !this.navService.collapseSidebar;
     }
+
+    trackByMenuItem(index: number, item: any): string {
+        return item.path || index;
+    }
 }

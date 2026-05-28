@@ -9,6 +9,7 @@ import { AnaliticService } from "../../shared/services/analitic.service";
 import { ChartData } from "../../shared/model/chartData.model";
 import { TranslateService } from '@ngx-translate/core';
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
+import { LoadingService } from "../../shared/services/loading.service";
 
 @Component({
     selector: 'app-home',
@@ -29,8 +30,9 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
         private dataReloadService: DataReloadService,
         private modal: NgbModal,
         private translate: TranslateService,
+        private loading: LoadingService,
     ) {
-        super(translate, modal);
+        super(translate, modal, loading);
         let t = this;
         t.filter.startDate = t.GetTodayDate().toISOString();
         t.filter.endDate = t.GetTodayDate().toISOString();
@@ -85,6 +87,10 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
                 if (isRunLoading)
                     t.setLoading(false);
             });
+    }
+
+    trackBySlot(index: number, item: any): string {
+        return item.timeWash || index;
     }
 
     ngOnDestroy(): void {

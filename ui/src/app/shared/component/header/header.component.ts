@@ -10,6 +10,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EventService } from '../../services/event.service';
+import { ThemeService } from '../../services/theme.service';
+import { LoadingService } from '../../services/loading.service';
 import { UserInfoModel } from "../../model/userInfo.model";
 import { UserService } from "../../services/user.service";
 import { DataReloadService } from "../../services/dataReload.service";
@@ -28,6 +30,7 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     getUser: () => UserInfoModel;
     user: UserInfoModel = new UserInfoModel();
     isMobileMenuOpen = false;
+    isDarkMode = false;
     protected menuItems: Page[] | undefined;
     private destroy$ = new Subject<void>();
 
@@ -40,8 +43,10 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         private userService: UserService,
         private navService: NavService,
         private eventService: EventService,
+        private themeService: ThemeService,
+        private loading: LoadingService,
     ) {
-        super(translate, modalService);
+        super(translate, modalService, loading);
         const t = this;
         t.initializeLanguage();
         t.getUser = () => this.userService.get() ?? new UserInfoModel();
@@ -69,6 +74,8 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
                 this.currentLang = this.translate.currentLang;
                 this.updateCurrentLanguageInfo();
             });
+
+        this.isDarkMode = this.themeService.getTheme() === 'dark';
 
         this.loadData();
         this.dataReloadService.dataReload$
@@ -204,6 +211,19 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         if (langInfo) {
             this.currentLanguageInfo = langInfo;
         }
+    }
+
+    toggleTheme() {
+        this.themeService.toggle();
+        this.isDarkMode = !this.isDarkMode;
+    }
+
+    trackByLang(index: number, lang: any): string {
+        return lang.shortName;
+    }
+
+    trackByMenuItem(index: number, item: any): string {
+        return item.path || index;
     }
 
     private async refreshUser() {

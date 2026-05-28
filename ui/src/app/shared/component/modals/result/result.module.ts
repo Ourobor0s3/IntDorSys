@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ResultModal } from './result.modal';
 
 @NgModule({
     declarations: [ResultModal],
-    imports: [CommonModule, NgbModule, FormsModule, ReactiveFormsModule],
+    imports: [CommonModule, NgbModule, FormsModule, ReactiveFormsModule, TranslateModule],
 })
 export class ResultModule {
 }

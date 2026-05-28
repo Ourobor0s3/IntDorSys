@@ -32,7 +32,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         AppComponent, AuthComponent,
     ],
     imports: [
-        ReactiveFormsModule,
         BrowserModule,
         FormsModule,
         ReactiveFormsModule,

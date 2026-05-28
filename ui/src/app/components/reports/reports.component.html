@@ -35,18 +35,14 @@
   </div>
 
   <div *ngIf="sortedReports.length > 0" class="reports-grid">
-    <div *ngFor="let report of sortedReports; let i = index" class="report-card">
+    <div *ngFor="let report of sortedReports; trackBy: trackByReport; let i = index" class="report-card">
       <div class="report-card-body">
         <div class="report-username">{{ report.username }}</div>
 
         <div *ngIf="report.files && report.files.length > 0; else noPhotos" class="report-gallery">
-          <img [src]="report.files[0].filePath" alt="report"
-               class="report-thumb" (click)="openLightbox(report, 0)" />
-          <div *ngIf="report.files.length > 1" class="report-dots">
-            <span *ngFor="let f of report.files; let j = index"
-                  class="dot" [class.dot-active]="j === 0"
-                  (click)="openLightbox(report, j)"></span>
-          </div>
+          <img *ngFor="let file of report.files; trackBy: trackByFile; let j = index"
+               [src]="file.filePath" alt="report photo"
+               class="report-thumb" (click)="openLightbox(report, j)" />
         </div>
         <ng-template #noPhotos>
           <div class="report-no-photos">{{ 'reports.no_photos' | lang }}</div>
@@ -64,9 +60,7 @@
     <div class="card-body">
       <div class="lightbox-header">
         <div class="fw-semibold">{{ lightboxReport.username }}</div>
-        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="closeLightbox()">
-          {{ 'common.close' | lang }}
-        </button>
+        <button type="button" class="btn-close" (click)="closeLightbox()"></button>
       </div>
       <img [src]="lightboxReport.files[lightboxIndex].filePath" alt="preview" class="lightbox-img" />
       <div *ngIf="lightboxReport.files.length > 1" class="lightbox-nav">

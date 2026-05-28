@@ -163,6 +163,10 @@
     "en": "English",
     "ru": "Russian"
   },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode"
+  },
   "user_status": {
     "-1": "Blocked",
     "0": "Registered"

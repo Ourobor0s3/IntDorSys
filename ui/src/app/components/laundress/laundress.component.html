@@ -54,7 +54,7 @@
 
   <!-- Cards grid -->
   <div *ngIf="laundList && laundList.length > 0" class="cards-grid">
-    <div *ngFor="let laund of laundList" class="day-card">
+    <div *ngFor="let laund of laundList; trackBy: trackByDate" class="day-card">
       <div class="card-header-custom">
         {{ laund.date }}
         <span class="slot-count">{{ laund.laundModels?.length || 0 }} slots</span>
@@ -65,7 +65,7 @@
             <p class="text-muted small mb-0">{{ 'common.no_data' | lang }}</p>
           </div>
         </ng-container>
-        <div *ngFor="let l of laund.laundModels" class="slot-row"
+        <div *ngFor="let l of laund.laundModels; trackBy: trackBySlot" class="slot-row"
              [class.slot-expired]="isSlotExpired(l.timeWash)"
              [class.slot-editing]="isEditMode && !isSlotExpired(l.timeWash)">
           <!-- Time -->
@@ -81,7 +81,7 @@
               </div>
               <div class="user-details">
                 <span class="user-name">{{ l.selectUser.fullName || l.selectUser.username }}</span>
-                <span class="user-meta" *ngIf="l.selectUser.numGroup">{{ l.selectUser.numGroup }}</span>
+                <span class="user-meta" *ngIf="l.selectUser.numGroup">{{ l.selectUser.numRoom }}</span>
               </div>
               <span class="status-dot dot-occupied"></span>
               <span class="status-text">{{ 'laundress.in_use' | lang }}</span>
@@ -139,13 +139,13 @@
       <div class="col">
         <label class="form-label fw-medium">{{ 'laundress.hour_from' | lang }}</label>
         <select [(ngModel)]="newTimeRangeStartHour" class="form-select">
-          <option *ngFor="let h of evenHours" [value]="h">{{ h }}:00</option>
+          <option *ngFor="let h of evenHours; trackBy: trackByHour" [value]="h">{{ h }}:00</option>
         </select>
       </div>
       <div class="col">
         <label class="form-label fw-medium">{{ 'laundress.hour_to' | lang }}</label>
         <select [(ngModel)]="newTimeRangeEndHour" class="form-select">
-          <option *ngFor="let h of evenHours" [value]="h">{{ h }}:00</option>
+          <option *ngFor="let h of evenHours; trackBy: trackByHour" [value]="h">{{ h }}:00</option>
         </select>
       </div>
     </div>
@@ -168,7 +168,7 @@
       <label class="form-label fw-medium">{{ 'laundress.select_user' | lang }}</label>
       <select [(ngModel)]="selectedUserId" class="form-select">
         <option [value]="0">{{ 'laundress.select_user_placeholder' | lang }}</option>
-        <option *ngFor="let u of users" [value]="u.id">{{ u.fullName || u.username }}</option>
+        <option *ngFor="let u of users; trackBy: trackByUser" [value]="u.id">{{ u.fullName || u.username }}</option>
       </select>
     </div>
   </div>
