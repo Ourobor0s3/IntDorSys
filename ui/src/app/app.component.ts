@@ -1,4 +1,4 @@
-import { Component, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ChildrenOutletContexts, NavigationEnd, Router } from "@angular/router";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { filter, Subscription } from "rxjs";
@@ -30,7 +30,6 @@ interface StyleConfig {
     ],
 })
 export class AppComponent extends BaseComponent implements OnDestroy {
-    title = "ui";
     modalRef: NgbModalRef;
     private eventSubscription: Subscription;
     private readonly styleConfigs: StyleConfig[] = [
@@ -41,7 +40,6 @@ export class AppComponent extends BaseComponent implements OnDestroy {
     constructor(
         private modalService: NgbModal,
         private contexts: ChildrenOutletContexts,
-        private renderer: Renderer2,
         private router: Router,
         private translate: TranslateService,
         private authService: AuthService,
@@ -86,7 +84,6 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         });
     }
 
-    // Create style sheet append in head
     private createStyle(styleName: string, preload = false): void {
         const link = document.createElement('link');
         link.type = 'text/css';
@@ -95,8 +92,12 @@ export class AppComponent extends BaseComponent implements OnDestroy {
 
         if (preload) {
             link.as = 'style';
-            link.setAttribute('onload', "this.rel='stylesheet'");
+            link.onload = () => { link.rel = 'stylesheet'; };
         }
+
+        link.onerror = () => {
+            console.warn(`Failed to load style: ${styleName}.css`);
+        };
 
         document.head.appendChild(link);
     }

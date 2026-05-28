@@ -41,6 +41,33 @@
     /* Loader */
     --loader-size: 40px;
     --loader-color: var(--primary-color);
+
+    /* Theme transition */
+    --theme-transition-duration: 0.25s;
+    --theme-transition-timing: ease-in-out;
+}
+
+/* Smooth theme transitions on layout elements */
+body,
+.page-main-header,
+.sidebar,
+.footer-copyright,
+.card,
+.modal-content,
+.dropdown-menu,
+.form-control,
+.form-select,
+.btn,
+.toast-notification,
+.table-wrapper,
+.home-card,
+.day-card,
+.report-card,
+.auth-container {
+    transition: background-color var(--theme-transition-duration) var(--theme-transition-timing),
+                color var(--theme-transition-duration) var(--theme-transition-timing),
+                border-color var(--theme-transition-duration) var(--theme-transition-timing),
+                box-shadow var(--theme-transition-duration) var(--theme-transition-timing);
 }
 
 /* Utility classes */
