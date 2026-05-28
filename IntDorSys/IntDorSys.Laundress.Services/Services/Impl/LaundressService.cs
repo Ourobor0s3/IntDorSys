@@ -4,6 +4,7 @@ using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models.Filters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Ouro.CommonUtils.Extensions;
 using Ouro.CommonUtils.Results;
 
@@ -12,10 +13,12 @@ namespace IntDorSys.Laundress.Services.Services.Impl
     internal sealed class LaundressService : ILaundressService
     {
         private readonly AppDataContext _db;
+        private readonly ILogger<LaundressService> _logger;
 
-        public LaundressService(AppDataContext db)
+        public LaundressService(AppDataContext db, ILogger<LaundressService> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public async Task<DataResult<List<UseLaundress>>> GetTimeByFilterAsync(
@@ -230,9 +233,9 @@ namespace IntDorSys.Laundress.Services.Services.Impl
                 {
                     await _db.SaveChangesAsync(ct);
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateException ex)
                 {
-                    // some slots may have been created concurrently
+                    _logger.LogWarning(ex, "Concurrent slot creation conflict at CreateTimeRangeAsync (date={Date}, start={Start}, end={End})", date, startHour, endHour);
                 }
             }
 

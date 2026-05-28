@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HeaderButtonModel } from "../../model/headerButton.model";
 import { NavService } from "../../services/nav.service";
 import { EventService } from "../../services/event.service";
@@ -20,6 +20,7 @@ export class BreadcrumbComponent implements OnDestroy {
     showInput: boolean = false;
     buttonsSubscription: Subscription | undefined;
     inputSubscription: Subscription | undefined;
+    private destroy$ = new Subject<void>();
 
     constructor(
         private router: Router,
@@ -27,7 +28,7 @@ export class BreadcrumbComponent implements OnDestroy {
         private eventService: EventService,
     ) {
         const t = this;
-        t.buttonsSubscription = t.eventService.SubpageEvent.subscribe(
+        t.buttonsSubscription = t.eventService.SubpageEvent.pipe(takeUntil(this.destroy$)).subscribe(
             (headerButton: HeaderButtonModel) => {
                 switch (headerButton.buttonNumber) {
                     case 0:
@@ -42,13 +43,13 @@ export class BreadcrumbComponent implements OnDestroy {
             },
         );
 
-        t.inputSubscription = t.eventService.ShowUploadButtonEvent.subscribe(
+        t.inputSubscription = t.eventService.ShowUploadButtonEvent.pipe(takeUntil(this.destroy$)).subscribe(
             (showUploadInput: boolean) => {
                 t.showInput = showUploadInput;
             },
         );
 
-        t.router.events.subscribe((event) => {
+        t.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
             //t.title = '';
             t.button1 = new HeaderButtonModel();
             t.button2 = new HeaderButtonModel();
@@ -100,6 +101,8 @@ export class BreadcrumbComponent implements OnDestroy {
 
     ngOnDestroy() {
         const t = this;
+        t.destroy$.next();
+        t.destroy$.complete();
         if (!!t.buttonsSubscription) {
             t.buttonsSubscription.unsubscribe();
         }

@@ -1,4 +1,4 @@
-namespace IntDorSys.Web.Api.Controllers.Laundress
+namespace IntDorSys.Laundress.Core.Models
 {
     public sealed class ChartPointDto
     {

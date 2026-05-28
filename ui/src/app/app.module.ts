@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { SharedModule } from "./shared/shared.component";
@@ -9,7 +9,7 @@ import { RegisterModule } from "./auth/register/register.model";
 import { AuthComponent } from "./auth/auth.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from "@angular/common/http";
 import { ChartModule } from "primeng/chart";
 import { TokenService } from "./shared/services/token.service";
 import { ApiService } from "./shared/services/api.service";
@@ -21,6 +21,8 @@ import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { languages } from './shared/constants/languages';
 import { Language } from './shared/enums/language';
 import { AccountService } from "./shared/services/account.service";
+import { AuthInterceptor } from "./shared/services/auth.interceptor";
+import { GlobalErrorHandler } from "./shared/services/global-error-handler";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json?ver=' + new Date().getTime());
@@ -59,6 +61,15 @@ export function HttpLoaderFactory(http: HttpClient) {
         TokenService,
         ApiService,
         AuthGuard,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true,
+        },
+        {
+            provide: ErrorHandler,
+            useClass: GlobalErrorHandler,
+        },
     ],
     bootstrap: [AppComponent],
 })

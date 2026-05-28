@@ -41,12 +41,12 @@ export class UserService {
             .toPromise()
             .then((resp) => {
                 this.user = resp.data;
-                if (this.isAuthentificated()) return this.user;
+                if (this.isAuthenticated()) return this.user;
                 else return new UserInfoModel();
             });
     };
 
-    public isAuthentificated(): boolean {
+    public isAuthenticated(): boolean {
         let at = localStorage.getItem('accessToken');
         return at != null && at.length > 0;
     }

@@ -5,7 +5,6 @@ using IntDorSys.Laundress.Services.Services;
 using IntDorSys.TelegramBot.Service.AdminServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Ouro.TelegramBot.Core.Services;
 using Telegram.Bot.Types;
 
@@ -110,9 +109,10 @@ case "No":
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(Exception)} HandleMessage: {
-                    JsonConvert.SerializeObject(callbackQuery.Message)}\r\n" +
-                                 $"{ex.Message}{ex.InnerException?.Message}{ex.StackTrace}");
+                _logger.LogError(ex, "AdminCallbackHandler error: callbackId={CallbackId}, fromId={FromId}, messageId={MessageId}",
+                    callbackQuery.Id,
+                    callbackQuery.From.Id,
+                    callbackQuery.Message?.MessageId);
             }
         }
     }

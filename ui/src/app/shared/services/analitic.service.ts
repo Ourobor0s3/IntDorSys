@@ -1,5 +1,5 @@
 import { ApiService } from './api.service';
-import { IResponse } from '../interface/responce';
+import { IResponse } from '../interface/response';
 import { Injectable } from "@angular/core";
 import { ChartData } from "../model/chartData.model";
 

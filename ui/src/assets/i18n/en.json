@@ -28,7 +28,8 @@
     "passwordConfirmation": {
       "notMatch": "Passwords does not match"
     },
-    "telegramIdMustBeNumber": "Telegram ID must be a number"
+    "telegramIdMustBeNumber": "Telegram ID must be a number",
+    "telegram_id_must_be_number": "Telegram ID must be a number"
   },
   "menu": {
     "home": "Home",

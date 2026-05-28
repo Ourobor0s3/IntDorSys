@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ContentLayoutComponent } from './shared/component/content-layout/content-layout.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { mainContent } from "./shared/routes/routes";
@@ -26,6 +26,7 @@ const mainRoutes: Routes = [
 @NgModule({
     imports: [RouterModule.forRoot(mainRoutes, {
         scrollPositionRestoration: 'enabled',
+        preloadingStrategy: PreloadAllModules,
     })],
     exports: [RouterModule],
 })

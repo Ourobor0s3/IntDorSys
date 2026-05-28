@@ -103,6 +103,10 @@ export class AuthService {
         this.router.navigate(['/' + authRoute + '/' + loginRoute]);
     }
 
+    getAccessToken(): string | null {
+        return localStorage.getItem('accessToken');
+    }
+
     isLoggedIn(): boolean {
         return !!this.authData;
     }

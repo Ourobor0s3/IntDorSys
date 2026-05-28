@@ -1,3 +1,4 @@
+using IntDorSys.Laundress.Core.Models;
 using IntDorSys.Laundress.Core.Models.Filters;
 using IntDorSys.Laundress.Services.Services;
 using Microsoft.AspNetCore.Authorization;

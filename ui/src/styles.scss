@@ -3,6 +3,10 @@
 /*html, body { height: 100%; }*/
 /*body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }*/
 
+body.modal-open-scroll-lock {
+    overflow: hidden;
+}
+
 @import './assets/scss/_generic.scss';
 @import './assets/scss/_common.scss';
 

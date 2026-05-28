@@ -31,21 +31,21 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         super(translate, modalService);
         let t = this;
         let items = t.navService.mainItems;
-        items.subscribe(menuItems => {
+        items.pipe(takeUntil(this.destroy$)).subscribe(menuItems => {
             this.menuItems = menuItems;
-            this.router.events.subscribe((event) => {
-                if (event instanceof NavigationEnd) {
-                    t.updateActiveTabs(event.url);
-                    if (event.url != t.navService.currentUrl) {
-                        t.navService.previousUrl = t.navService.currentUrl;
-                        t.navService.currentUrl = event.url;
-                    }
-                }
-            })
         });
 
-        this.router.events.subscribe((ev) => {
-            if (ev instanceof NavigationStart) {
+        this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+                if (this.menuItems) {
+                    t.updateActiveTabs(event.url);
+                }
+                if (event.url != t.navService.currentUrl) {
+                    t.navService.previousUrl = t.navService.currentUrl;
+                    t.navService.currentUrl = event.url;
+                }
+            }
+            if (event instanceof NavigationStart) {
                 let sidebar = document.getElementById('sidebar');
                 if (sidebar) sessionStorage.setItem('sidebarScrollY', sidebar.scrollTop.toString());
             }

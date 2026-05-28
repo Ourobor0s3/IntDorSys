@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-@Pipe({ name: 'lang', pure: false })
+@Pipe({ name: 'lang', pure: true })
 export class TranslateReplacePipe implements PipeTransform {
 
     private variableRegEx = /\{(.+?)\}/g;

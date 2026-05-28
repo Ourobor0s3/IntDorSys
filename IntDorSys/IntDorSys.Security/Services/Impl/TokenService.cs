@@ -66,7 +66,6 @@ namespace IntDorSys.Security.Services.Impl
             return new AuthToken
             {
                 AccessToken = jwt,
-                RefreshToken = Guid.NewGuid().ToString(),
                 Role = role,
                 ExpiresIn = (long)_settings.Value.Expiration.TotalSeconds,
             };

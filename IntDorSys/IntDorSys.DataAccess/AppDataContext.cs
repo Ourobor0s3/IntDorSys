@@ -88,7 +88,16 @@ namespace IntDorSys.DataAccess
 
         public void DeleteEntity<T>(T entity) where T : class, ISoftDeletable
         {
-            Set<T>().Remove(entity);
+            var prop = typeof(T).GetProperty("IsDeleted");
+            if (prop != null && prop.CanWrite)
+            {
+                prop.SetValue(entity, true);
+                Set<T>().Update(entity);
+            }
+            else
+            {
+                Set<T>().Remove(entity);
+            }
         }
     }
 }

@@ -28,18 +28,14 @@ export class ConfirmModal implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.descriptionHTML = this.sanitizer.bypassSecurityTrustHtml(this.description);
-        document.addEventListener('touchmove', this.listener);
+        document.body.classList.add('modal-open-scroll-lock');
     }
 
     ngOnDestroy(): void {
-        document.removeEventListener('touchmove', this.listener);
+        document.body.classList.remove('modal-open-scroll-lock');
     }
 
     public isConfirm(resp: boolean) {
         this.activeModal.close(resp);
     }
-
-    private listener = (event: Event) => {
-        event.preventDefault(), { passive: false }
-    };
 }

@@ -7,13 +7,9 @@ using IntDorSys.Laundress.Services;
 using IntDorSys.Security;
 using IntDorSys.Services;
 using IntDorSys.TelegramBot.Service;
-using IntDorSys.TelegramBot.Service.Authorize;
-using IntDorSys.TelegramBot.Service.CallbackServices;
-using IntDorSys.TelegramBot.Service.CommandServices;
-using IntDorSys.TelegramBot.Service.MessageServices;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Hosting;
 using Ouro.TelegramBot.Core;
-using ServicesInstaller = IntDorSys.TelegramBot.Service.ServicesInstaller;
-// using IntDorSys.Web.Api.Blazor.Services;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 
@@ -109,25 +105,34 @@ namespace IntDorSys.Web.Api
                 .AddCoreConfiguration(builder.Configuration);
 
 
-builder.Services
+            builder.Services
                 .ConfigureTelegramBot(isBattle
                     ? builder.Configuration.GetSection(ConfigSectionNames.TelegramBattleSection)
                     : builder.Configuration.GetSection(ConfigSectionNames.TelegramTestSection))
-                .AddTelegramServices();
-
-#pragma warning disable ASP0000 // Disabling warning for service provider pattern required by bot setup
-            var serviceProvider = builder.Services.BuildServiceProvider();
-            builder.Services
-                .AddBotHostServices(
-                    ServicesInstaller.GetSettingsAndHandlers(
-                        serviceProvider.GetRequiredService<ICallbackHandlerService>(),
-                        serviceProvider.GetRequiredService<IMessageHandlerService>(),
-                        serviceProvider.GetRequiredService<IAuthService>(),
-                        serviceProvider.GetRequiredService<ICommandService>())
-                );
-#pragma warning restore ASP0000
+                .AddTelegramServices()
+                .AddHostedService<ResilientBotHostedService>();
 
             var app = builder.Build();
+
+            app.UseExceptionHandler(exceptionHandlerApp =>
+            {
+                exceptionHandlerApp.Run(async context =>
+                {
+                    var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Response.ContentType = "application/problem+json";
+
+                    var problem = new
+                    {
+                        type = "https://httpstatuses.com/500",
+                        title = "An unexpected error occurred",
+                        status = StatusCodes.Status500InternalServerError,
+                        detail = exception?.Message,
+                    };
+
+                    await JsonSerializer.SerializeAsync(context.Response.Body, problem);
+                });
+            });
 
             app.MigrateDb();
             // app.UseStaticFiles();

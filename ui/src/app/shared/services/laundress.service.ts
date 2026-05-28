@@ -1,5 +1,5 @@
 import { ApiService } from './api.service';
-import { IResponse } from '../interface/responce';
+import { IResponse } from '../interface/response';
 import { PageLaundressModel } from "../model/laundress.model";
 import { Injectable } from "@angular/core";
 import { BaseFilterModel } from "../model/filter/baseFilter.model";

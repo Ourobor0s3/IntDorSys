@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IntDorSys.Security
@@ -47,7 +48,12 @@ namespace IntDorSys.Security
         {
             var section = builder.Configuration.GetSection(JwtSettings.SectionName);
 
-            builder.Services.Configure<JwtSettings>(section);
+            builder.Services.AddOptions<JwtSettings>()
+                .Bind(section)
+                .ValidateOnStart();
+
+            builder.Services.AddSingleton<IValidateOptions<JwtSettings>, JwtSettingsValidation>();
+
             var jwt = section.Get<JwtSettings>() ?? throw new Exception("Missing JwtSettings section.");
 
             builder.Services

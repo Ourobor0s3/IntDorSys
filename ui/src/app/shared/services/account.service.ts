@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from "./api.service";
-import { IResponse } from "../interface/responce";
+import { IResponse } from "../interface/response";
 
 const accountApiUrl = 'account/';
 
