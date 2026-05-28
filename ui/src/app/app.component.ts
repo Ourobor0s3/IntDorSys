@@ -10,6 +10,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { AuthService } from "./shared/services/auth.service";
 import { UserService } from "./shared/services/user.service";
 import { EventService } from "./shared/services/event.service";
+import { environment } from '../environments/environment';
 
 interface StyleConfig {
     name: string;
@@ -88,7 +89,7 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         const link = document.createElement('link');
         link.type = 'text/css';
         link.rel = preload ? 'preload' : 'stylesheet';
-        link.href = `${window.location.origin}/assets/css/${styleName}.css`;
+        link.href = `${window.location.origin}/assets/css/${styleName}.css?v=${environment.appVersion}`;
 
         if (preload) {
             link.as = 'style';
