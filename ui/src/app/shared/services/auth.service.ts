@@ -48,7 +48,6 @@ export class AuthService {
                 AuthService._authData.accessToken != cookAuth.accessToken)
         ) {
             this.logout();
-            // return;
         }
         return AuthService._authData;
     }
@@ -94,15 +93,13 @@ export class AuthService {
             return false;
         };
 
-        window.stop();
         this.showLoader = false;
         this.authData = undefined;
         this.userService.clear();
         this.eventService.logout();
         localStorage.removeItem('auth');
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('localization')
-        //localStorage.clear(); //сбрасывает язык в localStorage (по дефолту 'en')
+        localStorage.removeItem('localization');
         this.router.navigate(['/' + authRoute + '/' + loginRoute]);
     }
 

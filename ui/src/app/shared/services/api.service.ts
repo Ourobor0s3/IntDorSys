@@ -90,12 +90,8 @@ export class ApiService {
     }
 
     private getPublicHeaders(isFile: boolean = false) {
-        // var confirmCode = localStorage.getItem('confirmCode');
-        // if (confirmCode) localStorage.removeItem('confirmCode');
-
         var defaultHeaders = {
             'Content-Type': 'application/json',
-            // 'Confirmation-Code': confirmCode ?? 'not_set',
             Localization: localStorage.getItem('localization') ?? 'en',
         };
 

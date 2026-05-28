@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HeaderButtonModel } from "../../model/headerButton.model";
@@ -12,7 +12,7 @@ import { EventService } from "../../services/event.service";
     styleUrls: ['./breadcrumb.component.scss'],
 })
 
-export class BreadcrumbComponent implements OnInit, OnDestroy {
+export class BreadcrumbComponent implements OnDestroy {
     title: string | undefined;
     sectionHeaderIsHidden: boolean | undefined;
     button1: HeaderButtonModel = new HeaderButtonModel();
@@ -26,7 +26,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
         private navService: NavService,
         private eventService: EventService,
     ) {
-        var t = this;
+        const t = this;
         t.buttonsSubscription = t.eventService.SubpageEvent.subscribe(
             (headerButton: HeaderButtonModel) => {
                 switch (headerButton.buttonNumber) {
@@ -65,9 +65,8 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
                         firstEventPath = splitEventPath[1];
                     }
 
-                    //isFullPathMatch - полное соответствие урла, т.е. такой раздел прописан в PAGES и имеет собственный хедер
-                    var isFullPathMatch = item.path!.includes(event.urlAfterRedirects);
-                    var isPartPathMatch = firstItemPath.includes(firstEventPath);
+                    let isFullPathMatch = item.path!.includes(event.urlAfterRedirects);
+                    let isPartPathMatch = firstItemPath.includes(firstEventPath);
                     //если в руте есть двоеточие, значит нужно проверить сходимость рутов без айдишника(или другого параметра)
                     if (item.path!.includes(':')) {
                         isFullPathMatch = (firstItemPath + '/' + splitItemPath[2]).includes(
@@ -99,11 +98,8 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
         });
     }
 
-    ngOnInit(): void {
-    }
-
     ngOnDestroy() {
-        var t = this;
+        const t = this;
         if (!!t.buttonsSubscription) {
             t.buttonsSubscription.unsubscribe();
         }

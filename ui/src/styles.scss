@@ -172,6 +172,10 @@
     background: var(--app-card-bg);
     border-color: var(--app-border-color);
     color: var(--app-text-muted);
+
+    img {
+      filter: brightness(0) invert(0.8);
+    }
   }
 
   .card {
@@ -193,12 +197,6 @@
     color: var(--app-text-primary);
     border: 1px solid var(--app-border-color);
     box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-  }
-
-  .page-footer {
-    border-top-color: var(--app-border-color);
-    color: var(--app-text-muted);
-    background: var(--app-header-bg);
   }
 
   .footer-copyright {
@@ -233,6 +231,10 @@
 
   .slot-user {
     color: var(--app-text-primary) !important;
+  }
+
+  .welcome-card {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
   }
 
   /* ============ Laundress ============ */
@@ -292,6 +294,10 @@
     color: #34d399 !important;
   }
 
+  .user-meta {
+    color: var(--app-text-muted, #9ca3af) !important;
+  }
+
   .status-text {
     color: #9ca3af !important;
   }
@@ -305,18 +311,27 @@
     background: var(--app-card-bg) !important;
     border-color: var(--app-card-border) !important;
     box-shadow: var(--app-card-shadow) !important;
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+      border-color: #6366f1 !important;
+    }
+  }
+
+  .report-card-body {
+    background: transparent !important;
   }
 
   .report-username {
     color: #818cf8 !important;
   }
 
-  .dot {
-    background: var(--app-border-color) !important;
-  }
+  .report-thumb {
+    opacity: 0.9;
 
-  .dot.dot-active {
-    background: #818cf8 !important;
+    &:hover {
+      opacity: 1;
+    }
   }
 
   .report-no-photos {
@@ -329,6 +344,15 @@
 
   .report-date {
     color: var(--app-text-muted) !important;
+  }
+
+  .lightbox-modal {
+    background: var(--app-card-bg) !important;
+    border-color: var(--app-card-border) !important;
+  }
+
+  .lightbox-header {
+    color: var(--app-text-primary) !important;
   }
 
   /* ============ Users info table ============ */
@@ -359,6 +383,11 @@
 
   .copy-link {
     color: #818cf8 !important;
+  }
+
+  .status-tag {
+    background: var(--app-hover-bg) !important;
+    color: var(--app-text-muted) !important;
   }
 
   /* ============ Auth page ============ */
@@ -476,5 +505,31 @@
     &:hover {
       background: #26263a !important;
     }
+  }
+
+  /* SVG icon images inside buttons */
+  .theme-toggle-btn img,
+  .auth-theme-toggle img {
+    filter: brightness(0) invert(0.8);
+  }
+
+  /* ============ Auth page — missing details ============ */
+  .auth-container .card {
+    border-color: var(--app-border-color, #2a2a3d);
+  }
+
+  .auth-footer .text-muted {
+    color: var(--app-text-muted, #9ca3af) !important;
+  }
+
+  .auth-logo img {
+    filter: brightness(1.2);
+  }
+
+  /* ============ Modal windows (confirm + result) ============ */
+  .card-modal {
+    background-color: var(--app-card-bg, #1e1e2d) !important;
+    border: 1px solid var(--app-card-border, #2a2a3d) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
   }
 }

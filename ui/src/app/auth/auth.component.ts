@@ -6,7 +6,6 @@ import { transition, trigger, useAnimation } from '@angular/animations';
 import { fadeIn } from 'ng-animate';
 import { authRoute } from '../shared/constants/routes';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { UserService } from "../shared/services/user.service";
 import { TranslateService } from '@ngx-translate/core';
 import { Language } from '../shared/enums/language';
 import { languages } from '../shared/constants/languages';
@@ -31,7 +30,6 @@ export class AuthComponent extends BaseComponent implements OnInit {
     constructor(
         private activateRoute: ActivatedRoute,
         private router: Router,
-        private userService: UserService,
         private modal: NgbModal,
         private translate: TranslateService,
         private themeService: ThemeService,

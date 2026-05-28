@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { Subject, takeUntil } from "rxjs";
 import { DataReloadService } from "../../shared/services/dataReload.service";
@@ -29,7 +29,6 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
     private destroy$ = new Subject<void>();
 
     constructor(
-        @Inject(LOCALE_ID) public locale: string,
         private modalService: NgbModal,
         private userService: UsersInfoService,
         private dataReloadService: DataReloadService,
@@ -64,7 +63,7 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
             t.userList = res.data;
             t.applyFilter();
         }).catch((err) => {
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 t.setLoading(false);
@@ -158,8 +157,8 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
                     t.searchUsers();
                 });
             })
-            .catch(() => {
-                // Console errors off
+            .catch((err) => {
+                console.error(err);
             });
     }
 }

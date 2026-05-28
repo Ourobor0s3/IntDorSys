@@ -28,12 +28,8 @@
 
 .filter-label {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--app-text-muted, #6b7280);
   font-weight: 500;
-
-  [data-bs-theme="dark"] & {
-    color: #9ca3af;
-  }
 }
 
 .filter-actions {

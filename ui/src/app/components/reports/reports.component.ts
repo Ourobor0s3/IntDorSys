@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { LaundressService } from "../../shared/services/laundress.service";
 import { DataReloadService } from "../../shared/services/dataReload.service";
@@ -27,7 +27,6 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
     private destroy$ = new Subject<void>();
 
     constructor(
-        @Inject(LOCALE_ID) public locale: string,
         private laundService: LaundressService,
         private dataReloadService: DataReloadService,
         private modal: NgbModal,
@@ -36,7 +35,7 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
     ) {
         super(translate, modal, loading);
         let t = this;
-        let dateBE = t.GetCurrentDateWithDelta();
+        let dateBE = t.getCurrentDateWithDelta();
         t.startDate = dateBE.dateStart;
         t.endDate = dateBE.dateEnd;
     }
@@ -73,6 +72,7 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
 
     searchReports() {
         let t = this;
+        t.setLoading(true);
         t.filter.startDate = t.startDate.toISOString();
         t.filter.endDate = t.endDate.toISOString();
 
@@ -82,7 +82,10 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
                 t.applySort();
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
+            })
+            .finally(() => {
+                t.setLoading(false);
             });
     }
 

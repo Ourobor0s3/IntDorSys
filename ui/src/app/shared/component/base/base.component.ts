@@ -106,9 +106,11 @@ export abstract class BaseComponent {
         if (!input) return;
 
         const width = input.offsetWidth;
-        document.querySelectorAll<HTMLElement>('.bs-calendar-container').forEach(calendar => {
-            calendar.style.width = `${width}px`;
-        });
+        const calendarContainer = input.closest('.filter-group')?.querySelector<HTMLElement>('.bs-calendar-container')
+            ?? document.querySelector<HTMLElement>('.bs-calendar-container');
+        if (calendarContainer) {
+            calendarContainer.style.width = `${width}px`;
+        }
     }
 
     /**
@@ -132,12 +134,12 @@ export abstract class BaseComponent {
      * @param monthDelta - Смещение в месяцах
      * @param yearDelta - Смещение в годах
      */
-    public GetCurrentDateWithDelta(
+    public getCurrentDateWithDelta(
         daysDelta = 2,
         monthDelta = 0,
         yearDelta = 0,
     ): { dateStart: Date; dateEnd: Date } {
-        const { dateStart, dateEnd } = this.GetCurrentDateWithDeltaStr(daysDelta, monthDelta, yearDelta);
+        const { dateStart, dateEnd } = this.getCurrentDateWithDeltaStr(daysDelta, monthDelta, yearDelta);
         return {
             dateStart: new Date(dateStart),
             dateEnd: new Date(dateEnd),
@@ -150,7 +152,7 @@ export abstract class BaseComponent {
      * @param monthDelta - Смещение в месяцах
      * @param yearDelta - Смещение в годах
      */
-    public GetCurrentDateWithDeltaStr(
+    public getCurrentDateWithDeltaStr(
         daysDelta: number = 2,
         monthDelta: number = 0,
         yearDelta: number = 0,
@@ -168,7 +170,7 @@ export abstract class BaseComponent {
         return { dateStart, dateEnd };
     }
 
-    public GetTodayDate(): Date {
+    public getTodayDate(): Date {
         const today = new Date();
         const { year, month, day } = {
             year: today.getFullYear(),

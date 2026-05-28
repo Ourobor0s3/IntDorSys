@@ -2,23 +2,33 @@
   <div class="filter-bar">
     <div class="filter-group">
       <label class="filter-label">{{ 'laundress.start_date' | lang }}</label>
-      <input #dps="bsDatepicker"
-             (click)="calendarClick('#bsCalendarStart')"
-             (onShown)="setCalendarWidth('#bsCalendarStart')"
-             [(bsValue)]="startDate" [bsConfig]="bsConfig"
-             [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
-             bsDatepicker class="form-control form-control-sm input-datepicker"
-             id="bsCalendarStart" type="text">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text px-2">
+          <img alt="Calendar" height="16" src="assets/image/table_icons/calendar.svg" width="16">
+        </span>
+        <input #dps="bsDatepicker"
+               (click)="calendarClick('#bsCalendarStart')"
+               (onShown)="setCalendarWidth('#bsCalendarStart')"
+               [(bsValue)]="startDate" [bsConfig]="bsConfig"
+               [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
+               bsDatepicker class="form-control form-control-sm input-datepicker"
+               id="bsCalendarStart" type="text">
+      </div>
     </div>
     <div class="filter-group">
       <label class="filter-label">{{ 'laundress.end_date' | lang }}</label>
-      <input #dpe="bsDatepicker"
-             (click)="calendarClick('#bsCalendarEnd')"
-             (onShown)="setCalendarWidth('#bsCalendarEnd')"
-             [(bsValue)]="endDate" [bsConfig]="bsConfig"
-             [ngClass]="{'iconShow' : dpe.isOpen }" [readonly]="true"
-             bsDatepicker class="form-control form-control-sm input-datepicker"
-             id="bsCalendarEnd" type="text">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text px-2">
+          <img alt="Calendar" height="16" src="assets/image/table_icons/calendar.svg" width="16">
+        </span>
+        <input #dpe="bsDatepicker"
+               (click)="calendarClick('#bsCalendarEnd')"
+               (onShown)="setCalendarWidth('#bsCalendarEnd')"
+               [(bsValue)]="endDate" [bsConfig]="bsConfig"
+               [ngClass]="{'iconShow' : dpe.isOpen }" [readonly]="true"
+               bsDatepicker class="form-control form-control-sm input-datepicker"
+               id="bsCalendarEnd" type="text">
+      </div>
     </div>
     <div class="filter-actions">
       <button (click)="searchReports()" class="btn btn-sm btn-primary px-3" type="button">
