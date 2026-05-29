@@ -23,12 +23,16 @@ namespace IntDorSys.Laundress.Services
             // Подключение сервисов
             services
                 .AddTransient<ILaundressService, LaundressService>()
+                .AddTransient<IUseLaundressQueryService, LaundressService>()
                 .AddTransient<ILaundReportService, LaundReportService>()
                 .AddTransient<IUserBotService, UserBotService>()
                 .AddTransient<ILaundAnaliticService, LaundAnaliticService>();
 
-            // Подключение сервиса бота
-            services.AddTransient<ILaundressBotService, LaundressBotService>();
+            services
+                .AddTransient<ILaundressBotService, LaundressBotService>()
+                .AddTransient<ILaundressBotMenuService, LaundressBotService>()
+                .AddTransient<ILaundressBotBookingService, LaundressBotService>()
+                .AddTransient<ILaundressBotNotificationService, LaundressBotService>();
 
             services.AddQuartzCoreServices(
                 jobConfigurator =>

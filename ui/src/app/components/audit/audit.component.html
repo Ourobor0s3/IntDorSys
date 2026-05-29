@@ -1,0 +1,52 @@
+<div class="page-content">
+  <div class="filter-bar d-flex">
+    <select class="form-select form-select-sm filter-select" [(ngModel)]="actionFilter" (change)="onFilterChange()">
+      <option value="">{{ 'audit.all_actions' | lang }}</option>
+      <option *ngFor="let a of actions" [value]="a">{{ 'audit.action.' + a | lang }}</option>
+    </select>
+    <button (click)="loadLogs()" class="btn btn-sm btn-outline-secondary" type="button">
+      {{ 'common.refresh' | lang }}
+    </button>
+  </div>
+
+  <div *ngIf="allLogs == null" class="empty-state">
+    <p>{{ 'common.loading' | lang }}</p>
+  </div>
+
+  <div *ngIf="allLogs != null && logs.length === 0" class="empty-state">
+    <p>{{ 'common.no_data' | lang }}</p>
+  </div>
+
+  <div *ngIf="allLogs != null && logs.length > 0" class="table-wrapper">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>{{ 'common.date' | lang }}</th>
+          <th>{{ 'audit.user' | lang }}</th>
+          <th>{{ 'audit.action_header' | lang }}</th>
+          <th>{{ 'audit.entity' | lang }}</th>
+          <th>{{ 'audit.details' | lang }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of logs; trackBy: trackByLog">
+          <td class="small text-nowrap">{{ log.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td class="small">{{ log.userName }}</td>
+          <td class="small"><code>{{ 'audit.action.' + log.action | lang }}</code></td>
+          <td class="small">{{ log.entityName }}<span *ngIf="log.entityId"> #{{ log.entityId }}</span></td>
+          <td class="small text-muted">{{ log.details }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination-bar">
+      <button (click)="prevPage()" [disabled]="page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
+        &laquo; {{ 'common.prev' | lang }}
+      </button>
+      <span class="mx-2 small">{{ page }} / {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="page >= totalPages" class="btn btn-sm btn-outline-secondary" type="button">
+        {{ 'common.next' | lang }} &raquo;
+      </button>
+    </div>
+  </div>
+</div>

@@ -11,4 +11,5 @@ export class UserInfoModel {
     registerDate: string;
     // показывает, заблочен ли пользователь
     isBlocked: boolean;
+    usageCount: number;
 }

@@ -59,11 +59,12 @@
 
 .users-table .col-num { width: 40px; text-align: center; }
 .users-table .col-name { min-width: 120px; max-width: 200px; }
-.users-table .col-email { min-width: 120px; max-width: 180px; }
+.users-table .col-telegram { min-width: 120px; max-width: 180px; }
 .users-table .col-group { width: 60px; text-align: center; }
 .users-table .col-room { width: 60px; text-align: center; }
 .users-table .col-status { width: 100px; }
 .users-table .col-action { width: 44px; text-align: center; }
+.users-table .col-usage { width: 60px; text-align: center; }
 .users-table .col-date { min-width: 110px; }
 .users-table .col-confirm { width: 60px; }
 

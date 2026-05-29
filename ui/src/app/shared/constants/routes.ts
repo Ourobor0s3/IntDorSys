@@ -5,3 +5,4 @@ export const overviewRoute: string = "home";
 export const userInfoRoute: string = "user-info";
 export const laundressRoute: string = "laundress";
 export const reportsRoute: string = "reports";
+export const auditRoute: string = "audit";

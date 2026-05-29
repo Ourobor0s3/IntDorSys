@@ -1,5 +1,6 @@
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
+using IntDorSys.Services.Audit;
 using IntDorSys.Services.Builders;
 using IntDorSys.Services.Users;
 using IntDorSys.Web.Api.Controllers.Base;
@@ -21,12 +22,19 @@ namespace IntDorSys.Web.Api.Controllers
 
         [HttpPut("change-status/{userId}")]
         [Authorize(Roles = "Admin")]
-        public Task<DataResult<bool>> ChangeStatus(
+        public async Task<DataResult<bool>> ChangeStatus(
             long userId,
             [FromBody] UserStatus newStatus,
-            [FromServices] IUserService service)
+            [FromServices] IUserCommandService service,
+            [FromServices] IAuditService audit)
         {
-            return service.ChangeUserStatus(userId, newStatus, HttpContext.RequestAborted);
+            var result = await service.ChangeUserStatus(userId, newStatus, HttpContext.RequestAborted);
+            if (result.IsSuccess)
+            {
+                await audit.RecordAsync(UserId, "ChangeUserStatus", "UserInfo",
+                    userId.ToString(), $"New status: {newStatus}");
+            }
+            return result;
         }
     }
 }

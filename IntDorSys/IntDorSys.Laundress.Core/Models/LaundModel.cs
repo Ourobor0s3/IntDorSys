@@ -1,13 +1,13 @@
-using IntDorSys.Core.Entities.Users;
+using IntDorSys.Core.Models;
 
 namespace IntDorSys.Laundress.Core.Models
 {
     public class LaundModel
     {
         /// <summary>
-        ///     User, who uses the laundress
+        ///     User assigned to the slot
         /// </summary>
-        public UserInfo? SelectUser { get; set; }
+        public UserInfoModel? SelectUser { get; set; }
 
         /// <summary>
         ///     Time washing

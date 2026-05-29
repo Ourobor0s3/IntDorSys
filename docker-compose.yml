@@ -32,7 +32,7 @@ services:
       ASPNETCORE_URLS: http://0.0.0.0:${BACKEND_PORT}
       BuildTest: ${BUILD_TEST}
       AutomaticMigrationsEnabled: "true"
-      Logging__RootDir: /tmp/logs/intdorsys
+      LOG_DIR: /tmp/logs/intdorsys
       ConnectionStrings__Test: "Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};"
       ConnectionStrings__Battle: "Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};"
       Telegram__Test__Token: ${TELEGRAM_TEST_TOKEN}
@@ -49,6 +49,7 @@ services:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     volumes:
       - filestorage:/app/FileFolderStorage
+      - ./logs:/tmp/logs/intdorsys
     restart: unless-stopped
 
   frontend:

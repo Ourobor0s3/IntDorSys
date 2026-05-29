@@ -12,11 +12,10 @@ export abstract class BaseComponent {
 
     public passwordPattern = /^[A-Za-z0-9!@#$%^&*()_+-=\[\]{};':"\\|,.<>\/?]+$/;
     public readonly bsConfig: Partial<BsDatepickerConfig> = {
-        dateInputFormat: 'DD-MM-YYYY',
+        dateInputFormat: 'DD.MM.YYYY',
         selectWeek: false,
         showWeekNumbers: false,
         isAnimated: true,
-        customTodayClass: 'datepicker-custom-today-class',
     };
     private modalRefBase: NgbModalRef | null = null;
     private translationCache: Map<string, string> = new Map();

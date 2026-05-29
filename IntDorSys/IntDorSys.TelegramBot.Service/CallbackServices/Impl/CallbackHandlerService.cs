@@ -12,12 +12,12 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
         private readonly IAdminCallbackHandler _adminHandler;
         private readonly ILaundressCallbackHandler _laundressHandler;
         private readonly IUserRoleService _userRoleService;
-        private readonly IUserService _userService;
+        private readonly IUserQueryService _userService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
 
         /// <inheritdoc cref="ICallbackHandlerService" />
         public CallbackHandlerService(
-            IUserService userService,
+            IUserQueryService userService,
             IUserRoleService userRoleService,
             IAdminCallbackHandler adminHandler,
             ILaundressCallbackHandler laundressHandler,

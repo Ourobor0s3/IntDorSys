@@ -9,10 +9,10 @@ namespace IntDorSys.TelegramBot.Service.CommandServices.Impl
     internal sealed class BaseCommandsService : IBaseCommandsService
     {
         private readonly ITelegramService _telegramService;
-        private readonly IUserService _userService;
+        private readonly IUserQueryService _userService;
 
         public BaseCommandsService(
-            IUserService userService,
+            IUserQueryService userService,
             ITelegramService telegramService)
         {
             _userService = userService;

@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 
 namespace IntDorSys.Services.Users.Impl
 {
-    internal sealed class UserService : IUserService
+    internal sealed class UserService : IUserService, IUserQueryService, IUserCommandService
     {
         private readonly AppDataContext _db;
 

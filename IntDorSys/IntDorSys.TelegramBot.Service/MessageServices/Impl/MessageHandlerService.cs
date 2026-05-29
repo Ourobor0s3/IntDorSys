@@ -10,13 +10,13 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
 
         private readonly ILaundressMessageHandler _laundressHandler;
         private readonly IUserRoleService _userRoleService;
-        private readonly IUserService _userService;
+        private readonly IUserQueryService _userService;
         private readonly IUsersMessageHandler _usersHandler;
 
 
         /// <inheritdoc cref="IMessageHandlerService" />
         public MessageHandlerService(
-            IUserService userService,
+            IUserQueryService userService,
             IUserRoleService userRoleService,
             ILaundressMessageHandler laundressHandler,
             IUsersMessageHandler usersHandler,

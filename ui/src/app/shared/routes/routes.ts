@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { laundressRoute, overviewRoute, reportsRoute, userInfoRoute } from "../constants/routes";
+import { auditRoute, laundressRoute, overviewRoute, reportsRoute, userInfoRoute } from "../constants/routes";
 
 export const mainContent: Routes = [
     {
@@ -31,5 +31,11 @@ export const mainContent: Routes = [
         loadChildren: () =>
             import('../../components/reports/reports.module')
                 .then(m => m.ReportsModule),
+    },
+    {
+        path: auditRoute,
+        loadChildren: () =>
+            import('../../components/audit/audit.module')
+                .then(m => m.AuditModule),
     },
 ];

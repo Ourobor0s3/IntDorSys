@@ -10,7 +10,7 @@ using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Laundress.Services.Services.Impl
 {
-    internal sealed class LaundressService : ILaundressService
+    internal sealed class LaundressService : ILaundressService, IUseLaundressQueryService
     {
         private readonly AppDataContext _db;
         private readonly ILogger<LaundressService> _logger;

@@ -155,6 +155,11 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 .idea
+
 .opencode
+AGENTS.md
 tmp_ouro/
 .env
+/logs
+/.config
+/mnt

@@ -592,6 +592,11 @@ body {
     justify-content: center;
 }
 
+/* Page content wrapper (shared across all pages) */
+.page-content {
+  padding: 0 0 1.5rem;
+}
+
 /* Main content wrapper */
 .main-content {
     margin-left: var(--sidebar-width);

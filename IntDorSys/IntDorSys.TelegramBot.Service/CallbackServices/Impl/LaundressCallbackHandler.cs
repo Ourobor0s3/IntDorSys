@@ -11,13 +11,13 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
     internal sealed class LaundressCallbackHandler : ILaundressCallbackHandler
     {
         private readonly ILaundressBotService _laundBot;
-        private readonly IUserService _userService;
+        private readonly IUserQueryService _userService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly ILogger<LaundressCallbackHandler> _logger;
 
         public LaundressCallbackHandler(
             ILaundressBotService laundBot,
-            IUserService userService,
+            IUserQueryService userService,
             IOptionsMonitor<AdminSettings> adminSettings,
             ILogger<LaundressCallbackHandler> logger)
         {

@@ -4,13 +4,12 @@ import { AppComponent } from './app.component';
 import { SharedModule } from "./shared/shared.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { AuthService } from "./shared/services/auth.service";
-import { LoginModule } from "./auth/login/login.model";
-import { RegisterModule } from "./auth/register/register.model";
+import { LoginModule } from "./auth/login/login.module";
+import { RegisterModule } from "./auth/register/register.module";
 import { AuthComponent } from "./auth/auth.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from "@angular/common/http";
-import { ChartModule } from "primeng/chart";
 import { TokenService } from "./shared/services/token.service";
 import { ApiService } from "./shared/services/api.service";
 import { AuthGuard } from "./shared/guards/auth.guard";
@@ -42,7 +41,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         BrowserAnimationsModule,
         AppRoutingModule,
         LoginModule,
-        ChartModule,
         RegisterModule,
         BsDatepickerModule.forRoot(),
         TranslateModule.forRoot({

@@ -12,7 +12,7 @@ namespace IntDorSys.Web.Api.Controllers
     {
         [HttpGet]
         public async Task<DataResult<UserInfoModel>> Get(
-            [FromServices] IUserService userService,
+            [FromServices] IUserQueryService userService,
             [FromServices] IUserInfoBuilder builder)
         {
             var res = new DataResult<UserInfoModel>();

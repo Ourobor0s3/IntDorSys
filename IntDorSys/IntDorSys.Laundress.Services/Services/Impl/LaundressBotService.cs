@@ -17,7 +17,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace IntDorSys.Laundress.Services.Services.Impl
 {
-    internal sealed class LaundressBotService : ILaundressBotService
+    internal sealed class LaundressBotService : ILaundressBotService, ILaundressBotMenuService, ILaundressBotBookingService, ILaundressBotNotificationService
     {
         private readonly AppDataContext _db;
         private readonly ILaundressService _laund;

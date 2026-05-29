@@ -1,8 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ChildrenOutletContexts, Router } from "@angular/router";
 import { NavService } from "../../services/nav.service";
 import { transition, trigger, useAnimation } from "@angular/animations";
 import { fadeIn } from "ng-animate";
+import { EventService } from "../../services/event.service";
+import { Subject, takeUntil } from "rxjs";
 
 @Component({
     selector: 'app-content-layout',
@@ -14,18 +16,28 @@ import { fadeIn } from "ng-animate";
         ]),
     ],
 })
-export class ContentLayoutComponent implements OnInit, AfterViewInit {
+export class ContentLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     pageBodyWidth: number = 0;
+    private destroy$ = new Subject<void>();
 
     constructor(
         public navServices: NavService,
         private router: Router,
         private contexts: ChildrenOutletContexts,
         private cdr: ChangeDetectorRef,
+        private eventService: EventService,
     ) {
     }
 
     ngOnInit(): void {
+        this.eventService.LangChangeEvent
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => setTimeout(() => this.calculatePageBodyWrapperWidth(), 0));
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     ngAfterViewInit(): void {

@@ -1,7 +1,11 @@
-﻿using IntDorSys.Services.Builders;
+﻿using IntDorSys.Services.Audit;
+using IntDorSys.Services.Audit.Impl;
+using IntDorSys.Services.Builders;
 using IntDorSys.Services.Builders.Impl;
 using IntDorSys.Services.FileStorage;
 using IntDorSys.Services.FileStorage.Impl;
+using IntDorSys.Services.Statistics;
+using IntDorSys.Services.Statistics.Impl;
 using IntDorSys.Services.Users;
 using IntDorSys.Services.Users.Impl;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,12 +16,15 @@ namespace IntDorSys.Services
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            // Подключение сервисов
             services
                 .AddTransient<IUserInfoBuilder, UserInfoBuilder>()
                 .AddTransient<IUserService, UserService>()
+                .AddTransient<IUserQueryService, UserService>()
+                .AddTransient<IUserCommandService, UserService>()
                 .AddTransient<IFileService, FileService>()
-                .AddTransient<IUserRoleService, UserRoleService>();
+                .AddTransient<IUserRoleService, UserRoleService>()
+                .AddTransient<IAuditService, AuditService>()
+                .AddTransient<IUsageStatsService, UsageStatsService>();
 
             return services;
         }

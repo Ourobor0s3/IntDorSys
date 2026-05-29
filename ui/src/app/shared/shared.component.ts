@@ -14,6 +14,8 @@ import { BarChartComponent } from "./component/bar-chart/bar-chart.component";
 import { TranslateReplacePipe } from "./pipes/translate-replace.pipe";
 import { TranslateModule } from "@ngx-translate/core";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
+import { ConfirmModule } from "./component/modals/confirm/confirm.module";
+import { ResultModule } from "./component/modals/result/result.module";
 
 @NgModule({
     declarations: [
@@ -34,6 +36,8 @@ import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
         FormsModule,
         BsDatepickerModule,
         NgbModule,
+        ConfirmModule,
+        ResultModule,
     ],
     exports: [
         BarChartComponent,

@@ -1,0 +1,16 @@
+.filter-bar {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-select {
+  width: auto;
+  min-width: 160px;
+}
+
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}

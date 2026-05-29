@@ -7,20 +7,20 @@ namespace IntDorSys.Laundress.Services.Jobs
 {
     public class SendTimeJob : BaseJob
     {
-        private readonly ILaundressBotService _botService;
+        private readonly ILaundressBotNotificationService _notification;
 
         public SendTimeJob(
             ILogger<SendTimeJob> logger,
-            ILaundressBotService botService)
+            ILaundressBotNotificationService notification)
             : base(logger)
         {
-            _botService = botService;
+            _notification = notification;
         }
 
         protected override async Task InnerExecuteAsync(IJobExecutionContext context)
         {
             Logger.LogInformation("Starting to send notification for time wash");
-            await _botService.CheckTimeAndSendNotifAsync(context.CancellationToken);
+            await _notification.CheckTimeAndSendNotifAsync(context.CancellationToken);
             Logger.LogInformation("Completed sending notification for time wash");
         }
     }

@@ -7,6 +7,8 @@ using IntDorSys.Laundress.Services;
 using IntDorSys.Security;
 using IntDorSys.Services;
 using IntDorSys.TelegramBot.Service;
+using IntDorSys.Web.Api.Bot;
+using IntDorSys.Web.Api.Installers;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using Ouro.TelegramBot.Core;
@@ -32,7 +34,8 @@ namespace IntDorSys.Web.Api
                 .ConfigureAuthentication();
 
             builder.Services
-                .AddHealthChecks();
+                .AddHealthChecks()
+                .AddCheck<BotHealthCheck>("telegram_bot");
 
             builder.Services.AddRateLimiter(options =>
             {
@@ -106,6 +109,7 @@ namespace IntDorSys.Web.Api
 
 
             builder.Services
+                .AddSingleton<BotStatus>()
                 .ConfigureTelegramBot(isBattle
                     ? builder.Configuration.GetSection(ConfigSectionNames.TelegramBattleSection)
                     : builder.Configuration.GetSection(ConfigSectionNames.TelegramTestSection))

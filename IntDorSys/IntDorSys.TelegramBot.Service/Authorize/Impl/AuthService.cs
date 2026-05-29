@@ -13,12 +13,12 @@ namespace IntDorSys.TelegramBot.Service.Authorize.Impl
         private readonly IAdminService _adminService;
         private readonly ILogger<AuthService> _logger;
         private readonly ITelegramService _telegramService;
-        private readonly IUserService _userService;
+        private readonly IUserCommandService _userService;
 
         public AuthService(
             ITelegramService telegramService,
             IAdminService adminService,
-            IUserService userService,
+            IUserCommandService userService,
             ILogger<AuthService> logger)
         {
             _telegramService = telegramService;

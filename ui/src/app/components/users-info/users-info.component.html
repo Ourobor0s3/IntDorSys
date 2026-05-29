@@ -28,11 +28,12 @@
       <tr>
         <th class="col-num">№</th>
         <th class="col-name">{{ 'users.name' | lang }}</th>
-        <th class="col-email">{{ 'users.email' | lang }}</th>
+        <th class="col-telegram">{{ 'users.telegram' | lang }}</th>
         <th class="col-group">{{ 'users.group' | lang }}</th>
         <th class="col-room">{{ 'users.room' | lang }}</th>
         <th class="col-status">{{ 'users.status' | lang }}</th>
         <th class="col-action"></th>
+        <th class="col-usage">{{ 'users.usage' | lang }}</th>
         <th class="col-date">{{ 'users.registered_date' | lang }}</th>
         <th class="col-confirm text-center">{{ 'users.is_confirm' | lang }}</th>
       </tr>
@@ -41,7 +42,7 @@
       <tr *ngFor="let user of filteredUsers; trackBy: trackByUser; let i = index">
         <td class="col-num">{{ i + 1 }}</td>
         <td class="col-name cell-ellipsis" [title]="user.fullName">{{ user.fullName }}</td>
-        <td class="col-email">
+        <td class="col-telegram">
           <span (click)="copyText(user.username)" class="copy-link">{{ user.username }}</span>
         </td>
         <td class="col-group">{{ user.numGroup }}</td>
@@ -56,6 +57,7 @@
             <img alt="" height="12" ngSrc="assets/image/buttons/pencil.svg" width="14"/>
           </button>
         </td>
+        <td class="col-usage text-center">{{ user.usageCount }}</td>
         <td class="col-date">{{ user.registerDate }}</td>
         <td class="col-confirm text-center">
           <img *ngIf="user.isConfirm" alt="" height="12" ngSrc="assets/image/table_icons/check_status.svg" width="14"/>

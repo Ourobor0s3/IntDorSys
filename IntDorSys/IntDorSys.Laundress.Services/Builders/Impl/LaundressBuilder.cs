@@ -1,3 +1,4 @@
+using IntDorSys.Core.Models;
 using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models;
 using IntDorSys.Laundress.Core.Models.Filters;
@@ -8,18 +9,25 @@ namespace IntDorSys.Laundress.Services.Builders.Impl
 {
     internal sealed class LaundressBuilder : ILaundressBuilder
     {
-        private readonly ILaundressService _service;
+        private readonly IUseLaundressQueryService _query;
 
-        public LaundressBuilder(ILaundressService service)
+        public LaundressBuilder(IUseLaundressQueryService query)
         {
-            _service = service;
+            _query = query;
         }
 
         public LaundModel Build(UseLaundress laund)
         {
             var laundInfo = new LaundModel
             {
-                SelectUser = laund.SelectUser,
+                SelectUser = laund.SelectUser == null ? null : new UserInfoModel
+                {
+                    Id = laund.SelectUser.Id,
+                    FullName = laund.SelectUser.FullName,
+                    Username = laund.SelectUser.Username,
+                    NumGroup = laund.SelectUser.NumGroup,
+                    NumRoom = laund.SelectUser.NumRoom,
+                },
                 TimeWash = laund.TimeWash,
             };
 
@@ -32,7 +40,7 @@ namespace IntDorSys.Laundress.Services.Builders.Impl
         {
             var result = new DataResult<List<PageLaundressModel>>();
 
-            var laundResult = await _service.GetTimeByFilterAsync(filter, ct);
+            var laundResult = await _query.GetTimeByFilterAsync(filter, ct);
             var res = Build(laundResult.Data.Select(Build).ToList());
 
             return !laundResult.IsSuccess ? result.WithError("Not found") : result.WithData(res);

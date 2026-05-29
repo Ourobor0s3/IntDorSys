@@ -11,13 +11,13 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
     internal sealed class LaundressMessageHandler : ILaundressMessageHandler
     {
         private readonly ILaundressBotService _laundBot;
-        private readonly IUserService _userService;
+        private readonly IUserQueryService _userService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly ILogger<LaundressMessageHandler> _logger;
 
         public LaundressMessageHandler(
             ILaundressBotService laundBot,
-            IUserService userService,
+            IUserQueryService userService,
             IOptionsMonitor<AdminSettings> adminSettings,
             ILogger<LaundressMessageHandler> logger)
         {

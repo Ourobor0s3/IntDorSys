@@ -1,4 +1,5 @@
-﻿using IntDorSys.Core.Entities.Users;
+﻿using IntDorSys.Core.Entities;
+using IntDorSys.Core.Entities.Users;
 using IntDorSys.Laundress.Core;
 using Microsoft.EntityFrameworkCore;
 using Ouro.DatabaseUtils.Conventions;
@@ -72,6 +73,16 @@ namespace IntDorSys.DataAccess
                 });
 
             modelBuilder.AddLaundressMap();
+
+            modelBuilder.AddPersistentEntity<AuditLog>(
+                builder =>
+                {
+                    builder.Property(x => x.Action).IsRequired().HasMaxLength(100);
+                    builder.Property(x => x.EntityName).IsRequired().HasMaxLength(100);
+                    builder.Property(x => x.EntityId).HasMaxLength(50);
+                    builder.Property(x => x.Details).HasMaxLength(500);
+                    builder.RequiredReference(x => x.User, x => x.UserId);
+                });
         }
 
         public void AddOrUpdateEntity<T>(T entity) where T : class, IEntity

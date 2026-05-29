@@ -1,6 +1,7 @@
 ﻿using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
+using IntDorSys.Services.Statistics;
 using IntDorSys.Services.Users;
 using Ouro.CommonUtils.Results;
 
@@ -8,11 +9,13 @@ namespace IntDorSys.Services.Builders.Impl
 {
     internal sealed class UserInfoBuilder : IUserInfoBuilder
     {
-        private readonly IUserService _service;
+        private readonly IUserQueryService _service;
+        private readonly IUsageStatsService _usageStats;
 
-        public UserInfoBuilder(IUserService service)
+        public UserInfoBuilder(IUserQueryService service, IUsageStatsService usageStats)
         {
             _service = service;
+            _usageStats = usageStats;
         }
 
         public UserInfoModel Build(UserInfo userInfo)
@@ -44,7 +47,15 @@ namespace IntDorSys.Services.Builders.Impl
                 return result.WithError("Not found");
             }
 
-            var res = users.Data.Select(Build).ToList();
+            var usageCounts = await _usageStats.GetUsageCountsAsync(ct);
+
+            var res = users.Data.Select(u =>
+            {
+                var model = Build(u);
+                model.UsageCount = usageCounts.GetValueOrDefault(u.Id, 0);
+                return model;
+            }).ToList();
+
             return result.WithData(res);
         }
 

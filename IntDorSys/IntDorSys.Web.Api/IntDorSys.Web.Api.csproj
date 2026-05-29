@@ -17,6 +17,7 @@
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.8" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="Ouro.WebApiUtils" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="112.0.0" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-<div class="laundress-page">
+<div class="page-content">
   <div class="filter-bar">
     <div class="filter-group">
       <label class="filter-label">{{ 'laundress.start_date' | lang }}</label>
@@ -33,6 +33,9 @@
     <div class="filter-actions">
       <button (click)="searchTimeLaund()" class="btn btn-sm btn-primary px-3" type="button">
         {{ 'laundress.filter' | lang }}
+      </button>
+      <button *ngIf="isAdmin" (click)="exportExcel()" class="btn btn-sm btn-outline-secondary" title="Export XLSX" type="button">
+        XLSX
       </button>
       <button *ngIf="isAdmin"
               (click)="toggleEditMode()"
@@ -106,7 +109,7 @@
             </ng-template>
           </div>
 
-          <!-- Edit actions -->
+          <!-- Edit actions (admin only) -->
           <div *ngIf="isEditMode && !isSlotExpired(l.timeWash)" class="slot-actions">
             <ng-container *ngIf="!l.selectUser; else occupiedActions">
               <button (click)="openBookModal(bookModal, l.timeWash)"
@@ -187,3 +190,5 @@
     <button (click)="bookUser(modal)" class="btn btn-primary" type="button">{{ 'common.save' | lang }}</button>
   </div>
 </ng-template>
+
+

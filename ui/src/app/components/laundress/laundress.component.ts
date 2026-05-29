@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { LaundressService } from "../../shared/services/laundress.service";
-import { PageLaundressModel } from "../../shared/model/laundress.model";
+import { LaundressModel, PageLaundressModel } from "../../shared/model/laundress.model";
 import { DataReloadService } from "../../shared/services/dataReload.service";
 import { Subject, takeUntil } from "rxjs";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
@@ -58,17 +58,12 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
     ngOnInit() {
         let t = this;
         t.isAdmin = t.authService.isAdmin();
-        t.loadData();
+        t.searchTimeLaund();
         t.dataReloadService.dataReload$
             .pipe(takeUntil(t.destroy$))
             .subscribe(() => {
-                t.loadData();
+                t.searchTimeLaund();
             });
-    }
-
-    loadData() {
-        let t = this;
-        t.searchTimeLaund();
     }
 
     searchTimeLaund(isRunLoading: boolean = true) {
@@ -117,7 +112,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.newTimeWashDate = now.toISOString().split('T')[0];
         this.newTimeRangeStartHour = 8;
         this.newTimeRangeEndHour = 22;
-        this.modal.open(content, { centered: true, backdrop: 'static', size: 'sm' });
+        this.modal.open(content, { centered: true, backdrop: 'static', size: 'md' });
     }
 
     createTimeSlotRange(modal: any) {
@@ -148,7 +143,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         if (this.users.length === 0) {
             this.loadUsers();
         }
-        this.modal.open(content, { centered: true, backdrop: 'static', size: 'sm' });
+        this.modal.open(content, { centered: true, backdrop: 'static', size: 'md' });
     }
 
     bookUser(modal: any) {
@@ -187,9 +182,8 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
                     })
                     .catch(err => t.showResponseError(err));
             })
-            .catch((err) => {
+            .catch(() => {
                 t.showError(t.translate.instant('common.operation_cancelled'));
-                console.error(err);
             });
     }
 
@@ -210,17 +204,23 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
                     })
                     .catch(err => t.showResponseError(err));
             })
-            .catch((err) => {
+            .catch(() => {
                 t.showError(t.translate.instant('common.operation_cancelled'));
-                console.error(err);
             });
+    }
+
+    // Export
+    exportExcel() {
+        let t = this;
+        t.laundService.exportExcel(t.startDate.toISOString(), t.endDate.toISOString())
+            .catch(err => t.showResponseError(err));
     }
 
     isSlotExpired(timeWash: string): boolean {
         return new Date(timeWash) < new Date();
     }
 
-    public disableAutoRefresh() {
+    disableAutoRefresh() {
         this.isAutoRefresh = false;
         clearTimeout(this.timerId);
     }

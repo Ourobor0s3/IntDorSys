@@ -48,5 +48,10 @@ namespace IntDorSys.Core.Models
         ///     Admin confirmed user
         /// </summary>
         public bool IsConfirm { get; set; }
+
+        /// <summary>
+        ///     Number of laundress bookings in the last 6 months
+        /// </summary>
+        public int UsageCount { get; set; }
     }
 }
