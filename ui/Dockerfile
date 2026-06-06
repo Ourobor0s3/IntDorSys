@@ -10,9 +10,12 @@ RUN APP_VER=$(node -p "require('./package.json').version + '.' + Math.floor(Date
     npm run build
 
 FROM nginx:alpine
+RUN apk add --no-cache openssl && \
+    mkdir -p /etc/nginx/certs
+
 COPY --from=node /app/dist/endless /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+EXPOSE 80 443
 
 CMD ["nginx", "-g", "daemon off;"]
