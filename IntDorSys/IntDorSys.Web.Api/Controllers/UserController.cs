@@ -11,7 +11,7 @@ namespace IntDorSys.Web.Api.Controllers
     public class UserController : ProtectedApiController
     {
         [HttpGet]
-        public async Task<DataResult<UserInfoModel>> Get(
+        public async Task<DataResult<UserInfoModel>> GetAsync(
             [FromServices] IUserQueryService userService,
             [FromServices] IUserInfoBuilder builder)
         {

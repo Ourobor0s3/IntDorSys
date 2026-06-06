@@ -95,7 +95,7 @@ export class RegisterComponent extends BaseComponent {
             });
     }
 
-    validatePassword(g: FormGroup) {
+    validatePassword(g: FormGroup): void {
         let password = g.get('password');
         if (password.dirty || !!password.value) {
             password.markAsDirty();
@@ -106,7 +106,7 @@ export class RegisterComponent extends BaseComponent {
         if (passwordConfirm.dirty || !!passwordConfirm.value) {
             passwordConfirm.markAsDirty();
             passwordConfirm.markAsTouched();
-            var isValidPasswordConfirm = ValidationUtils.validatePasswordConfirmation(
+            const isValidPasswordConfirm = ValidationUtils.validatePasswordConfirmation(
                 password.value,
                 passwordConfirm.value,
             );
@@ -120,15 +120,15 @@ export class RegisterComponent extends BaseComponent {
         }
     }
 
-    navigateToLogin() {
+    navigateToLogin(): void {
         this.navigateTab(authRoute + "/" + loginRoute);
     }
 
-    navigateTab(link: string) {
+    navigateTab(link: string): void {
         this.router.navigateByUrl('/' + link);
     }
 
-    hideOrShowPassword(isConfirmField: boolean = false) {
+    hideOrShowPassword(isConfirmField: boolean = false): void {
         if (isConfirmField) {
             this.showConfirmPass = !this.showConfirmPass;
             return;

@@ -1,9 +1,11 @@
-<div [ngStyle]="{'max-width': maxWidth}" class="card-modal mx-auto modal-width">
-  <div *ngIf="imgUrl != ''" class="row mb-3">
-    <div class="col p-0 text-center">
-      <img alt="" src="{{imgUrl}}" style="width: 58px; height: 58px;">
+<div class="card-modal mx-auto modal-width">
+  @if (imgUrl != '') {
+    <div class="row mb-3">
+      <div class="col p-0 text-center">
+        <img alt="" src="{{imgUrl}}" style="width: 58px; height: 58px;">
+      </div>
     </div>
-  </div>
+  }
   <div class="row mb-2 text-center">
     <div class="col f-26 f-w-600">{{ title }}</div>
   </div>

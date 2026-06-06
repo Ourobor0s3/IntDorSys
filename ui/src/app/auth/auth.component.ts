@@ -58,7 +58,7 @@ export class AuthComponent extends BaseComponent implements OnInit {
         this.isDarkMode = this.themeService.getTheme() === 'dark';
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         if (this.currentActiveTab) {
             this.currentActiveTab.isActive = false;
         }

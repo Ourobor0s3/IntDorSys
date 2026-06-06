@@ -2,7 +2,7 @@ import { ApiService } from './api.service';
 import { HttpClient } from '@angular/common/http';
 import { IResponse } from '../interface/response';
 import { PageLaundressModel } from "../model/laundress.model";
-import { Injectable } from "@angular/core";
+import { Injectable, Renderer2, RendererFactory2 } from "@angular/core";
 import { lastValueFrom } from "rxjs";
 import { BaseFilterModel } from "../model/filter/baseFilter.model";
 import { QueryUtils } from "../utils/queryUtils";
@@ -26,7 +26,10 @@ export interface AuditLogModel {
     providedIn: 'root',
 })
 export class LaundressService {
-    constructor(private api: ApiService, private http: HttpClient) {
+    private renderer: Renderer2;
+
+    constructor(private api: ApiService, private http: HttpClient, rendererFactory: RendererFactory2) {
+        this.renderer = rendererFactory.createRenderer(null, null);
     }
 
     async getLaund(filter: BaseFilterModel): Promise<IResponse<PageLaundressModel[]>> {
@@ -69,9 +72,9 @@ export class LaundressService {
     async exportExcel(startDate: string, endDate: string): Promise<void> {
         let url = environment.apiUrl + apiLaundUrl + '/export?startDate=' + encodeURIComponent(startDate) + '&endDate=' + encodeURIComponent(endDate);
         let blob = await lastValueFrom(this.http.get(url, { responseType: 'blob' }));
-        let link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = 'laundress_export_' + new Date().toISOString().split('T')[0] + '.xlsx';
+        let link = this.renderer.createElement('a');
+        this.renderer.setAttribute(link, 'href', window.URL.createObjectURL(blob));
+        this.renderer.setAttribute(link, 'download', 'laundress_export_' + new Date().toISOString().split('T')[0] + '.xlsx');
         link.click();
         window.URL.revokeObjectURL(link.href);
     }

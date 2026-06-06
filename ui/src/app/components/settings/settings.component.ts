@@ -40,8 +40,8 @@ export class SettingsComponent extends BaseComponent implements OnInit {
         let t = this;
         t.setLoading(true);
         try {
-            let res: any = await (await t.api.get<any>('settings')).toPromise();
-            t.items = (res?.data ?? []).map((s: any) => ({
+            let res = await (await t.api.get<unknown>('settings')).toPromise();
+            t.items = ((res?.data ?? []) as Array<{ id: number; key: string; value: string; isEditable: boolean }>).map((s) => ({
                 id: s.id,
                 key: s.key,
                 value: s.value,
@@ -73,7 +73,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
         }
         t.saving = true;
         try {
-            let res: any = await (await t.api.put<any>('settings/' + item.id, { value: item.value })).toPromise();
+            let res = await (await t.api.put<unknown>('settings/' + item.id, { value: item.value })).toPromise();
             if (res?.isSuccess) {
                 item.originalValue = item.value;
                 item.editing = false;

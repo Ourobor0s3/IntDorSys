@@ -17,6 +17,8 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly AppDataContext _db;
         private readonly IAppSettingService _settings;
         private readonly ILogger<LaundressService> _logger;
+        private const int DefaultWashDurationHours = 2;
+        private const int MaxConcurrentBookings = 2;
 
         public LaundressService(AppDataContext db, IAppSettingService settings, ILogger<LaundressService> logger)
         {
@@ -28,7 +30,7 @@ namespace IntDorSys.Laundress.Services.Impl
         private async Task<int> GetWashDurationHoursAsync(CancellationToken ct)
         {
             var val = await _settings.GetValueAsync("WashDurationHours", ct);
-            return int.TryParse(val, out var hours) ? hours : 2;
+            return int.TryParse(val, out var hours) ? hours : DefaultWashDurationHours;
         }
 
         private async Task<bool> HasOverlappingSlotsAsync(DateTime timeWash, int washDurationHours, CancellationToken ct)
@@ -49,7 +51,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 .Include(x => x.SelectUser)
                 .AsQueryable();
 
-            // Учитываем UserId
+            // Filter by UserId
             if (filter?.UserId > 0)
             {
                 query = query.Where(x =>
@@ -61,7 +63,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 query = query.Where(x => x.TimeWash >= DateTime.Now.Date);
             }
 
-            // Обработка StartDate
+            // Process StartDate filter
             if (!string.IsNullOrWhiteSpace(filter?.StartDate) &&
                 DateTime.TryParse(filter.StartDate,
                     null,
@@ -75,7 +77,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 query = query.Where(x => x.TimeWash >= DateTime.Now.Date);
             }
 
-            // Обработка EndDate
+            // Process EndDate filter
             if (!string.IsNullOrWhiteSpace(filter?.EndDate) &&
                 DateTime.TryParse(filter.EndDate,
                     null,
@@ -86,7 +88,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 query = query.Where(x => x.TimeWash <= endOfDay);
             }
 
-            // Обработка SearchDate
+            // Process SearchDate filter
             if (filter?.SearchDate is { } searchDate && searchDate != DateTime.MinValue)
             {
                 var startOfDay = searchDate.Date;
@@ -94,7 +96,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 query = query.Where(x => x.TimeWash >= startOfDay && x.TimeWash <= endOfDay);
             }
 
-            // Только свободные записи (и не в прошлом)
+            // Only free records (not in the past)
             if (filter?.IsUnoccupiedRecords == true)
             {
                 query = query
@@ -102,7 +104,7 @@ namespace IntDorSys.Laundress.Services.Impl
                     .Where(x => x.TimeWash >= DateTime.Now);
             }
 
-            // Только занятые записи
+            // Only occupied records
             if (filter?.IsOccupiedRecords == true)
             {
                 query = query.Where(x => x.SelectUser != null);
@@ -161,7 +163,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 .Where(x => x.TimeWash > DateTime.Now)
                 .Where(x => x.SelectUserId == userId)
                 .CountAsync(ct);
-            if (useWash >= 2)
+            if (useWash >= MaxConcurrentBookings)
             {
                 return res.WithError($"{userId} use two time wash already exists");
             }

@@ -1,5 +1,5 @@
 export class QueryUtils {
-    static objectToQueryString(params: Record<string, any>): string {
+    static objectToQueryString(params: object): string {
         if (!params)
             return '';
 
@@ -15,15 +15,15 @@ export class QueryUtils {
             ([key, value]) => {
                 if (Array.isArray(value)) {
                     return value
-                        .map(val => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
+                        .map(val => `${encodeURIComponent(key)}=${encodeURIComponent(String(val))}`)
                         .join('&');
                 }
 
-                if (value instanceof Object) {
+                if (typeof value === 'object' && value !== null) {
                     value = JSON.stringify(value);
                 }
 
-                return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+                return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
             },
         );
         const queryString = encodedEntries.join('&');

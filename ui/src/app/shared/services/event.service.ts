@@ -7,13 +7,13 @@ import { HeaderButtonModel } from "../model/headerButton.model";
 })
 export class EventService {
     readonly LangChangeEvent = new Subject<string>();
-    readonly NotifCountEvent = new Subject<any>();
+    readonly NotifCountEvent = new Subject<number>();
     readonly SubpageEvent = new Subject<HeaderButtonModel>();
     readonly ShowUploadButtonEvent = new Subject<boolean>();
     readonly SubscriptionUpgrade = new Subject<void>();
-    private arrIntervals: any = [];
-    private funcImpl: any[] = [];
-    private arrForLogOut: any = [];
+    private arrIntervals: ReturnType<typeof setInterval>[] = [];
+    private funcImpl: (() => void)[] = [];
+    private arrForLogOut: { clear: () => void }[] = [];
 
     Langchanged(msg: string) {
         this.LangChangeEvent.next(msg);
@@ -24,11 +24,11 @@ export class EventService {
         this.arrIntervals.push(setInterval(func, interval));
     }
 
-    public isFuncArrIncludes(func: any) {
+    public isFuncArrIncludes(func: () => void) {
         return this.funcImpl.includes(func);
     }
 
-    public addFuncToArrayForLogout(func: any) {
+    public addFuncToArrayForLogout(func: { clear: () => void }) {
         this.arrForLogOut.push(func);
     }
 
@@ -41,16 +41,17 @@ export class EventService {
     }
 
     public clearIntervals() {
-        this.arrIntervals.forEach((element: any) => {
+        this.arrIntervals.forEach((element: ReturnType<typeof setInterval>) => {
             clearInterval(element);
         });
     }
 
     public clearModels() {
-        this.arrForLogOut.forEach((element: any) => {
+        this.arrForLogOut.forEach((element: { clear: () => void }) => {
             try {
                 element.clear();
-            } catch (ex) {
+            } catch {
+                // ignore — element may not implement clear()
             }
         });
     }

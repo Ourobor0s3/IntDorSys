@@ -72,16 +72,16 @@ export class LoginComponent extends BaseComponent {
             });
     }
 
-    navigateToReg() {
+    navigateToReg(): void {
         this.navigateTab(authRoute + "/" + registerRoute);
     }
 
-    navigateTab(link: string) {
+    navigateTab(link: string): void {
         let t = this;
         t.router.navigateByUrl('/' + link);
     }
 
-    hideOrShowPassword() {
+    hideOrShowPassword(): void {
         this.showPass = !this.showPass;
     }
 

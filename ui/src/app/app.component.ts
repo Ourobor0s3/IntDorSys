@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, Renderer2 } from '@angular/core';
 import { ChildrenOutletContexts, NavigationEnd, Router } from "@angular/router";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { filter, Subscription } from "rxjs";
@@ -46,6 +46,7 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         private authService: AuthService,
         private eventService: EventService,
         private userService: UserService,
+        private renderer: Renderer2,
     ) {
         super(translate, modalService);
         this.initializeApp();
@@ -86,20 +87,20 @@ export class AppComponent extends BaseComponent implements OnDestroy {
     }
 
     private createStyle(styleName: string, preload = false): void {
-        const link = document.createElement('link');
-        link.type = 'text/css';
-        link.rel = preload ? 'preload' : 'stylesheet';
-        link.href = `${window.location.origin}/assets/css/${styleName}.css?v=${environment.appVersion}`;
+        const link = this.renderer.createElement('link');
+        this.renderer.setAttribute(link, 'type', 'text/css');
+        this.renderer.setAttribute(link, 'rel', preload ? 'preload' : 'stylesheet');
+        this.renderer.setAttribute(link, 'href', `${window.location.origin}/assets/css/${styleName}.css?v=${environment.appVersion}`);
 
         if (preload) {
-            link.as = 'style';
-            link.onload = () => { link.rel = 'stylesheet'; };
+            this.renderer.setAttribute(link, 'as', 'style');
+            link.onload = () => { this.renderer.setAttribute(link, 'rel', 'stylesheet'); };
         }
 
         link.onerror = () => {
             console.warn(`Failed to load style: ${styleName}.css`);
         };
 
-        document.head.appendChild(link);
+        this.renderer.appendChild(document.head, link);
     }
 }

@@ -13,7 +13,9 @@
       <div (click)="collapseSidebar()" class="white-overlay"></div>
       <div #sidebarBlock id="sidebar-wrapper">
         <!-- *ngIf="!!navServices", чтобы меню не появлялось до проставления класса openSidebar или colapsedSidebar -->
-        <app-sidebar *ngIf="!!navServices"></app-sidebar>
+        @if (!!navServices) {
+          <app-sidebar></app-sidebar>
+        }
       </div>
 
       <div [style.width.px]="pageBodyWidth"

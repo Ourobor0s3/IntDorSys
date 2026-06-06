@@ -22,7 +22,7 @@ namespace IntDorSys.Web.Api.Controllers
 
         [HttpPut("change-status/{userId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<DataResult<bool>> ChangeStatus(
+        public async Task<DataResult<bool>> ChangeStatusAsync(
             long userId,
             [FromBody] UserStatus newStatus,
             [FromServices] IUserCommandService service,

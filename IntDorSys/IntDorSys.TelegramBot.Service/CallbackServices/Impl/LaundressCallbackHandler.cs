@@ -102,7 +102,7 @@ else if (listCallback[1].Equals(MessageText.AllRecords)
                     case MessageKeyConstants.Back:
                         if (listCallback[1].Equals(MessageKeyConstants.Menu))
                         {
-                            await _laundBot.SendMenu(
+                            await _laundBot.SendMenuAsync(
                                 userInfo,
                                 callbackQuery.Message!.MessageId,
                                 ct);

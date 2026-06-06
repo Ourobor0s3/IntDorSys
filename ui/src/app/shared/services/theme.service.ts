@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { Subject } from 'rxjs';
 
 export type Theme = 'light' | 'dark';
@@ -11,8 +11,10 @@ export class ThemeService {
     private themeSubject = new Subject<Theme>();
     theme$ = this.themeSubject.asObservable();
     private currentTheme: Theme;
+    private renderer: Renderer2;
 
-    constructor() {
+    constructor(rendererFactory: RendererFactory2) {
+        this.renderer = rendererFactory.createRenderer(null, null);
         this.currentTheme = (localStorage.getItem(this.STORAGE_KEY) as Theme) || 'light';
         this.applyTheme(this.currentTheme);
     }
@@ -35,6 +37,6 @@ export class ThemeService {
     private applyTheme(theme: Theme): void {
         this.currentTheme = theme;
         localStorage.setItem(this.STORAGE_KEY, theme);
-        document.documentElement.setAttribute('data-bs-theme', theme);
+        this.renderer.setAttribute(document.documentElement, 'data-bs-theme', theme);
     }
 }

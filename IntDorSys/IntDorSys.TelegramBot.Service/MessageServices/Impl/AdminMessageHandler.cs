@@ -10,6 +10,7 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
     {
         private readonly IDumpService _dumpService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
+        private const string DumpCommand = "/dump";
 
         public AdminMessageHandler(IDumpService dumpService, IOptionsMonitor<AdminSettings> adminSettings)
         {
@@ -19,7 +20,7 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
 
         public async Task HandleAsync(Message message, CancellationToken ct)
         {
-            if (message.Text == "/dump")
+            if (message.Text == DumpCommand)
             {
                 await _dumpService.CreateDump(_adminSettings.CurrentValue.AdminChatId, ct);
             }

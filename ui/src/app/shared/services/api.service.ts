@@ -31,7 +31,7 @@ export class ApiService {
         return this.http.get<IResponse<T>>(apiUrl + url, { headers });
     }
 
-    async getForPreview(url: string): Promise<Observable<any>> {
+    async getForPreview(url: string): Promise<Observable<string>> {
         const headers = await this.getAuthorizationHeaders();
         return this.http.get(apiUrl + url, { headers, responseType: 'text' });
     }
@@ -41,35 +41,35 @@ export class ApiService {
         return this.http.delete<IResponse<T>>(apiUrl + url, { headers });
     }
 
-    postAnonym<T>(url: string, body: any): Observable<IResponse<T>> {
+    postAnonym<T>(url: string, body: unknown): Observable<IResponse<T>> {
         return this.http.post<IResponse<T>>(apiUrl + url, body, { headers: this.getPublicHeaders() });
     }
 
-    async post<T>(url: string, body: any): Promise<Observable<IResponse<T>>> {
+    async post<T>(url: string, body: unknown): Promise<Observable<IResponse<T>>> {
         const headers = await this.getAuthorizationHeaders();
         return this.http.post<IResponse<T>>(apiUrl + url, body, { headers });
     }
 
-    putAnonym<T>(url: string, body: any): Observable<IResponse<T>> {
+    putAnonym<T>(url: string, body: unknown): Observable<IResponse<T>> {
         return this.http.put<IResponse<T>>(apiUrl + url, body);
     }
 
-    async put<T>(url: string, body: any): Promise<Observable<IResponse<T>>> {
+    async put<T>(url: string, body: unknown): Promise<Observable<IResponse<T>>> {
         const headers = await this.getAuthorizationHeaders();
         return this.http.put<IResponse<T>>(apiUrl + url, body, { headers });
     }
 
-    async patch<T>(url: string, body: any = {}): Promise<Observable<IResponse<T>>> {
+    async patch<T>(url: string, body: unknown = {}): Promise<Observable<IResponse<T>>> {
         const headers = await this.getAuthorizationHeaders();
         return this.http.patch<IResponse<T>>(apiUrl + url, body, { headers });
     }
 
-    async upload<T>(url: string, body: any): Promise<Observable<IResponse<T>>> {
+    async upload<T>(url: string, body: unknown): Promise<Observable<IResponse<T>>> {
         const headers = await this.getAuthorizationHeaders(true);
         return this.http.post<IResponse<T>>(apiUrl + url, body, { headers });
     }
 
-    async uploadImage<T>(url: string, body: any, image: any) {
+    async uploadImage<T>(url: string, body: Record<string, unknown> | null, image: File) {
         if (!!body) {
             body.file = image;
         }
@@ -78,10 +78,10 @@ export class ApiService {
         formData.append('file', image);
 
         const headers = await this.getAuthorizationHeaders(true);
-        return this.http.put<IResponse<T>>(apiUrl + url, formData, { params: body, headers });
+        return this.http.put<IResponse<T>>(apiUrl + url, formData, { params: body as never, headers });
     }
 
-    async uploadAvatar<T>(url: string, body: any): Promise<Observable<IResponse<T>>> {
+    async uploadAvatar<T>(url: string, body: Blob): Promise<Observable<IResponse<T>>> {
         const formData = new FormData();
 
         formData.append('file', body);
@@ -90,12 +90,12 @@ export class ApiService {
     }
 
     private getPublicHeaders(isFile: boolean = false) {
-        var defaultHeaders = {
+        const defaultHeaders = {
             'Content-Type': 'application/json',
             Localization: localStorage.getItem('localization') ?? 'en',
         };
 
-        var fileHeaders = {
+        const fileHeaders = {
             Localization: localStorage.getItem('localization') ?? 'en',
         };
 

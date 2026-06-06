@@ -21,7 +21,7 @@ namespace IntDorSys.Web.Api.Controllers
         [HttpPost]
         [AllowAnonymous]
         [EnableRateLimiting("AuthLimit")]
-        public async Task<Result> Post(
+        public async Task<Result> PostAsync(
             [FromBody] NewUserRequest request,
             [FromServices] IAuthService authService)
         {

@@ -19,14 +19,14 @@ namespace IntDorSys.TelegramBot.Service
     {
         public static IServiceCollection AddBotServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Подключение сервисов
+            // Register bot services
             services
                 .AddTransient<IBaseCommandsService, BaseCommandsService>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<IAuthService, AuthService>()
                 .AddTransient<IAdminService, AdminService>();
 
-            // Подключение сервисов для определения сообщений бота
+            // Register message handler services
             services
                 .AddTransient<IMessageHandlerService, MessageHandlerService>()
                 .AddTransient<IUsersMessageHandler, UsersMessageHandler>()

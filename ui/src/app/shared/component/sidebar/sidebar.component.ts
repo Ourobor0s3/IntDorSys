@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { BaseComponent } from "../base/base.component";
 import { NavigationEnd, NavigationStart, Router } from "@angular/router";
 import { NavService, Page } from "../../services/nav.service";
@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent extends BaseComponent implements OnInit, AfterViewChecked, OnDestroy {
+    @ViewChild('sidebar', { static: false }) sidebarEl!: ElementRef;
     public getUser: () => UserInfoModel;
     isMobileMenuOpen = false;
     protected menuItems: Page[] | undefined;
@@ -27,6 +28,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         protected navService: NavService,
         private authService: AuthService,
         private translate: TranslateService,
+        private renderer: Renderer2,
     ) {
         super(translate, modalService);
         let t = this;
@@ -46,8 +48,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
                 }
             }
             if (event instanceof NavigationStart) {
-                let sidebar = document.getElementById('sidebar');
-                if (sidebar) sessionStorage.setItem('sidebarScrollY', sidebar.scrollTop.toString());
+                if (this.sidebarEl) sessionStorage.setItem('sidebarScrollY', this.sidebarEl.nativeElement.scrollTop.toString());
             }
         });
 
@@ -55,10 +56,9 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     ngAfterViewChecked(): void {
-        var scrollPosition = sessionStorage.getItem('sidebarScrollY');
-        if (!!scrollPosition) {
-            let sidebar = document.getElementById('sidebar');
-            sidebar!.scrollTop = +scrollPosition;
+        const scrollPosition = sessionStorage.getItem('sidebarScrollY');
+        if (!!scrollPosition && this.sidebarEl) {
+            this.sidebarEl.nativeElement.scrollTop = +scrollPosition;
         }
     }
 
@@ -110,17 +110,21 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
 
     toggleMobileMenu() {
         this.isMobileMenuOpen = !this.isMobileMenuOpen;
-        document.body.style.overflow = this.isMobileMenuOpen ? 'hidden' : '';
+        if (this.isMobileMenuOpen) {
+            this.renderer.setStyle(document.body, 'overflow', 'hidden');
+        } else {
+            this.renderer.removeStyle(document.body, 'overflow');
+        }
     }
 
     // Click Toggle menu
-    toggletNavActive(item: any) {
+    toggletNavActive(item: Page) {
         let t = this;
         if (item.path == t.router.url) {
             return;
         }
 
-        t.menuItems!.forEach((a): any => {
+        t.menuItems!.forEach((a) => {
             if (t.menuItems!.includes(item))
                 a.active = false
             if (!a.children) return false
@@ -140,7 +144,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         this.navService.collapseSidebar = !this.navService.collapseSidebar;
     }
 
-    trackByMenuItem(index: number, item: any): string {
-        return item.path || index;
+    trackByMenuItem(index: number, item: Page): string {
+        return item.path || String(index);
     }
 }

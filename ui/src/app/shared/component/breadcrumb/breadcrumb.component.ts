@@ -81,7 +81,7 @@ export class BreadcrumbComponent implements OnDestroy {
                     }
                 }
 
-                navService.HEADERBUTTONS.filter((item: any) => {
+                navService.HEADERBUTTONS.filter((item: HeaderButtonModel) => {
                     if (
                         item.itemTitle == t.title ||
                         item.headerTitle == t.title ||

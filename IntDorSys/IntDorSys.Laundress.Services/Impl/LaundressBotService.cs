@@ -27,6 +27,11 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly IAuditService _audit;
 
+        private const int SlotIntervalHours = 2;
+        private static readonly TimeSpan NotificationLeadHours = TimeSpan.FromHours(-3);
+        private static readonly TimeSpan NotificationFollowUpHours = TimeSpan.FromHours(-2);
+        private const string UnknownName = "неизвестно";
+
         public LaundressBotService(
             ILaundressService laund,
             IUseLaundressQueryService query,
@@ -46,7 +51,7 @@ namespace IntDorSys.Laundress.Services.Impl
         }
 
         /// <inheritdoc />
-        public async Task SendMenu(UserInfo user, int messageId = 0, CancellationToken ct = default)
+        public async Task SendMenuAsync(UserInfo user, int messageId = 0, CancellationToken ct = default)
         {
             var mes = new BotResponceMessage
             {
@@ -80,7 +85,7 @@ namespace IntDorSys.Laundress.Services.Impl
             try
             {
                 var appointments = Enumerable.Range(start, end - start + 1)
-                    .Where(i => i % 2 == 0)
+                    .Where(i => i % SlotIntervalHours == 0)
                     .Select(i =>
                     {
                         var dt = DateTime.Parse($"{date} {i}:00");
@@ -544,7 +549,7 @@ namespace IntDorSys.Laundress.Services.Impl
 
         private static string GetShortName(string? fullName)
         {
-            if (string.IsNullOrEmpty(fullName)) return "неизвестно";
+            if (string.IsNullOrEmpty(fullName)) return UnknownName;
             var parts = fullName.Split(' ');
             return parts.Length >= 2 ? $"{parts[0]} {parts[1][0]}." : parts[0];
         }
@@ -653,7 +658,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 var usersWashHours = await _db.Set<UseLaundress>()
                     .Include(x => x.SelectUser)
                     .Where(x => x.SelectUserId != null)
-                    .Where(x => x.TimeWash.AddHours(-3) >= DateTime.Now && x.TimeWash.AddHours(-2) < DateTime.Now)
+                    .Where(x => x.TimeWash.Add(NotificationLeadHours) >= DateTime.Now && x.TimeWash.Add(NotificationFollowUpHours) < DateTime.Now)
                     .Where(x => !x.IsSendHours)
                     .ToListAsync(ct);
 

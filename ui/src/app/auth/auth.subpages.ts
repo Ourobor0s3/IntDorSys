@@ -7,7 +7,7 @@ export class Subpages {
     needUpper!: boolean;
 }
 
-export var authSubpages: Subpages[] = [
+export const authSubpages: Subpages[] = [
     { title: 'Login', isActive: false, route: loginRoute, needUpper: true },
     { title: 'Register', isActive: false, route: registerRoute, needUpper: true },
 ];

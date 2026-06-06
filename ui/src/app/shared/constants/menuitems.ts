@@ -1,4 +1,4 @@
-export var menuitems: { [key: string]: string } = {
+export const menuitems: { [key: string]: string } = {
     home: 'assets/image/menuitems/home_active.svg',
     "user-info": 'assets/image/menuitems/users_active.svg',
     laundress: 'assets/image/menuitems/wash_active.svg',

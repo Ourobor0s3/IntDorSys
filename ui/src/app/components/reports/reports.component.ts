@@ -17,7 +17,7 @@ import { LoadingService } from "../../shared/services/loading.service";
 export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy {
     reportList: ReportModel[] = [];
     sortedReports: ReportModel[] = [];
-    timerId: any;
+    timerId: ReturnType<typeof setTimeout> | null;
     filter: BaseFilterModel = new BaseFilterModel();
     startDate: Date = new Date();
     endDate: Date = new Date();
@@ -63,7 +63,7 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
                 t.applySort();
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 t.setLoading(false);

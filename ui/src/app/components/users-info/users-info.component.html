@@ -18,53 +18,63 @@
     </button>
   </div>
 
-  <div *ngIf="filteredUsers == null" class="empty-state">
-    <p>{{ 'common.no_data' | lang }}</p>
-  </div>
+  @if (filteredUsers == null) {
+    <div class="empty-state">
+      <p>{{ 'common.no_data' | lang }}</p>
+    </div>
+  }
 
-  <div *ngIf="filteredUsers != null" class="table-wrapper">
-    <table class="users-table">
-      <thead>
-      <tr>
-        <th class="col-num">№</th>
-        <th class="col-name">{{ 'users.name' | lang }}</th>
-        <th class="col-telegram">{{ 'users.telegram' | lang }}</th>
-        <th class="col-group">{{ 'users.group' | lang }}</th>
-        <th class="col-room">{{ 'users.room' | lang }}</th>
-        <th class="col-status">{{ 'users.status' | lang }}</th>
-        <th class="col-action"></th>
-        <th class="col-usage">{{ 'users.usage' | lang }}</th>
-        <th class="col-date">{{ 'users.registered_date' | lang }}</th>
-        <th class="col-confirm text-center">{{ 'users.is_confirm' | lang }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let user of filteredUsers; trackBy: trackByUser; let i = index">
-        <td class="col-num">{{ i + 1 }}</td>
-        <td class="col-name cell-ellipsis" [title]="user.fullName">{{ user.fullName }}</td>
-        <td class="col-telegram">
-          <span (click)="copyText(user.username)" class="copy-link">{{ user.username }}</span>
-        </td>
-        <td class="col-group">{{ user.numGroup }}</td>
-        <td class="col-room">{{ user.numRoom }}</td>
-        <td class="col-status">
-          <span class="status-tag" [ngClass]="getStatusStyle(user.status).classname">
-            {{ 'user_status.' + user.status | lang }}
-          </span>
-        </td>
-        <td class="col-action">
-          <button class="btn btn-sm btn-outline-secondary px-2" (click)="changeStatus(user)" title="{{ 'users.block_user' | lang }}">
-            <img alt="" height="12" ngSrc="assets/image/buttons/pencil.svg" width="14"/>
-          </button>
-        </td>
-        <td class="col-usage text-center">{{ user.usageCount }}</td>
-        <td class="col-date">{{ user.registerDate }}</td>
-        <td class="col-confirm text-center">
-          <img *ngIf="user.isConfirm" alt="" height="12" ngSrc="assets/image/table_icons/check_status.svg" width="14"/>
-          <img *ngIf="!user.isConfirm" alt="" height="12" ngSrc="assets/image/table_icons/x_status.svg" width="12"/>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+  @if (filteredUsers != null) {
+    <div class="table-wrapper">
+      <table class="users-table">
+        <thead>
+        <tr>
+          <th class="col-num">№</th>
+          <th class="col-name">{{ 'users.name' | lang }}</th>
+          <th class="col-telegram">{{ 'users.telegram' | lang }}</th>
+          <th class="col-group">{{ 'users.group' | lang }}</th>
+          <th class="col-room">{{ 'users.room' | lang }}</th>
+          <th class="col-status">{{ 'users.status' | lang }}</th>
+          <th class="col-action"></th>
+          <th class="col-usage">{{ 'users.usage' | lang }}</th>
+          <th class="col-date">{{ 'users.registered_date' | lang }}</th>
+          <th class="col-confirm text-center">{{ 'users.is_confirm' | lang }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (user of filteredUsers; track $index) {
+          <tr>
+            <td class="col-num">{{ $index + 1 }}</td>
+            <td class="col-name cell-ellipsis" [title]="user.fullName">{{ user.fullName }}</td>
+            <td class="col-telegram">
+              <span (click)="copyText(user.username)" class="copy-link">{{ user.username }}</span>
+            </td>
+            <td class="col-group">{{ user.numGroup }}</td>
+            <td class="col-room">{{ user.numRoom }}</td>
+            <td class="col-status">
+              <span class="status-tag" [ngClass]="getStatusStyle(user.status).classname">
+                {{ 'user_status.' + user.status | lang }}
+              </span>
+            </td>
+            <td class="col-action">
+              <button class="btn btn-sm btn-outline-secondary px-2" (click)="changeStatus(user)" title="{{ 'users.block_user' | lang }}">
+                <img alt="" height="12" ngSrc="assets/image/buttons/pencil.svg" width="14"/>
+              </button>
+            </td>
+            <td class="col-usage text-center">{{ user.usageCount }}</td>
+            <td class="col-date">{{ user.registerDate }}</td>
+            <td class="col-confirm text-center">
+              @if (user.isConfirm) {
+                <img alt="" height="12" ngSrc="assets/image/table_icons/check_status.svg" width="14"/>
+              }
+              @if (!user.isConfirm) {
+                <img alt="" height="12" ngSrc="assets/image/table_icons/x_status.svg" width="12"/>
+              }
+            </td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>

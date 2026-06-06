@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart, registerables } from "chart.js";
 import { ChartData } from "../../model/chartData.model";
 import { TranslateService } from '@ngx-translate/core';
@@ -13,9 +13,10 @@ import { takeUntil } from 'rxjs/operators';
     styleUrls: ['./bar-chart.component.scss'],
 })
 export class BarChartComponent implements OnInit, OnDestroy {
+    @ViewChild('customChart', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
     @Input() public chartInfo: ChartData[];
 
-    public chart: any;
+    public chart: Chart | null;
     private currentTheme: 'light' | 'dark' = 'light';
     private destroy$ = new Subject<void>();
 
@@ -98,7 +99,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
             this.chart.destroy();
         }
 
-        const canvas = document.getElementById('custom-chart') as HTMLCanvasElement;
+        if (!this.canvasRef) return;
+        const canvas = this.canvasRef.nativeElement;
         this.setupCanvasDPI(canvas);
 
         const t = this.chartTheme();
@@ -179,8 +181,8 @@ export class BarChartComponent implements OnInit, OnDestroy {
             this.chart.data.datasets[0].label = allTimeRecordsLabel;
             this.chart.data.datasets[1].label = usedTimeRecordsLabel;
 
-            this.chart.options.scales.x.title.text = timeAxisLabel;
-            this.chart.options.scales.y.title.text = countAxisLabel;
+            (this.chart as any).options.scales.x.title.text = timeAxisLabel;
+            (this.chart as any).options.scales.y.title.text = countAxisLabel;
 
             this.chart.update('none');
         } else {
@@ -193,10 +195,10 @@ export class BarChartComponent implements OnInit, OnDestroy {
             const t = this.chartTheme();
             this.chart.options.scales.x.ticks.color = t.muted;
             this.chart.options.scales.x.grid.color = t.grid;
-            this.chart.options.scales.x.title.color = t.text;
+            (this.chart as any).options.scales.x.title.color = t.text;
             this.chart.options.scales.y.ticks.color = t.muted;
             this.chart.options.scales.y.grid.color = t.grid;
-            this.chart.options.scales.y.title.color = t.text;
+            (this.chart as any).options.scales.y.title.color = t.text;
             this.chart.options.plugins.legend.labels.color = t.text;
             this.chart.update('none');
         }

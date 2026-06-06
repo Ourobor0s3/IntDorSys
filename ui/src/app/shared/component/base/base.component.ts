@@ -1,4 +1,4 @@
-import { UntypedFormGroup } from "@angular/forms";
+import { AbstractControl, UntypedFormGroup } from "@angular/forms";
 import { NgbModal, NgbModalOptions, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModal } from "../modals/confirm";
 import { ModalInfoModel } from "../../model/modalInfo.model";
@@ -7,6 +7,7 @@ import { BsDatepickerConfig } from "ngx-bootstrap/datepicker";
 import { formatDate } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '../../services/loading.service';
+import { Renderer2 } from '@angular/core';
 
 export abstract class BaseComponent {
 
@@ -24,6 +25,7 @@ export abstract class BaseComponent {
         protected translateBase: TranslateService,
         protected modalServiceBase: NgbModal,
         protected loadingService?: LoadingService,
+        protected rendererBase?: Renderer2,
     ) {
     }
 
@@ -42,11 +44,11 @@ export abstract class BaseComponent {
         });
     }
 
-    public elemIsInvalid(elem: any): boolean {
+    public elemIsInvalid(elem: AbstractControl): boolean {
         return elem.dirty && !elem.untouched && elem.invalid;
     }
 
-    public textErrorStr(elem: any, namepattern = null) {
+    public textErrorStr(elem: AbstractControl, namepattern: RegExp | null = null): string {
         if (this.elemIsInvalid(elem)) {
             let customError = Object.getOwnPropertyNames(elem.errors);
             return elem.errors.required ? this.translateBase.instant("errors.required") :
@@ -178,7 +180,7 @@ export abstract class BaseComponent {
     }
 
     // if system error return true
-    protected showResponseError(response: any, title: string = null): boolean {
+    protected showResponseError(response: { errors?: Array<{ message: string }>; error?: string | { errors?: Array<{ message: string }>; error?: string; error_description?: string }; status?: number } | null, title: string | null = null): boolean {
 
         if (!response || !response.error && !response.errors || response.status === 401) {
             return false;
@@ -309,11 +311,17 @@ export abstract class BaseComponent {
      */
     protected showToast(message: string, duration: number = 3000): void {
         const cachedMessage = this.getCachedTranslation(message);
-        const toast = document.createElement('div');
+        const toast = this.rendererBase
+            ? this.rendererBase.createElement('div')
+            : document.createElement('div');
         toast.textContent = cachedMessage;
         toast.className = 'toast-notification';
 
-        document.body.appendChild(toast);
+        if (this.rendererBase) {
+            this.rendererBase.appendChild(document.body, toast);
+        } else {
+            document.body.appendChild(toast);
+        }
 
         requestAnimationFrame(() => {
             toast.classList.add('show');
@@ -322,7 +330,11 @@ export abstract class BaseComponent {
         setTimeout(() => {
             toast.classList.remove('show');
             toast.addEventListener('transitionend', () => {
-                toast.remove();
+                if (this.rendererBase) {
+                    this.rendererBase.removeChild(document.body, toast);
+                } else {
+                    toast.remove();
+                }
             });
         }, duration);
     }

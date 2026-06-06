@@ -1,37 +1,53 @@
 <div class="page-content">
-  <div *ngIf="items.length === 0" class="empty-state">
-    <p>{{ 'common.no_data' | lang }}</p>
-  </div>
+  @if (items.length === 0) {
+    <div class="empty-state">
+      <p>{{ 'common.no_data' | lang }}</p>
+    </div>
+  }
 
-  <div *ngIf="items.length > 0" class="table-wrapper">
-    <table class="users-table">
-      <thead>
-        <tr>
-          <th>{{ 'settings.key' | lang }}</th>
-          <th>{{ 'settings.value' | lang }}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of items">
-          <td class="small text-nowrap"><code>{{ item.key }}</code></td>
-          <td class="small">
-            <span *ngIf="!item.editing" (dblclick)="editItem(item)" style="cursor:pointer; white-space:pre-line;">{{ item.value }}</span>
-            <textarea *ngIf="item.editing" class="form-control form-control-sm" [(ngModel)]="item.value" rows="4"></textarea>
-          </td>
-          <td class="text-nowrap">
-            <button *ngIf="!item.editing" (click)="editItem(item)" class="btn btn-sm btn-outline-secondary me-1" type="button">
-              {{ 'common.edit' | lang }}
-            </button>
-            <button *ngIf="item.editing" (click)="saveItem(item)" [disabled]="saving" class="btn btn-sm btn-primary me-1" type="button">
-              {{ 'common.save' | lang }}
-            </button>
-            <button *ngIf="item.editing" (click)="cancelEdit(item)" class="btn btn-sm btn-outline-secondary" type="button">
-              {{ 'common.cancel' | lang }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  @if (items.length > 0) {
+    <div class="table-wrapper">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>{{ 'settings.key' | lang }}</th>
+            <th>{{ 'settings.value' | lang }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items; track item) {
+            <tr>
+              <td class="small text-nowrap"><code>{{ item.key }}</code></td>
+              <td class="small">
+                @if (!item.editing) {
+                  <span (dblclick)="editItem(item)" style="cursor:pointer; white-space:pre-line;">{{ item.value }}</span>
+                }
+                @if (item.editing) {
+                  <textarea class="form-control form-control-sm" [(ngModel)]="item.value" rows="4"></textarea>
+                }
+              </td>
+              <td class="text-nowrap">
+                @if (!item.editing) {
+                  <button (click)="editItem(item)" class="btn btn-sm btn-outline-secondary me-1" type="button">
+                    {{ 'common.edit' | lang }}
+                  </button>
+                }
+                @if (item.editing) {
+                  <button (click)="saveItem(item)" [disabled]="saving" class="btn btn-sm btn-primary me-1" type="button">
+                    {{ 'common.save' | lang }}
+                  </button>
+                }
+                @if (item.editing) {
+                  <button (click)="cancelEdit(item)" class="btn btn-sm btn-outline-secondary" type="button">
+                    {{ 'common.cancel' | lang }}
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>

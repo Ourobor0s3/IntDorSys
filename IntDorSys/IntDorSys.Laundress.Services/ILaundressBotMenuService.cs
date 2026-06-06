@@ -6,7 +6,7 @@ namespace IntDorSys.Laundress.Services
     public interface ILaundressBotMenuService
     {
         /// <summary>Sends the main laundry menu inline keyboard.</summary>
-        Task SendMenu(UserInfo user, int messageId = 0, CancellationToken ct = default);
+        Task SendMenuAsync(UserInfo user, int messageId = 0, CancellationToken ct = default);
 
         /// <summary>Sends a list of all time slots (occupied + free).</summary>
         Task SendAllTimeAsync(long chatId, int messageId = 0, CancellationToken ct = default);

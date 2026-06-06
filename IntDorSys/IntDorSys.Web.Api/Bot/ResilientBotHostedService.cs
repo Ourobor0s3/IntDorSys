@@ -45,7 +45,7 @@ namespace IntDorSys.Web.Api.Bot
         private async Task RunAsync(CancellationToken globalCt)
         {
             _logger.LogInformation("Bot host starting — initial connect attempt");
-            await TryStartBot(globalCt);
+            await TryStartBotAsync(globalCt);
 
             using var retryTimer = new PeriodicTimer(RetryInterval);
             using var restartTimer = new PeriodicTimer(RestartInterval);
@@ -63,14 +63,14 @@ namespace IntDorSys.Web.Api.Bot
                         if (!_botRunning)
                         {
                             _logger.LogWarning("Bot not running — retrying connection");
-                            await TryStartBot(globalCt);
+                            await TryStartBotAsync(globalCt);
                         }
                     }
                     else if (completed == restartTask && _botRunning)
                     {
                         _logger.LogInformation("5-hour scheduled restart");
-                        await StopBot();
-                        await TryStartBot(globalCt);
+                        await StopBotAsync();
+                        await TryStartBotAsync(globalCt);
                     }
                 }
             }
@@ -80,7 +80,7 @@ namespace IntDorSys.Web.Api.Bot
             }
         }
 
-        private async Task TryStartBot(CancellationToken globalCt)
+        private async Task TryStartBotAsync(CancellationToken globalCt)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace IntDorSys.Web.Api.Bot
             return Task.CompletedTask;
         }
 
-        private async Task StopBot()
+        private async Task StopBotAsync()
         {
             _logger.LogInformation("Stopping bot...");
             _botRunning = false;
@@ -190,7 +190,7 @@ namespace IntDorSys.Web.Api.Bot
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             _globalCts?.Cancel();
-            await StopBot();
+            await StopBotAsync();
         }
 
         public void Dispose()

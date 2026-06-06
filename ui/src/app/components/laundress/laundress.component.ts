@@ -4,7 +4,7 @@ import { LaundressService } from "../../shared/services/laundress.service";
 import { LaundressModel, PageLaundressModel } from "../../shared/model/laundress.model";
 import { DataReloadService } from "../../shared/services/dataReload.service";
 import { Subject, takeUntil } from "rxjs";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
 import { TranslateService } from '@ngx-translate/core';
 import { UsersInfoService } from "../../shared/services/user-info.service";
@@ -20,7 +20,7 @@ import { LoadingService } from "../../shared/services/loading.service";
 })
 export class LaundressComponent extends BaseComponent implements OnInit, OnDestroy {
     laundList?: PageLaundressModel[];
-    timerId: any;
+    timerId: ReturnType<typeof setTimeout> | null;
     filter: BaseFilterModel = new BaseFilterModel();
     isAutoRefresh: boolean = true;
     startDate: Date = new Date();
@@ -107,7 +107,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
             .catch(err => console.error(err));
     }
 
-    openCreateModal(content: any) {
+    openCreateModal(content: unknown) {
         let now = new Date();
         this.newTimeWashDate = now.toISOString().split('T')[0];
         this.newTimeRangeStartHour = 8;
@@ -115,7 +115,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.modal.open(content, { centered: true, backdrop: 'static', size: 'md' });
     }
 
-    createTimeSlotRange(modal: any) {
+    createTimeSlotRange(modal: NgbModalRef) {
         let t = this;
         let userId = t.userService.user?.id;
 
@@ -137,7 +137,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
             .catch(err => t.showResponseError(err));
     }
 
-    openBookModal(content: any, timeWash: string) {
+    openBookModal(content: unknown, timeWash: string) {
         this.selectedTimeWash = timeWash;
         this.selectedUserId = 0;
         if (this.users.length === 0) {
@@ -146,7 +146,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.modal.open(content, { centered: true, backdrop: 'static', size: 'md' });
     }
 
-    bookUser(modal: any) {
+    bookUser(modal: NgbModalRef) {
         let t = this;
         if (t.selectedUserId <= 0) {
             t.showError(t.translate.instant('laundress.select_user_required'));
@@ -231,19 +231,19 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.destroy$.complete();
     }
 
-    trackByDate(index: number, item: any): string {
-        return item.date || index;
+    trackByDate(index: number, item: PageLaundressModel): string {
+        return item.date || String(index);
     }
 
-    trackBySlot(index: number, item: any): string {
-        return item.timeWash || index;
+    trackBySlot(index: number, item: LaundressModel): string {
+        return item.timeWash || String(index);
     }
 
-    trackByUser(index: number, item: any): string {
-        return item.id || index;
+    trackByUser(index: number, item: UserInfoModel): string {
+        return String(item.id || index);
     }
 
-    trackByHour(index: number, item: any): number {
+    trackByHour(index: number, item: number): number {
         return item;
     }
 }

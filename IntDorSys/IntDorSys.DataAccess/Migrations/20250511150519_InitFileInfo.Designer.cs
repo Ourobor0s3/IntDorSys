@@ -18,7 +18,7 @@ namespace IntDorSys.DataAccess.Migrations
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-#pragma warning disable 612, 618
+
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
@@ -354,7 +354,7 @@ namespace IntDorSys.DataAccess.Migrations
 
                     b.Navigation("SelectUser");
                 });
-#pragma warning restore 612, 618
+
         }
     }
 }

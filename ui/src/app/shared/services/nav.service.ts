@@ -8,7 +8,7 @@ import { HeaderButtonModel } from "../model/headerButton.model";
 export interface Page {
     path?: string;
     title?: string;
-    icon?: any;
+    icon?: string;
     image?: string;
     type?: string;
     badgeType?: string;
@@ -27,12 +27,12 @@ export interface Page {
     providedIn: 'root',
 })
 export class NavService {
-    public screenWidth: any;
+    public screenWidth: number;
     public collapseSidebar: boolean = true;
     public collapseHeaderInfo: boolean = false;
     menuitems = menuitems;
-    public currentUrl: any;
-    public previousUrl: any;
+    public currentUrl: string;
+    public previousUrl: string;
     MainPages: Page[] = [
         {
             path: '/' + overviewRoute,

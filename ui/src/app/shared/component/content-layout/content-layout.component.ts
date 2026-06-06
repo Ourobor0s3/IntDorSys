@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChildrenOutletContexts, Router } from "@angular/router";
 import { NavService } from "../../services/nav.service";
 import { transition, trigger, useAnimation } from "@angular/animations";
@@ -17,6 +17,8 @@ import { Subject, takeUntil } from "rxjs";
     ],
 })
 export class ContentLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild('sidebarBlock', { static: false }) sidebarBlockEl!: ElementRef;
+    @ViewChild('pageBodyWrapper', { static: false }) pageBodyWrapperEl!: ElementRef;
     pageBodyWidth: number = 0;
     private destroy$ = new Subject<void>();
 
@@ -50,17 +52,14 @@ export class ContentLayoutComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     @HostListener('window:resize', ['$event'])
-    onResize(event?: any) {
+    onResize(event?: Event) {
         this.calculatePageBodyWrapperWidth();
     }
 
     // пересчет размеров pageBodyWrapper
     calculatePageBodyWrapperWidth() {
-        const sidebarBlock = document.getElementById('sidebar-wrapper');
-        const pageBodyWrapper = document.getElementById('pageBodyWrapper');
-
-        if (sidebarBlock && pageBodyWrapper) {
-            this.pageBodyWidth = pageBodyWrapper.offsetWidth - sidebarBlock.offsetWidth;
+        if (this.sidebarBlockEl && this.pageBodyWrapperEl) {
+            this.pageBodyWidth = this.pageBodyWrapperEl.nativeElement.offsetWidth - this.sidebarBlockEl.nativeElement.offsetWidth;
             this.cdr.detectChanges();
         }
     }

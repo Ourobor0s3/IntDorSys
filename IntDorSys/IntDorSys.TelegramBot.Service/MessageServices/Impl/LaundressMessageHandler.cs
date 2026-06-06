@@ -39,7 +39,7 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
 
                     if (userMessage.Equals(MessageKeyConstants.Menu))
                     {
-                        await _laundBot.SendMenu(userInfo, ct: ct);
+                        await _laundBot.SendMenuAsync(userInfo, ct: ct);
                     }
                     else if (userMessage.Equals(MessageText.AllFreeRecords))
                     {

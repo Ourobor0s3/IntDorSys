@@ -28,107 +28,125 @@
       <button (click)="searchTimeLaund()" class="btn btn-sm btn-primary px-3" type="button">
         {{ 'laundress.filter' | lang }}
       </button>
-      <button *ngIf="isAdmin" (click)="exportExcel()" class="btn btn-sm btn-outline-secondary" title="Export XLSX" type="button">
-        XLSX
-      </button>
-      <button *ngIf="isAdmin"
+      @if (isAdmin) {
+        <button (click)="exportExcel()" class="btn btn-sm btn-outline-secondary" title="Export XLSX" type="button">
+          XLSX
+        </button>
+      }
+      @if (isAdmin) {
+        <button
               (click)="toggleEditMode()"
               [class.btn-outline-primary]="!isEditMode"
               [class.btn-primary]="isEditMode"
               class="btn btn-sm" type="button">
-        {{ (isEditMode ? 'laundress.edit_mode_on' : 'laundress.edit_mode_off') | lang }}
-      </button>
+          {{ (isEditMode ? 'laundress.edit_mode_on' : 'laundress.edit_mode_off') | lang }}
+        </button>
+      }
     </div>
   </div>
 
   <!-- Edit toolbar -->
-  <div *ngIf="isEditMode" class="edit-toolbar">
-    <button (click)="openCreateModal(createModal)" class="btn btn-sm btn-success" type="button">
-      + {{ 'laundress.add_time_slot' | lang }}
-    </button>
-    <span class="text-muted ms-2 small">{{ 'laundress.edit_hint' | lang }}</span>
-  </div>
+  @if (isEditMode) {
+    <div class="edit-toolbar">
+      <button (click)="openCreateModal(createModal)" class="btn btn-sm btn-success" type="button">
+        + {{ 'laundress.add_time_slot' | lang }}
+      </button>
+      <span class="text-muted ms-2 small">{{ 'laundress.edit_hint' | lang }}</span>
+    </div>
+  }
 
   <!-- Loading / Empty states -->
-  <div *ngIf="laundList == null" class="empty-state">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">{{ 'common.loading' | lang }}</span>
+  @if (laundList == null) {
+    <div class="empty-state">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">{{ 'common.loading' | lang }}</span>
+      </div>
     </div>
-  </div>
-  <div *ngIf="laundList && laundList.length === 0" class="empty-state">
-    <p class="text-muted">{{ 'common.no_data' | lang }}</p>
-  </div>
+  }
+  @if (laundList && laundList.length === 0) {
+    <div class="empty-state">
+      <p class="text-muted">{{ 'common.no_data' | lang }}</p>
+    </div>
+  }
 
   <!-- Cards grid -->
-  <div *ngIf="laundList && laundList.length > 0" class="cards-grid">
-    <div *ngFor="let laund of laundList; trackBy: trackByDate" class="day-card">
-      <div class="card-header-custom">
-        {{ laund.date }}
-        <span class="badge bg-light text-secondary rounded-pill fw-normal">{{ laund.laundModels?.length || 0 }} slots</span>
-      </div>
-      <div class="card-body-custom">
-        <ng-container *ngIf="!laund.laundModels || laund.laundModels.length === 0">
-          <div class="text-center py-3">
-            <p class="text-muted small mb-0">{{ 'common.no_data' | lang }}</p>
+  @if (laundList && laundList.length > 0) {
+    <div class="cards-grid">
+      @for (laund of laundList; track $index) {
+        <div class="day-card">
+          <div class="card-header-custom">
+            {{ laund.date }}
+            <span class="badge bg-light text-secondary rounded-pill fw-normal">{{ laund.laundModels?.length || 0 }} slots</span>
           </div>
-        </ng-container>
-        <div *ngFor="let l of laund.laundModels; trackBy: trackBySlot" class="slot-row"
-             [class.slot-expired]="isSlotExpired(l.timeWash)"
-             [class.slot-editing]="isEditMode && !isSlotExpired(l.timeWash)">
-          <!-- Time -->
-          <div class="slot-time">
-            <span class="time-badge">{{ l.timeWash | date:'HH:mm' }}</span>
-          </div>
+          <div class="card-body-custom">
+            @if (!laund.laundModels || laund.laundModels.length === 0) {
+              <div class="text-center py-3">
+                <p class="text-muted small mb-0">{{ 'common.no_data' | lang }}</p>
+              </div>
+            }
+            @for (l of laund.laundModels; track $index) {
+              <div class="slot-row"
+                   [class.slot-expired]="isSlotExpired(l.timeWash)"
+                   [class.slot-editing]="isEditMode && !isSlotExpired(l.timeWash)">
+                <!-- Time -->
+                <div class="slot-time">
+                  <span class="time-badge">{{ l.timeWash | date:'HH:mm' }}</span>
+                </div>
 
-          <!-- User / Status -->
-          <div class="slot-info">
-            <ng-container *ngIf="l.selectUser; else freeSlot">
-              <div class="user-avatar" [title]="l.selectUser.fullName || l.selectUser.username">
-                {{ (l.selectUser.fullName || l.selectUser.username || '?') | slice:0:1 | uppercase }}
-              </div>
-              <div class="user-details">
-                <span class="user-name">{{ l.selectUser.fullName || l.selectUser.username }}</span>
-                <span class="user-meta" *ngIf="l.selectUser.numGroup">{{ l.selectUser.numRoom }}</span>
-              </div>
-              <span class="status-dot dot-occupied"></span>
-              <span class="status-text">{{ 'laundress.in_use' | lang }}</span>
-            </ng-container>
-            <ng-template #freeSlot>
-              <div class="user-avatar avatar-free">+</div>
-              <div class="user-details">
-                <span class="user-name user-name-free">{{ 'laundress.free' | lang }}</span>
-              </div>
-              <span class="status-dot dot-free"></span>
-              <span class="status-text">{{ 'laundress.available' | lang }}</span>
-            </ng-template>
-          </div>
+                <!-- User / Status -->
+                <div class="slot-info">
+                  @if (l.selectUser) {
+                    <div class="user-avatar" [title]="l.selectUser.fullName || l.selectUser.username">
+                      {{ (l.selectUser.fullName || l.selectUser.username || '?') | slice:0:1 | uppercase }}
+                    </div>
+                    <div class="user-details">
+                      <span class="user-name">{{ l.selectUser.fullName || l.selectUser.username }}</span>
+                      @if (l.selectUser.numGroup) {
+                        <span class="user-meta">{{ l.selectUser.numRoom }}</span>
+                      }
+                    </div>
+                    <span class="status-dot dot-occupied"></span>
+                    <span class="status-text">{{ 'laundress.in_use' | lang }}</span>
+                  } @else {
+                    <div class="user-avatar avatar-free">+</div>
+                    <div class="user-details">
+                      <span class="user-name user-name-free">{{ 'laundress.free' | lang }}</span>
+                    </div>
+                    <span class="status-dot dot-free"></span>
+                    <span class="status-text">{{ 'laundress.available' | lang }}</span>
+                  }
+                </div>
 
-          <!-- Edit actions (admin only) -->
-          <div *ngIf="isEditMode && !isSlotExpired(l.timeWash)" class="slot-actions">
-            <ng-container *ngIf="!l.selectUser; else occupiedActions">
-              <button (click)="openBookModal(bookModal, l.timeWash)"
-                      class="btn btn-sm btn-outline-success"
-                      title="{{ 'laundress.book' | lang }}">
-                {{ 'laundress.book' | lang }}
-              </button>
-            </ng-container>
-            <ng-template #occupiedActions>
-              <button (click)="confirmUnbook(l.timeWash, l.selectUser.id)"
-                      class="btn btn-sm btn-outline-warning"
-                      title="{{ 'laundress.unbook' | lang }}">
-                {{ 'laundress.unbook' | lang }}
-              </button>
-            </ng-template>
-            <button (click)="confirmDelete(l.timeWash)"
-                    class="btn btn-sm btn-outline-danger"
-                    title="{{ 'common.delete' | lang }}">
-              {{ 'common.delete' | lang }}
-            </button>
+                <!-- Edit actions (admin only) -->
+                @if (isEditMode && !isSlotExpired(l.timeWash)) {
+                  <div class="slot-actions">
+                    @if (!l.selectUser) {
+                      <button (click)="openBookModal(bookModal, l.timeWash)"
+                              class="btn btn-sm btn-outline-success"
+                              title="{{ 'laundress.book' | lang }}">
+                        {{ 'laundress.book' | lang }}
+                      </button>
+                    } @else {
+                      <button (click)="confirmUnbook(l.timeWash, l.selectUser.id)"
+                              class="btn btn-sm btn-outline-warning"
+                              title="{{ 'laundress.unbook' | lang }}">
+                        {{ 'laundress.unbook' | lang }}
+                      </button>
+                    }
+                    <button (click)="confirmDelete(l.timeWash)"
+                            class="btn btn-sm btn-outline-danger"
+                            title="{{ 'common.delete' | lang }}">
+                      {{ 'common.delete' | lang }}
+                    </button>
+                  </div>
+                }
+              </div>
+            }
           </div>
         </div>
-      </div>
+      }
     </div>
-  </div>
+  }
 </div>
 
 <!-- Create Time Slot Range Modal -->
@@ -146,13 +164,17 @@
       <div class="col">
         <label class="form-label fw-medium">{{ 'laundress.hour_from' | lang }}</label>
         <select [(ngModel)]="newTimeRangeStartHour" class="form-select">
-          <option *ngFor="let h of evenHours; trackBy: trackByHour" [value]="h">{{ h }}:00</option>
+          @for (h of evenHours; track $index) {
+            <option [value]="h">{{ h }}:00</option>
+          }
         </select>
       </div>
       <div class="col">
         <label class="form-label fw-medium">{{ 'laundress.hour_to' | lang }}</label>
         <select [(ngModel)]="newTimeRangeEndHour" class="form-select">
-          <option *ngFor="let h of evenHours; trackBy: trackByHour" [value]="h">{{ h }}:00</option>
+          @for (h of evenHours; track $index) {
+            <option [value]="h">{{ h }}:00</option>
+          }
         </select>
       </div>
     </div>
@@ -175,7 +197,9 @@
       <label class="form-label fw-medium">{{ 'laundress.select_user' | lang }}</label>
       <select [(ngModel)]="selectedUserId" class="form-select">
         <option [value]="0">{{ 'laundress.select_user_placeholder' | lang }}</option>
-        <option *ngFor="let u of users; trackBy: trackByUser" [value]="u.id">{{ u.fullName || u.username }}</option>
+        @for (u of users; track $index) {
+          <option [value]="u.id">{{ u.fullName || u.username }}</option>
+        }
       </select>
     </div>
   </div>

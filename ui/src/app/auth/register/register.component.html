@@ -36,11 +36,12 @@
           type="email"
         >
       </div>
-      <div *ngIf="elemIsInvalid(regForm.controls.email)"
-           class="invalid-feedback d-block"
-           id="email-error">
-        {{ textErrorStr(regForm.controls.email) | lang }}
-      </div>
+      @if (elemIsInvalid(regForm.controls.email)) {
+        <div class="invalid-feedback d-block"
+             id="email-error">
+          {{ textErrorStr(regForm.controls.email) | lang }}
+        </div>
+      }
     </div>
 
     <div class="form-group mb-3">
@@ -74,11 +75,12 @@
           >
         </button>
       </div>
-      <div *ngIf="elemIsInvalid(regForm.controls.password)"
-           class="invalid-feedback d-block"
-           id="pass-error">
-        {{ textErrorStr(regForm.controls.password, passwordPattern) | lang }}
-      </div>
+      @if (elemIsInvalid(regForm.controls.password)) {
+        <div class="invalid-feedback d-block"
+             id="pass-error">
+          {{ textErrorStr(regForm.controls.password, passwordPattern) | lang }}
+        </div>
+      }
     </div>
 
     <div class="form-group mb-4">
@@ -112,11 +114,12 @@
           >
         </button>
       </div>
-      <div *ngIf="elemIsInvalid(regForm.controls.passwordConfirm)"
-           class="invalid-feedback d-block"
-           id="pass-confirm-error">
-        {{ textErrorStr(regForm.controls.passwordConfirm, passwordPattern) | lang }}
-      </div>
+      @if (elemIsInvalid(regForm.controls.passwordConfirm)) {
+        <div class="invalid-feedback d-block"
+             id="pass-confirm-error">
+          {{ textErrorStr(regForm.controls.passwordConfirm, passwordPattern) | lang }}
+        </div>
+      }
     </div>
 
     <div class="d-grid gap-2">

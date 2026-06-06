@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { overviewRoute } from "../../constants/routes";
@@ -45,6 +45,7 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         private eventService: EventService,
         private themeService: ThemeService,
         private loading: LoadingService,
+        private renderer: Renderer2,
     ) {
         super(translate, modalService, loading);
         const t = this;
@@ -184,7 +185,11 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
 
     toggleMobileMenu() {
         this.isMobileMenuOpen = !this.isMobileMenuOpen;
-        document.body.style.overflow = this.isMobileMenuOpen ? 'hidden' : '';
+        if (this.isMobileMenuOpen) {
+            this.renderer.setStyle(document.body, 'overflow', 'hidden');
+        } else {
+            this.renderer.removeStyle(document.body, 'overflow');
+        }
     }
 
     private initializeLanguage(): void {

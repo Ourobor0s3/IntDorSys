@@ -20,7 +20,7 @@ namespace IntDorSys.Web.Api.Controllers
         /// <param name="tokenService">Generates token by user data</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<DataResult<AuthToken>> Post(
+        public async Task<DataResult<AuthToken>> PostAsync(
             [FromBody] TokenRequest request,
             [FromServices] IAuthService authService,
             [FromServices] ITokenService tokenService)

@@ -4,15 +4,17 @@ namespace IntDorSys.Web.Api.Bot
 {
     internal static class BotConnectivityCheck
     {
-        private const int TimeoutMs = 3000;
+        private const string TelegramApiHost = "api.telegram.org";
+        private const int TelegramApiPort = 443;
+        private const int TelegramConnectTimeoutMs = 3000;
 
         internal static bool IsTelegramReachable()
         {
             try
             {
                 using var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                var result = socket.BeginConnect("api.telegram.org", 443, null, null);
-                return result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(TimeoutMs)) && socket.Connected;
+                var result = socket.BeginConnect(TelegramApiHost, TelegramApiPort, null, null);
+                return result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(TelegramConnectTimeoutMs)) && socket.Connected;
             }
             catch
             {

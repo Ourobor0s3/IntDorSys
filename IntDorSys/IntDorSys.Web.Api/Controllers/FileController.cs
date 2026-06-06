@@ -11,7 +11,7 @@ namespace IntDorSys.Web.Api.Controllers
     {
         [AllowAnonymous]
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> Get(
+        public async Task<IActionResult> GetAsync(
             Guid id,
             [FromServices] IFileService fileService)
         {

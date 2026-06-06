@@ -34,48 +34,61 @@
     </div>
   </div>
 
-  <div *ngIf="sortedReports.length === 0" class="empty-state">
-    <p class="text-muted">{{ 'common.no_data' | lang }}</p>
-  </div>
-
-  <div *ngIf="sortedReports.length > 0" class="reports-grid">
-    <div *ngFor="let report of sortedReports; trackBy: trackByReport; let i = index" class="report-card">
-      <div class="report-card-body">
-        <div class="fw-semibold small text-primary text-truncate">{{ report.username }}</div>
-
-         <div *ngIf="report.files && report.files.length > 0; else noPhotos" class="d-flex flex-wrap gap-2">
-          <img *ngFor="let file of report.files; trackBy: trackByFile; let j = index"
-               [src]="file.filePath" alt="report photo"
-               class="report-thumb" (click)="openLightbox(report, j)" />
-        </div>
-        <ng-template #noPhotos>
-          <div class="text-center py-3 text-muted small">{{ 'reports.no_photos' | lang }}</div>
-        </ng-template>
-
-        <div class="report-description">{{ report.description }}</div>
-        <div class="small text-end text-muted mt-auto">{{ report.createdAt | date:"d.MM.yyyy HH:mm" }}</div>
-      </div>
+  @if (sortedReports.length === 0) {
+    <div class="empty-state">
+      <p class="text-muted">{{ 'common.no_data' | lang }}</p>
     </div>
-  </div>
+  }
+
+  @if (sortedReports.length > 0) {
+    <div class="reports-grid">
+      @for (report of sortedReports; track $index) {
+        <div class="report-card">
+          <div class="report-card-body">
+            <div class="fw-semibold small text-primary text-truncate">{{ report.username }}</div>
+
+            @if (report.files && report.files.length > 0) {
+              <div class="d-flex flex-wrap gap-2">
+                @for (file of report.files; track $index) {
+                  <img [src]="file.filePath" alt="report photo"
+                       class="report-thumb" (click)="openLightbox(report, $index)" />
+                }
+              </div>
+            } @else {
+              <div class="text-center py-3 text-muted small">{{ 'reports.no_photos' | lang }}</div>
+            }
+
+            <div class="report-description">{{ report.description }}</div>
+            <div class="small text-end text-muted mt-auto">{{ report.createdAt | date:"d.MM.yyyy HH:mm" }}</div>
+          </div>
+        </div>
+      }
+    </div>
+  }
 
   <!-- Lightbox -->
-  <div *ngIf="lightboxReport" class="lightbox-backdrop" (click)="closeLightbox()"></div>
-  <div *ngIf="lightboxReport" class="lightbox-modal card">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="fw-semibold">{{ lightboxReport.username }}</div>
-        <button type="button" class="btn-close" (click)="closeLightbox()"></button>
-      </div>
-      <img [src]="lightboxReport.files[lightboxIndex].filePath" alt="preview" class="lightbox-img" />
-      <div *ngIf="lightboxReport.files.length > 1" class="d-flex justify-content-between align-items-center mt-3">
-        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="lightboxPrev()">
-          {{ 'reports.prev' | lang }}
-        </button>
-        <span class="text-muted">{{ lightboxIndex + 1 }} / {{ lightboxReport.files.length }}</span>
-        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="lightboxNext()">
-          {{ 'reports.next' | lang }}
-        </button>
+  @if (lightboxReport) {
+    <div class="lightbox-backdrop" (click)="closeLightbox()"></div>
+  }
+  @if (lightboxReport) {
+    <div class="lightbox-modal card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="fw-semibold">{{ lightboxReport.username }}</div>
+          <button type="button" class="btn-close" (click)="closeLightbox()"></button>
+        </div>
+        <img [src]="lightboxReport.files[lightboxIndex].filePath" alt="preview" class="lightbox-img" />
+        @if (lightboxReport.files.length > 1) {
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="lightboxPrev()">
+              {{ 'reports.prev' | lang }}
+            </button>
+            <span class="text-muted">{{ lightboxIndex + 1 }} / {{ lightboxReport.files.length }}</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="lightboxNext()">
+              {{ 'reports.next' | lang }}
+            </button>
+          </div>
+        }
       </div>
     </div>
-  </div>
-</div>
+  }

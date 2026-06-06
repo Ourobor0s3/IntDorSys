@@ -74,7 +74,7 @@ namespace IntDorSys.Laundress.Services.Impl
             DateTime? startDate = null;
             DateTime? endDate = null;
 
-            // Обработка входных дат в UTC
+            // Parse input dates in UTC
             if (!string.IsNullOrWhiteSpace(filter?.StartDate) &&
                 DateTime.TryParse(filter.StartDate,
                     null,
@@ -93,7 +93,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 endDate = parsedEnd.Date.AddDays(2).AddTicks(-1);
             }
 
-            // Получение файлов
+            // Fetch files
             var filesQuery = _db.Set<FileInfo>()
                 .AsNoTracking()
                 .Where(x => !string.IsNullOrEmpty(x.GroupId));
@@ -121,7 +121,7 @@ namespace IntDorSys.Laundress.Services.Impl
                     .GroupBy(f => f.GroupId)
                     .ToDictionary(g => g.Key!, g => g.ToList());
 
-            // Получение отчётов
+            // Fetch reports
             var reportsQuery = _db.Set<Report>()
                 .Include(x => x.User)
                 .AsNoTracking();

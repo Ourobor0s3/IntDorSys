@@ -25,7 +25,7 @@ namespace IntDorSys.Web.Api
 
             var isBattle = !builder.Configuration.GetValue<bool>("BuildTest");
 
-            // Для убирания зависимости от часовых поясов
+            // Remove dependency on time zones for legacy timestamp behavior
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             builder

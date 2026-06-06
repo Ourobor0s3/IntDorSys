@@ -1,5 +1,5 @@
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
@@ -20,16 +20,17 @@ export class ResultModal implements OnInit, OnDestroy {
     constructor(
         public activeModal: NgbActiveModal,
         private sanitizer: DomSanitizer,
+        private renderer: Renderer2,
     ) {
     }
 
     ngOnInit() {
         this.descriptionHTML = this.sanitizer.bypassSecurityTrustHtml(this.description);
-        document.body.classList.add('modal-open-scroll-lock');
+        this.renderer.addClass(document.body, 'modal-open-scroll-lock');
     }
 
     ngOnDestroy(): void {
-        document.body.classList.remove('modal-open-scroll-lock');
+        this.renderer.removeClass(document.body, 'modal-open-scroll-lock');
     }
 
     public closeModal(resp: boolean) {

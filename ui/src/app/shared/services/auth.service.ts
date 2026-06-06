@@ -4,6 +4,7 @@ import { authRoute, loginRoute } from "../constants/routes";
 import { Credentials, TokenService } from "./token.service";
 import { EventService } from "./event.service";
 import { UserService } from "./user.service";
+import { UserInfoModel } from "../model/userInfo.model";
 import { tap } from "rxjs";
 
 export interface User {
@@ -21,7 +22,7 @@ interface AuthData {
     providedIn: 'root',
 })
 export class AuthService {
-    public userData: any;
+    public userData: UserInfoModel | null;
     public showLoader: boolean = false;
 
     constructor(
@@ -32,7 +33,7 @@ export class AuthService {
     ) {
     }
 
-    private static _authData: any;
+    private static _authData: AuthData | null;
 
     get authData() {
         if (!AuthService._authData) {
