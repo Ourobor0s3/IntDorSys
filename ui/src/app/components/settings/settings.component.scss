@@ -1,0 +1,12 @@
+.settings-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    max-width: 700px;
+}
+
+.settings-card textarea {
+    min-height: 200px;
+    resize: vertical;
+}

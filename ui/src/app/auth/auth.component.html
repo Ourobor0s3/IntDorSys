@@ -1,0 +1,26 @@
+<div class="auth-container">
+  <button class="auth-theme-toggle" (click)="toggleTheme()" [attr.title]="isDarkMode ? 'Light mode' : 'Dark mode'">
+    <img *ngIf="isDarkMode" alt="Light mode" height="18" src="assets/image/table_icons/sun.svg" width="18"/>
+    <img *ngIf="!isDarkMode" alt="Dark mode" height="18" src="assets/image/table_icons/moon.svg" width="18"/>
+  </button>
+  <div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div [@animateRoute]="getCurrentState()" class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="auth-logo text-center">
+              <img alt="Logo" src="assets/image/logo/logo.svg">
+            </div>
+            <app-login *ngIf="subpagesMenu[0].isActive"></app-login>
+            <app-register *ngIf="subpagesMenu[1].isActive"></app-register>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="auth-footer">
+    <div class="text-muted text-center py-3">
+      © {{ currentYear }} IntDorSys. All Rights Reserved
+    </div>
+  </footer>
+</div>

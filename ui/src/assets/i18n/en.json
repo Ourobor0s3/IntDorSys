@@ -1,0 +1,149 @@
+{
+  "Register": "Register",
+  "Telegram": "Telegram ID",
+  "Password": "Password",
+  "Login": "Login",
+  "Registered": "Registered",
+  "Email": "Email",
+  "Logout": "Logout",
+  "account": {
+    "create": "Create new account?",
+    "login": "Already have an account?"
+  },
+  "errors": {
+    "required": "All fields are required",
+    "max": "Maximum",
+    "min": "Minimum",
+    "maxLength": "Maximum length ",
+    "minLength": "Minimum length ",
+    "passwordPattern": "Only Latin letters, numbers, and special characters",
+    "invalidEmail": "The email format is incorrect",
+    "mismatch": "Password mismatch",
+    "passwordConfirmation": {
+      "notMatch": "Passwords does not match"
+    },
+    "telegramIdMustBeNumber": "Telegram ID must be a number",
+    "telegram_id_must_be_number": "Telegram ID must be a number"
+  },
+  "menu": {
+    "home": "Home",
+    "users": "Users",
+    "laundress": "Laundress",
+    "reports": "Reports",
+    "audit": "Audit log",
+    "settings": "Settings"
+  },
+  "common": {
+    "ok": "Ok",
+    "no_data": "No data available",
+    "loading": "Loading...",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "date": "Date",
+    "optional": "optional",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "copy_success": "Copied to clipboard",
+    "system_error": "System error. Please contact technical support",
+    "status_changed": "Status updated successfully",
+    "operation_cancelled": "Operation cancelled",
+    "prev": "Prev",
+    "next": "Next",
+    "saved": "Saved successfully"
+  },
+  "users": {
+    "name": "Name",
+    "telegram": "Telegram",
+    "group": "Group",
+    "room": "Room",
+    "status": "Status",
+    "registered_date": "Registered date",
+    "is_confirm": "Is confirm",
+    "block_user": "Block user",
+    "usage": "Usage (6mo)",
+    "confirm_block": "Are you sure you want to block this user?",
+    "confirm_unblock": "Are you sure you want to unblock this user?",
+    "sort_desc": "Desc",
+    "sort_asc": "Asc",
+    "with_name": "With Name"
+  },
+  "home": {
+    "welcome": "Welcome to the Laundry control panel",
+    "admin_description": "In the Laundry control panel, you can view laundry records, check laundry analytics, view registered users, and confirm or cancel their access to the laundry service."
+  },
+  "laundress": {
+    "start_date": "Start date",
+    "end_date": "End date",
+    "filter": "Filter",
+    "available": "Available",
+    "in_use": "In use",
+    "free": "Free",
+    "book": "Book",
+    "unbook": "Unbook",
+    "edit_mode_on": "Edit mode ON",
+    "edit_mode_off": "Edit mode OFF",
+    "add_time_slot": "Add time slot",
+    "create_time_slot": "Create time slot",
+    "date": "Date",
+    "book_user": "Book user",
+    "select_user": "Select user",
+    "select_user_placeholder": "-- Select user --",
+    "select_user_required": "Please select a user",
+    "create_success": "Time slot created successfully",
+    "book_success": "User booked successfully",
+    "confirm_unbook": "Remove user from this slot?",
+    "confirm_delete_slot": "Delete this time slot?",
+    "hour_from": "From hour",
+    "hour_to": "To hour",
+    "range_hint": "Slots will be created every even hour in the selected range",
+    "edit_hint": "Book, unbook or delete time slots"
+  },
+  "audit": {
+    "user": "User",
+    "action_header": "Action",
+    "entity": "Entity",
+    "details": "Details",
+    "all_actions": "All actions",
+    "action": {
+      "CreateSlot": "Create slot",
+      "CreateSlotRange": "Create slot range",
+      "BookSlot": "Book slot",
+      "UnbookSlot": "Unbook slot",
+      "DeleteSlot": "Delete slot",
+      "ChangeUserStatus": "Change user status",
+      "UpdateSetting": "Update setting"
+    }
+  },
+  "chart": {
+    "all_time_records": "All time records",
+    "used_time_records": "Used time records",
+    "time": "Time",
+    "count": "Count"
+  },
+  "reports": {
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "no_photos": "No photos.",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "language": {
+    "en": "English",
+    "ru": "Russian"
+  },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode"
+  },
+  "settings": {
+    "key": "Key",
+    "value": "Value"
+  },
+  "user_status": {
+    "-1": "Blocked",
+    "0": "Registered"
+  }
+}

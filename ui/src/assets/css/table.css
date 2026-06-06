@@ -1,0 +1,86 @@
+:root {
+  --table-wrapper-bg: #fff;
+  --table-wrapper-border: #f0f0f0;
+  --table-wrapper-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --table-header-bg: #f9fafb;
+  --table-header-color: #6b7280;
+  --table-header-border: #f3f4f6;
+  --table-row-border: #f9fafb;
+  --table-row-hover: #f9fafb;
+  --table-cell-color: #343a40;
+  --table-link-color: #2563eb;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  background: var(--table-wrapper-bg);
+  border-radius: 12px;
+  box-shadow: var(--table-wrapper-shadow);
+  border: 1px solid var(--table-wrapper-border);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.users-table th,
+.users-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.users-table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--table-header-color);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--table-header-bg);
+  border-bottom: 1px solid var(--table-header-border);
+}
+
+.users-table tbody tr {
+  border-bottom: 1px solid var(--table-row-border);
+  transition: background 0.15s;
+}
+
+.users-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.users-table tbody tr:hover {
+  background: var(--table-row-hover);
+}
+
+.users-table .col-num { width: 40px; text-align: center; }
+.users-table .col-name { min-width: 120px; max-width: 200px; }
+.users-table .col-telegram { min-width: 120px; max-width: 180px; }
+.users-table .col-group { width: 60px; text-align: center; }
+.users-table .col-room { width: 60px; text-align: center; }
+.users-table .col-status { width: 100px; }
+.users-table .col-action { width: 44px; text-align: center; }
+.users-table .col-usage { width: 60px; text-align: center; }
+.users-table .col-date { min-width: 110px; }
+.users-table .col-confirm { width: 60px; }
+
+.copy-link {
+  cursor: pointer;
+  color: var(--table-link-color);
+}
+
+.copy-link:hover {
+  text-decoration: underline;
+}
+
+.status-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+}

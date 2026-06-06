@@ -1,0 +1,90 @@
+.welcome-card {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.welcome-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.welcome-desc {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.home-card-header {
+  padding: 0.875rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.home-card-body {
+  padding: 0.75rem 1.25rem;
+}
+
+.slot-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f9fafb;
+  font-size: 0.875rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.slot-time {
+  font-weight: 600;
+  color: #4b5563;
+  flex-shrink: 0;
+}
+
+.slot-separator {
+  color: #d1d5db;
+}
+
+.slot-user {
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-card .home-card-body {
+  min-height: 250px;
+}
+

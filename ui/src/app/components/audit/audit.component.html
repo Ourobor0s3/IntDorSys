@@ -1,0 +1,76 @@
+<div class="users-page">
+  <div class="filter-bar">
+    <div class="input-group input-group-sm" style="max-width:200px">
+      <span class="input-group-text px-2">
+        <img alt="Calendar" height="16" src="assets/image/table_icons/calendar.svg" width="16">
+      </span>
+      <input #dps="bsDatepicker"
+             (click)="calendarClick('#auditStartDate')"
+             (onShown)="setCalendarWidth('#auditStartDate')"
+             [(bsValue)]="startDate" [bsConfig]="bsConfig"
+             [ngClass]="{'iconShow' : dps.isOpen }" [readonly]="true"
+             bsDatepicker class="form-control form-control-sm input-datepicker"
+             id="auditStartDate" placeholder="{{ 'laundress.start_date' | lang }}" type="text">
+    </div>
+    <div class="input-group input-group-sm" style="max-width:200px">
+      <span class="input-group-text px-2">
+        <img alt="Calendar" height="16" src="assets/image/table_icons/calendar.svg" width="16">
+      </span>
+      <input #dpe="bsDatepicker"
+             (click)="calendarClick('#auditEndDate')"
+             (onShown)="setCalendarWidth('#auditEndDate')"
+             [(bsValue)]="endDate" [bsConfig]="bsConfig"
+             [ngClass]="{'iconShow' : dpe.isOpen }" [readonly]="true"
+             bsDatepicker class="form-control form-control-sm input-datepicker"
+             id="auditEndDate" placeholder="{{ 'laundress.end_date' | lang }}" type="text">
+    </div>
+    <select class="form-select form-select-sm" style="width:auto;min-width:160px" [(ngModel)]="actionFilter" (change)="onFilterChange()">
+      <option value="">{{ 'audit.all_actions' | lang }}</option>
+      <option *ngFor="let a of actions" [value]="a">{{ 'audit.action.' + a | lang }}</option>
+    </select>
+    <button (click)="loadLogs()" class="btn btn-sm btn-primary px-3" type="button">
+      {{ 'common.filter' | lang }}
+    </button>
+  </div>
+
+  <div *ngIf="allLogs == null" class="empty-state">
+    <p>{{ 'common.loading' | lang }}</p>
+  </div>
+
+  <div *ngIf="allLogs != null && logs.length === 0" class="empty-state">
+    <p>{{ 'common.no_data' | lang }}</p>
+  </div>
+
+  <div *ngIf="allLogs != null && logs.length > 0" class="table-wrapper">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>{{ 'common.date' | lang }}</th>
+          <th>{{ 'audit.user' | lang }}</th>
+          <th>{{ 'audit.action_header' | lang }}</th>
+          <th>{{ 'audit.entity' | lang }}</th>
+          <th>{{ 'audit.details' | lang }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of logs; trackBy: trackByLog">
+          <td class="small text-nowrap">{{ log.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td class="small">{{ log.userName }}</td>
+          <td class="small"><code>{{ 'audit.action.' + log.action | lang }}</code></td>
+          <td class="small">{{ log.entityName }}<span *ngIf="log.entityId"> #{{ log.entityId }}</span></td>
+          <td class="small text-muted" style="max-width:260px; white-space:normal; word-break:break-word">{{ log.details }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex align-items-center justify-content-center mt-3">
+      <button (click)="prevPage()" [disabled]="page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
+        &laquo; {{ 'common.prev' | lang }}
+      </button>
+      <span class="mx-2 small">{{ page }} / {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="page >= totalPages" class="btn btn-sm btn-outline-secondary" type="button">
+        {{ 'common.next' | lang }} &raquo;
+      </button>
+    </div>
+  </div>
+</div>
