@@ -200,7 +200,7 @@ namespace IntDorSys.Laundress.Services.Impl
             var res = new DataResult<bool>();
 
             var wash = await _db.Set<UseLaundress>()
-                .WhereIf(!isAdmin ,x => x.SelectUserId == userId)
+                .WhereIf(!isAdmin, x => x.SelectUserId == userId)
                 .FirstOrDefaultAsync(x => x.TimeWash == timeWash, ct);
 
             if (wash == null)

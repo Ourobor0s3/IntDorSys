@@ -13,7 +13,7 @@ namespace IntDorSys.DataAccess.Migrations
 {
     [DbContext(typeof(AppDataContext))]
     [Migration("20241122184044_init")]
-    partial class init
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

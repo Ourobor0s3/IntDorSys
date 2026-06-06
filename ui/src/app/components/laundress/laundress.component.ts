@@ -231,19 +231,4 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.destroy$.complete();
     }
 
-    trackByDate(index: number, item: PageLaundressModel): string {
-        return item.date || String(index);
-    }
-
-    trackBySlot(index: number, item: LaundressModel): string {
-        return item.timeWash || String(index);
-    }
-
-    trackByUser(index: number, item: UserInfoModel): string {
-        return String(item.id || index);
-    }
-
-    trackByHour(index: number, item: number): number {
-        return item;
-    }
 }

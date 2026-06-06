@@ -6,22 +6,22 @@
   }
 
   @if (items.length > 0) {
-    <div class="table-wrapper">
+    <div class="settings-card">
       <table class="users-table">
         <thead>
           <tr>
             <th>{{ 'settings.key' | lang }}</th>
             <th>{{ 'settings.value' | lang }}</th>
-            <th></th>
+            <th class="col-action"></th>
           </tr>
         </thead>
         <tbody>
           @for (item of items; track item) {
             <tr>
-              <td class="small text-nowrap"><code>{{ item.key }}</code></td>
-              <td class="small">
+              <td class="text-nowrap"><code>{{ item.key }}</code></td>
+              <td>
                 @if (!item.editing) {
-                  <span (dblclick)="editItem(item)" style="cursor:pointer; white-space:pre-line;">{{ item.value }}</span>
+                  <span (dblclick)="editItem(item)" class="cursor-pointer" style="white-space:pre-line;">{{ item.value }}</span>
                 }
                 @if (item.editing) {
                   <textarea class="form-control form-control-sm" [(ngModel)]="item.value" rows="4"></textarea>
@@ -29,7 +29,7 @@
               </td>
               <td class="text-nowrap">
                 @if (!item.editing) {
-                  <button (click)="editItem(item)" class="btn btn-sm btn-outline-secondary me-1" type="button">
+                  <button (click)="editItem(item)" class="btn btn-sm btn-outline-secondary" type="button">
                     {{ 'common.edit' | lang }}
                   </button>
                 }

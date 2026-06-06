@@ -10,7 +10,6 @@ using IntDorSys.TelegramBot.Service;
 using IntDorSys.Web.Api.Bot;
 using IntDorSys.Web.Api.Installers;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.Extensions.Hosting;
 using Ouro.TelegramBot.Core;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
@@ -76,7 +75,6 @@ namespace IntDorSys.Web.Api
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
 
-
             builder.Services
                 .AddSecurityServices(builder.Configuration)
                 .AddDataAccessServices(builder.Configuration)
@@ -85,7 +83,6 @@ namespace IntDorSys.Web.Api
                 .AddBuilders()
                 .AddBotServices(builder.Configuration)
                 .AddCoreConfiguration(builder.Configuration);
-
 
             builder.Services
                 .AddSingleton<BotStatus>()
@@ -110,7 +107,7 @@ namespace IntDorSys.Web.Api
                         type = "https://httpstatuses.com/500",
                         title = "An unexpected error occurred",
                         status = StatusCodes.Status500InternalServerError,
-                        detail = exception?.Message,
+                        detail = "Internal server error",
                     };
 
                     await JsonSerializer.SerializeAsync(context.Response.Body, problem);
@@ -123,7 +120,6 @@ namespace IntDorSys.Web.Api
             app.UseRouting();
             app.UseCors("Default");
             app.UseHttpsRedirection();
-
 
             app.UseHealthChecks("/health");
 

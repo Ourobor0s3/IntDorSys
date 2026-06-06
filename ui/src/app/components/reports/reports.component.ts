@@ -101,14 +101,6 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
         this.applySort();
     }
 
-    trackByReport(index: number, item: ReportModel): string {
-        return item.groupId ?? `${index}`;
-    }
-
-    trackByFile(index: number): number {
-        return index;
-    }
-
     startAutoRefresh() {
         let t = this;
         clearTimeout(t.timerId);

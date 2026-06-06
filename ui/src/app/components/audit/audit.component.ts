@@ -105,7 +105,4 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    trackByLog(index: number, item: AuditLogModel): number {
-        return item.id ?? index;
-    }
 }

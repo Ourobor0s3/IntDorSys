@@ -170,7 +170,7 @@ namespace IntDorSys.Laundress.Services.Impl
 
             var repGroupId = message.ReplyToMessage.MediaGroupId
                      ?? message.ReplyToMessage.Photo?[^1].FileId;
-    var report = new Report
+            var report = new Report
             {
                 UserId = user.Id,
                 GroupId = repGroupId,
@@ -198,7 +198,7 @@ namespace IntDorSys.Laundress.Services.Impl
             await _botClient.DownloadFile(file, memoryStream, ct);
 
             var groupId = message.MediaGroupId ?? photoSize.FileId;
-    await _fileService.SaveAsync(filePath!, memoryStream, groupId, ct);
+            await _fileService.SaveAsync(filePath!, memoryStream, groupId, ct);
         }
     }
 }

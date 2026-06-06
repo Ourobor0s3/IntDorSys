@@ -1,6 +1,6 @@
 <div class="users-page">
   <div class="filter-bar">
-    <div class="input-group input-group-sm" style="max-width:200px">
+    <div class="input-group input-group-sm filter-input">
       <span class="input-group-text px-2">
         <img alt="Calendar" height="16" src="assets/image/table_icons/calendar.svg" width="16">
       </span>
@@ -12,7 +12,7 @@
              bsDatepicker class="form-control form-control-sm input-datepicker"
              id="auditStartDate" placeholder="{{ 'laundress.start_date' | lang }}" type="text">
     </div>
-    <div class="input-group input-group-sm" style="max-width:200px">
+    <div class="input-group input-group-sm filter-input">
       <span class="input-group-text px-2">
         <img alt="Calendar" height="16" src="assets/image/table_icons/calendar.svg" width="16">
       </span>
@@ -24,7 +24,7 @@
              bsDatepicker class="form-control form-control-sm input-datepicker"
              id="auditEndDate" placeholder="{{ 'laundress.end_date' | lang }}" type="text">
     </div>
-    <select class="form-select form-select-sm" style="width:auto;min-width:160px" [(ngModel)]="actionFilter" (change)="onFilterChange()">
+    <select class="form-select form-select-sm filter-select" [(ngModel)]="actionFilter" (change)="onFilterChange()">
       <option value="">{{ 'audit.all_actions' | lang }}</option>
       @for (a of actions; track a) {
         <option [value]="a">{{ 'audit.action.' + a | lang }}</option>
@@ -66,17 +66,17 @@
               <td class="small">{{ log.userName }}</td>
               <td class="small"><code>{{ 'audit.action.' + log.action | lang }}</code></td>
               <td class="small">{{ log.entityName }}@if (log.entityId) { <span> #{{ log.entityId }}</span> }</td>
-              <td class="small text-muted" style="max-width:260px; white-space:normal; word-break:break-word">{{ log.details }}</td>
+              <td class="small text-muted audit-details">{{ log.details }}</td>
             </tr>
           }
         </tbody>
       </table>
 
-      <div class="d-flex align-items-center justify-content-center mt-3">
+      <div class="pagination-controls">
         <button (click)="prevPage()" [disabled]="page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
           &laquo; {{ 'common.prev' | lang }}
         </button>
-        <span class="mx-2 small">{{ page }} / {{ totalPages }}</span>
+        <span class="page-info">{{ page }} / {{ totalPages }}</span>
         <button (click)="nextPage()" [disabled]="page >= totalPages" class="btn btn-sm btn-outline-secondary" type="button">
           {{ 'common.next' | lang }} &raquo;
         </button>

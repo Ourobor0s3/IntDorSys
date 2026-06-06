@@ -88,10 +88,6 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
             });
     }
 
-    trackBySlot(index: number, item: any): string {
-        return item.timeWash || index;
-    }
-
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
