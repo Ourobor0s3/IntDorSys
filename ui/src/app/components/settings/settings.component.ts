@@ -14,6 +14,12 @@ interface SettingItem {
     editing: boolean;
 }
 
+interface BotStatus {
+    running: boolean;
+    username: string | null;
+    lastStarted: string | null;
+}
+
 @Component({
     selector: 'app-settings',
     templateUrl: './settings.component.html',
@@ -22,6 +28,9 @@ interface SettingItem {
 export class SettingsComponent extends BaseComponent implements OnInit {
     items: SettingItem[] = [];
     saving: boolean = false;
+
+    botStatus: BotStatus | null = null;
+    botRestarting: boolean = false;
 
     constructor(
         private api: ApiService,
@@ -34,6 +43,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.loadSettings();
+        this.loadBotStatus();
     }
 
     async loadSettings() {
@@ -53,6 +63,32 @@ export class SettingsComponent extends BaseComponent implements OnInit {
             console.error(err);
         } finally {
             t.setLoading(false);
+        }
+    }
+
+    async loadBotStatus() {
+        try {
+            let res = await (await this.api.get<BotStatus>('bot/status')).toPromise();
+            this.botStatus = res?.data ?? null;
+        } catch {
+            this.botStatus = null;
+        }
+    }
+
+    async restartBot() {
+        this.botRestarting = true;
+        try {
+            let res = await (await this.api.post<unknown>('bot/restart', {})).toPromise();
+            if (res?.isSuccess) {
+                this.showToast(this.translate.instant('bot.restart_success'));
+                await this.loadBotStatus();
+            } else {
+                this.showToast(this.translate.instant('bot.restart_fail'));
+            }
+        } catch {
+            this.showToast(this.translate.instant('bot.restart_fail'));
+        } finally {
+            this.botRestarting = false;
         }
     }
 

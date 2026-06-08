@@ -66,7 +66,7 @@ namespace IntDorSys.Laundress.Services.Impl
             // Process StartDate filter
             if (!string.IsNullOrWhiteSpace(filter?.StartDate) &&
                 DateTime.TryParse(filter.StartDate,
-                    null,
+                    CultureInfo.InvariantCulture,
                     DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal,
                     out var startDate))
             {

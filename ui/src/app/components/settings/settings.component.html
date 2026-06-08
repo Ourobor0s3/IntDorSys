@@ -1,4 +1,39 @@
 <div class="page-content">
+  <!-- Bot status -->
+  <div class="settings-card mb-3">
+    <h5 class="card-title">{{ 'bot.title' | lang }}</h5>
+    @if (botStatus) {
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div>
+          <span class="text-muted small">{{ 'bot.status' | lang }}:</span>
+          @if (botStatus.running) {
+            <span class="status-tag running ms-1">{{ 'bot.running' | lang }}</span>
+          } @else {
+            <span class="status-tag stopped ms-1">{{ 'bot.stopped' | lang }}</span>
+          }
+        </div>
+        @if (botStatus.username) {
+          <div>
+            <span class="text-muted small">{{ 'bot.username' | lang }}:</span>
+            <span class="ms-1">{{ '@' + botStatus.username }}</span>
+          </div>
+        }
+        @if (botStatus.lastStarted) {
+          <div>
+            <span class="text-muted small">{{ 'bot.last_started' | lang }}:</span>
+            <span class="ms-1">{{ botStatus.lastStarted | date:"d.MM.yyyy HH:mm" }}</span>
+          </div>
+        }
+        <button (click)="restartBot()" [disabled]="botRestarting" class="btn btn-sm btn-outline-warning" type="button">
+          {{ botRestarting ? ('bot.restarting' | lang) : ('bot.restart' | lang) }}
+        </button>
+      </div>
+    } @else {
+      <p class="text-muted small mb-0">{{ 'common.loading' | lang }}</p>
+    }
+  </div>
+
+  <!-- Settings table -->
   @if (items.length === 0) {
     <div class="empty-state">
       <p>{{ 'common.no_data' | lang }}</p>

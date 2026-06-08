@@ -69,7 +69,7 @@ namespace IntDorSys.Web.Api.Controllers.Laundress
             var userId = UserId;
             var result = await service.CreateTimeRangeAsync(
                 request.Date, request.StartHour, request.EndHour,
-                request.CreatedUserId, HttpContext.RequestAborted);
+                UserId, HttpContext.RequestAborted);
             if (result.IsSuccess && result.Data > 0)
             {
                 await audit.RecordAsync(userId, "CreateSlotRange", "UseLaundress",

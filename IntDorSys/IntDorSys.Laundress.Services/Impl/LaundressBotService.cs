@@ -131,7 +131,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 var appointments = (await _query.GetTimeByFilterAsync(
                     new LaundressFilterModel
                     {
-                        StartDate = DateTime.Today.ToString("dd.MM.yyyy"),
+                        StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
                     },
                     ct)).Data;
                 var message = "";
@@ -188,7 +188,7 @@ namespace IntDorSys.Laundress.Services.Impl
             {
                 var appointments = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
                         {
-                            StartDate = DateTime.Today.ToString("dd.MM.yyyy"),
+                            StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
                             UserId = user.Id,
                         },
                         ct)).Data
@@ -284,7 +284,7 @@ namespace IntDorSys.Laundress.Services.Impl
             {
                 var dates = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
                         {
-                            StartDate = DateTime.Today.ToString("dd.MM.yyyy"),
+                            StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
                             IsUnoccupiedRecords = true,
                         },
                         ct))

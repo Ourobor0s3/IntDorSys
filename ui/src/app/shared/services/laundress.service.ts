@@ -55,8 +55,8 @@ export class LaundressService {
         return (await this.api.delete<boolean>(url)).toPromise() as Promise<IResponse<boolean>>;
     }
 
-    async createTimeRange(date: string, startHour: number, endHour: number, createdUserId: number): Promise<IResponse<number>> {
-        return (await this.api.post<number>(apiLaundUrl + '/range', { date, startHour, endHour, createdUserId })).toPromise() as Promise<IResponse<number>>;
+    async createTimeRange(date: string, startHour: number, endHour: number): Promise<IResponse<number>> {
+        return (await this.api.post<number>(apiLaundUrl + '/range', { date, startHour, endHour })).toPromise() as Promise<IResponse<number>>;
     }
 
     async deleteTime(timeWash: string): Promise<IResponse<boolean>> {

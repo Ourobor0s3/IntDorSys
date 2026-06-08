@@ -90,7 +90,9 @@ namespace IntDorSys.Web.Api
                     ? builder.Configuration.GetSection(ConfigSectionNames.TelegramBattleSection)
                     : builder.Configuration.GetSection(ConfigSectionNames.TelegramTestSection))
                 .AddTelegramServices()
-                .AddHostedService<ResilientBotHostedService>();
+                .AddHostedService<ResilientBotHostedService>()
+                .AddSingleton<IBotControlService>(sp =>
+                    sp.GetRequiredService<ResilientBotHostedService>());
 
             var app = builder.Build();
 
