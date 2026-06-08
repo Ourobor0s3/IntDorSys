@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using IntDorSys.Core;
 using IntDorSys.Core.Constants;
 using IntDorSys.DataAccess;
@@ -10,9 +11,8 @@ using IntDorSys.TelegramBot.Service;
 using IntDorSys.Web.Api.Bot;
 using IntDorSys.Web.Api.Installers;
 using Microsoft.AspNetCore.Diagnostics;
-using Ouro.TelegramBot.Core;
 using Microsoft.AspNetCore.RateLimiting;
-using System.Threading.RateLimiting;
+using Ouro.TelegramBot.Core;
 
 namespace IntDorSys.Web.Api
 {

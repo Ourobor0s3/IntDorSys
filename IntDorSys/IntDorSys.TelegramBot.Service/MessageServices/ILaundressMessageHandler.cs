@@ -1,4 +1,4 @@
-﻿using Ouro.TelegramBot.Core.Interface;
+using Ouro.TelegramBot.Core.Interface;
 
 namespace IntDorSys.TelegramBot.Service.MessageServices
 {

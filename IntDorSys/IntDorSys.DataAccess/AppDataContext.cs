@@ -1,4 +1,4 @@
-﻿using IntDorSys.Core.Entities;
+using IntDorSys.Core.Entities;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Laundress.Core;
 using Microsoft.EntityFrameworkCore;

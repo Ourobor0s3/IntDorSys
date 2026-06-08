@@ -1,4 +1,4 @@
-﻿using IntDorSys.Core.Entities.Users;
+using IntDorSys.Core.Entities.Users;
 
 namespace IntDorSys.TelegramBot.Service.AdminServices
 {

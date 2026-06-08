@@ -4,8 +4,8 @@ namespace IntDorSys.Security.Settings
 {
     internal sealed class JwtSettingsValidation : IValidateOptions<JwtSettings>
     {
-        private const string Placeholder = "00000000-0000-0000-0000-000000000000";
-        private const int MinSecretLength = 32;
+        private const string placeholder = "00000000-0000-0000-0000-000000000000";
+        private const int minSecretLength = 32;
 
         public ValidateOptionsResult Validate(string? name, JwtSettings options)
         {
@@ -24,14 +24,14 @@ namespace IntDorSys.Security.Settings
                 return ValidateOptionsResult.Fail("JWT Secret is required");
             }
 
-            if (options.Secret == Placeholder)
+            if (options.Secret == placeholder)
             {
                 return ValidateOptionsResult.Fail($"JWT Secret contains the default placeholder value. Set a real secret via config, env var, or User Secrets.");
             }
 
-            if (options.Secret.Length < MinSecretLength)
+            if (options.Secret.Length < minSecretLength)
             {
-                return ValidateOptionsResult.Fail($"JWT Secret must be at least {MinSecretLength} characters long (HS256 requires 256-bit key). Current length: {options.Secret.Length}.");
+                return ValidateOptionsResult.Fail($"JWT Secret must be at least {minSecretLength} characters long (HS256 requires 256-bit key). Current length: {options.Secret.Length}.");
             }
 
             return ValidateOptionsResult.Success;

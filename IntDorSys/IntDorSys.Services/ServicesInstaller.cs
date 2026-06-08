@@ -1,4 +1,4 @@
-﻿using IntDorSys.Services.AppSettings;
+using IntDorSys.Services.AppSettings;
 using IntDorSys.Services.AppSettings.Impl;
 using IntDorSys.Services.Audit;
 using IntDorSys.Services.Audit.Impl;

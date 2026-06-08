@@ -22,7 +22,7 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly IAuditService _audit;
 
         public UserBotService(
-            IUserService  userService,
+            IUserService userService,
             ILogger<UserBotService> logger,
             ITelegramService telegramService,
             IOptionsMonitor<AdminSettings> adminSettings,

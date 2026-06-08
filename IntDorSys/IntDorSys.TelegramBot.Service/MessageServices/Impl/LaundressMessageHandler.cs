@@ -1,4 +1,4 @@
-﻿using IntDorSys.Core.Constants;
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Settings;
 using IntDorSys.Laundress.Services;
 using IntDorSys.Services.Users;

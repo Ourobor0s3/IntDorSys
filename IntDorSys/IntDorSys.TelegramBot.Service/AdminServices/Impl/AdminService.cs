@@ -1,4 +1,4 @@
-﻿using IntDorSys.Core.Constants;
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
@@ -40,8 +40,7 @@ namespace IntDorSys.TelegramBot.Service.AdminServices.Impl
 
             var sendMessage = new BotResponceMessage
             {
-                Message = $"New user {userInfo.TelegramId} : {userInfo.Username}\nFull name: {userInfo.FullName
-                }\nGroup: {userInfo.NumGroup}\nRoom: {userInfo.NumRoom}".ToTelegramLiteral(),
+                Message = $"New user {userInfo.TelegramId} : {userInfo.Username}\nFull name: {userInfo.FullName}\nGroup: {userInfo.NumGroup}\nRoom: {userInfo.NumRoom}".ToTelegramLiteral(),
                 InlineKeyboard = ButtonConstants.BtnYesOrNo(userInfo.TelegramId, "ConfirmUser"),
             };
 

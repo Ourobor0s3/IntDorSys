@@ -1,4 +1,4 @@
-﻿namespace IntDorSys.Laundress.Services
+namespace IntDorSys.Laundress.Services
 {
     /// <summary>
     ///     Combines menu, booking and notification services for the laundry Telegram bot

@@ -3,9 +3,9 @@ using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Constants;
-using IntDorSys.Services.Audit;
 using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models.Filters;
+using IntDorSys.Services.Audit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,10 +27,10 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly IAuditService _audit;
 
-        private const int SlotIntervalHours = 2;
-        private static readonly TimeSpan NotificationLeadHours = TimeSpan.FromHours(-3);
-        private static readonly TimeSpan NotificationFollowUpHours = TimeSpan.FromHours(-2);
-        private const string UnknownName = "неизвестно";
+        private const int slotIntervalHours = 2;
+        private static readonly TimeSpan _notificationLeadHours = TimeSpan.FromHours(-3);
+        private static readonly TimeSpan _notificationFollowUpHours = TimeSpan.FromHours(-2);
+        private const string unknownName = "неизвестно";
 
         public LaundressBotService(
             ILaundressService laund,
@@ -85,7 +85,7 @@ namespace IntDorSys.Laundress.Services.Impl
             try
             {
                 var appointments = Enumerable.Range(start, end - start + 1)
-                    .Where(i => i % SlotIntervalHours == 0)
+                    .Where(i => i % slotIntervalHours == 0)
                     .Select(i =>
                     {
                         var dt = DateTime.Parse($"{date} {i}:00");
@@ -187,10 +187,10 @@ namespace IntDorSys.Laundress.Services.Impl
             try
             {
                 var appointments = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
-                        {
-                            StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
-                            UserId = user.Id,
-                        },
+                {
+                    StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
+                    UserId = user.Id,
+                },
                         ct)).Data
                     .Select(x => x.TimeWash);
                 var inlineKeyboard = appointments.Select(x => new[]
@@ -235,9 +235,9 @@ namespace IntDorSys.Laundress.Services.Impl
             try
             {
                 var dates = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
-                        {
-                            IsOccupiedRecords = true,
-                        },
+                {
+                    IsOccupiedRecords = true,
+                },
                         ct))
                     .Data
                     .Select(x => x.TimeWash.Date)
@@ -283,10 +283,10 @@ namespace IntDorSys.Laundress.Services.Impl
             try
             {
                 var dates = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
-                        {
-                            StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
-                            IsUnoccupiedRecords = true,
-                        },
+                {
+                    StartDate = DateTime.Today.ToString("yyyy-MM-dd"),
+                    IsUnoccupiedRecords = true,
+                },
                         ct))
                     .Data
                     .Select(x => x.TimeWash.Date)
@@ -334,10 +334,10 @@ namespace IntDorSys.Laundress.Services.Impl
             try
             {
                 var times = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
-                        {
-                            IsUnoccupiedRecords = true,
-                            SearchDate = date.Date,
-                        },
+                {
+                    IsUnoccupiedRecords = true,
+                    SearchDate = date.Date,
+                },
                         ct))
                     .Data
                     .Select(x => x.TimeWash);
@@ -510,9 +510,9 @@ namespace IntDorSys.Laundress.Services.Impl
             try
             {
                 var times = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
-                        {
-                            SearchDate = date.Date,
-                        },
+                {
+                    SearchDate = date.Date,
+                },
                         ct))
                     .Data
                     .Where(x => x.SelectUserId != null)
@@ -549,7 +549,7 @@ namespace IntDorSys.Laundress.Services.Impl
 
         private static string GetShortName(string? fullName)
         {
-            if (string.IsNullOrEmpty(fullName)) return UnknownName;
+            if (string.IsNullOrEmpty(fullName)) return unknownName;
             var parts = fullName.Split(' ');
             return parts.Length >= 2 ? $"{parts[0]} {parts[1][0]}." : parts[0];
         }
@@ -658,7 +658,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 var usersWashHours = await _db.Set<UseLaundress>()
                     .Include(x => x.SelectUser)
                     .Where(x => x.SelectUserId != null)
-                    .Where(x => x.TimeWash.Add(NotificationLeadHours) >= DateTime.Now && x.TimeWash.Add(NotificationFollowUpHours) < DateTime.Now)
+                    .Where(x => x.TimeWash.Add(_notificationLeadHours) >= DateTime.Now && x.TimeWash.Add(_notificationFollowUpHours) < DateTime.Now)
                     .Where(x => !x.IsSendHours)
                     .ToListAsync(ct);
 

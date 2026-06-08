@@ -51,8 +51,8 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                                 callbackQuery.Message?.MessageId ?? 0,
                                 ct);
                         }
-else if (listCallback[1].Equals(MessageText.AllRecords)
-                              && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
+                        else if (listCallback[1].Equals(MessageText.AllRecords)
+                                                      && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
                         {
                             await _laundBot.SendAllTimeAsync(
                                 userInfo.TelegramId,

@@ -32,7 +32,7 @@ interface StyleConfig {
 })
 export class AppComponent extends BaseComponent implements OnDestroy {
     modalRef: NgbModalRef;
-    private eventSubscription: Subscription;
+    private eventSubscription: Subscription | undefined;
     private readonly styleConfigs: StyleConfig[] = [
         { name: 'main', preload: false },
         { name: 'table', preload: false },

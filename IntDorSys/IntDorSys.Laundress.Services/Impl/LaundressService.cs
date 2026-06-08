@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Entities;
@@ -17,8 +17,8 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly AppDataContext _db;
         private readonly IAppSettingService _settings;
         private readonly ILogger<LaundressService> _logger;
-        private const int DefaultWashDurationHours = 2;
-        private const int MaxConcurrentBookings = 2;
+        private const int defaultWashDurationHours = 2;
+        private const int maxConcurrentBookings = 2;
 
         public LaundressService(AppDataContext db, IAppSettingService settings, ILogger<LaundressService> logger)
         {
@@ -30,7 +30,7 @@ namespace IntDorSys.Laundress.Services.Impl
         private async Task<int> GetWashDurationHoursAsync(CancellationToken ct)
         {
             var val = await _settings.GetValueAsync("WashDurationHours", ct);
-            return int.TryParse(val, out var hours) ? hours : DefaultWashDurationHours;
+            return int.TryParse(val, out var hours) ? hours : defaultWashDurationHours;
         }
 
         private async Task<bool> HasOverlappingSlotsAsync(DateTime timeWash, int washDurationHours, CancellationToken ct)
@@ -163,7 +163,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 .Where(x => x.TimeWash > DateTime.Now)
                 .Where(x => x.SelectUserId == userId)
                 .CountAsync(ct);
-            if (useWash >= MaxConcurrentBookings)
+            if (useWash >= maxConcurrentBookings)
             {
                 return res.WithError($"{userId} use two time wash already exists");
             }

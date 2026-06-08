@@ -52,7 +52,7 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                                     ct);
                                 await _adminService.UpdateNotificateUserAsync(long.Parse(listCallback[2]), ct);
                                 break;
-case "No":
+                            case "No":
                                 await _telegramService.DeleteMessageAsync(_adminSettings.CurrentValue.AdminChatId,
                                     callbackQuery.Message!.MessageId,
                                     ct);

@@ -1,4 +1,4 @@
-﻿using IntDorSys.Laundress.Core.Entities;
+using IntDorSys.Laundress.Core.Entities;
 using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Laundress.Services

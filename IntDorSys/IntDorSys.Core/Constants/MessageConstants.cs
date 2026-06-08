@@ -1,4 +1,4 @@
-﻿namespace IntDorSys.Core.Constants
+namespace IntDorSys.Core.Constants
 {
     public static class MessageConstants
     {

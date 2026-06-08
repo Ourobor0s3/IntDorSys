@@ -31,7 +31,7 @@ namespace IntDorSys.Security.Services.Impl
         public async Task<AuthToken> IssueTokenAsync(UserInfo user)
         {
             var now = DateTime.UtcNow;
-            
+
             var roles = await _userRoleService.GetByIdAsync(user.Id, CancellationToken.None);
             var userRoles = roles.IsSuccess ? roles.Data ?? [] : [];
 

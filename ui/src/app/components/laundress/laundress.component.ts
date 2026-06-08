@@ -20,7 +20,7 @@ import { LoadingService } from "../../shared/services/loading.service";
 })
 export class LaundressComponent extends BaseComponent implements OnInit, OnDestroy {
     laundList?: PageLaundressModel[];
-    timerId: ReturnType<typeof setTimeout> | null;
+    timerId: ReturnType<typeof setTimeout> | undefined;
     filter: BaseFilterModel = new BaseFilterModel();
     isAutoRefresh: boolean = true;
     startDate: Date = new Date();

@@ -1,4 +1,4 @@
-﻿using Ouro.DatabaseUtils.Entities.Impl;
+using Ouro.DatabaseUtils.Entities.Impl;
 
 namespace IntDorSys.Core.Entities.Users
 {

@@ -1,8 +1,8 @@
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
 using IntDorSys.Services.Audit;
-using IntDorSys.Web.Api.Builders;
 using IntDorSys.Services.Users;
+using IntDorSys.Web.Api.Builders;
 using IntDorSys.Web.Api.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
