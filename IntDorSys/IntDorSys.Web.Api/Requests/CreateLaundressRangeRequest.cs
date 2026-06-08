@@ -14,8 +14,5 @@ namespace IntDorSys.Web.Api.Requests
         [Required]
         [Range(0, 23)]
         public int EndHour { get; set; }
-
-        [Required]
-        public long CreatedUserId { get; set; }
     }
 }

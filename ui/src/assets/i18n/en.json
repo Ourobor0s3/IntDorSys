@@ -142,6 +142,18 @@
     "key": "Key",
     "value": "Value"
   },
+  "bot": {
+    "title": "Telegram Bot",
+    "status": "Status",
+    "running": "Running",
+    "stopped": "Stopped",
+    "username": "Username",
+    "last_started": "Last started",
+    "restart": "Restart bot",
+    "restarting": "Restarting...",
+    "restart_success": "Bot restarted successfully",
+    "restart_fail": "Bot restart failed"
+  },
   "user_status": {
     "-1": "Blocked",
     "0": "Registered"

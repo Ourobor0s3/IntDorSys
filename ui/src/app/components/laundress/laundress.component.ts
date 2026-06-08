@@ -115,16 +115,10 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.modal.open(content, { centered: true, backdrop: 'static', size: 'md' });
     }
 
-    createTimeSlotRange(modal: NgbModalRef) {
+    async createTimeSlotRange(modal: NgbModalRef) {
         let t = this;
-        let userId = t.userService.user?.id;
 
-        if (!userId) {
-            t.showError('User not authenticated');
-            return;
-        }
-
-        t.laundService.createTimeRange(t.newTimeWashDate, t.newTimeRangeStartHour, t.newTimeRangeEndHour, userId)
+        t.laundService.createTimeRange(t.newTimeWashDate, t.newTimeRangeStartHour, t.newTimeRangeEndHour)
             .then(res => {
                 if (res.isSuccess) {
                     t.showSuccess(t.translate.instant('laundress.create_success'));

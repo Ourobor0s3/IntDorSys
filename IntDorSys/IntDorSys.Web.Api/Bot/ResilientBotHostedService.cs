@@ -9,10 +9,10 @@ using Telegram.Bot.Types;
 
 namespace IntDorSys.Web.Api.Bot
 {
-    internal sealed class ResilientBotHostedService : IHostedService, IDisposable
+    internal sealed class ResilientBotHostedService : IHostedService, IBotControlService, IDisposable
     {
-        private static readonly TimeSpan RetryInterval = TimeSpan.FromMinutes(15);
-        private static readonly TimeSpan RestartInterval = TimeSpan.FromHours(5);
+        private static readonly TimeSpan _retryInterval = TimeSpan.FromMinutes(15);
+        private static readonly TimeSpan _restartInterval = TimeSpan.FromHours(5);
 
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
@@ -47,8 +47,8 @@ namespace IntDorSys.Web.Api.Bot
             _logger.LogInformation("Bot host starting — initial connect attempt");
             await TryStartBotAsync(globalCt);
 
-            using var retryTimer = new PeriodicTimer(RetryInterval);
-            using var restartTimer = new PeriodicTimer(RestartInterval);
+            using var retryTimer = new PeriodicTimer(_retryInterval);
+            using var restartTimer = new PeriodicTimer(_restartInterval);
 
             try
             {
@@ -86,7 +86,7 @@ namespace IntDorSys.Web.Api.Bot
             {
                 if (!BotConnectivityCheck.IsTelegramReachable())
                 {
-                    _logger.LogWarning("Telegram API unreachable — retry in {Interval}", RetryInterval);
+                    _logger.LogWarning("Telegram API unreachable — retry in {Interval}", _retryInterval);
                     return;
                 }
 
@@ -185,6 +185,25 @@ namespace IntDorSys.Web.Api.Bot
             }
 
             await Task.Delay(500);
+        }
+
+        public async Task RestartAsync()
+        {
+            if (!_botRunning)
+            {
+                _logger.LogInformation("Manual restart requested but bot not running — starting");
+                await TryStartBotAsync(_globalCts?.Token ?? CancellationToken.None);
+                return;
+            }
+
+            _logger.LogInformation("Manual restart requested");
+            await StopBotAsync();
+            await TryStartBotAsync(_globalCts?.Token ?? CancellationToken.None);
+
+            if (!_botRunning)
+            {
+                throw new InvalidOperationException("Bot failed to restart");
+            }
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
