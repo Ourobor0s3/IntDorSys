@@ -166,8 +166,6 @@ namespace IntDorSys.Web.Api.Bot
             ITelegramBotClient botClient, Exception exception, CancellationToken ct)
         {
             _logger.LogError(exception, "Bot polling error");
-            _botRunning = false;
-            _botStatus.IsRunning = false;
             return Task.CompletedTask;
         }
 

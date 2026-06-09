@@ -15,7 +15,7 @@
         @if (botStatus.username) {
           <div>
             <span class="text-muted small">{{ 'bot.username' | lang }}:</span>
-            <span class="ms-1">{{ '@' + botStatus.username }}</span>
+            <span (click)="copyUsername()" class="copy-link ms-1">{{ '@' + botStatus.username }}</span>
           </div>
         }
         @if (botStatus.lastStarted) {

@@ -63,6 +63,9 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     ngOnInit(): void {
+        if (this.menuItems) {
+            this.updateActiveTabs(this.router.url);
+        }
     }
 
     ngOnDestroy() {
