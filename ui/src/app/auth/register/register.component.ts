@@ -30,7 +30,7 @@ export class RegisterComponent extends BaseComponent {
         let t = this;
         t.regForm = fb.group(
             {
-                telegram: [''],
+                telegram: ['', [Validators.required]],
                 email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
                 password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(t.passwordPattern)]],
                 passwordConfirm: ['', [Validators.required]],

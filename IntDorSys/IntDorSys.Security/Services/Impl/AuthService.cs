@@ -61,7 +61,15 @@ namespace IntDorSys.Security.Services.Impl
         {
             var result = new DataResult<UserInfo>();
 
+            // Try to find user by email first
             var userResult = await _userService.GetByEmailAsync(authData.Login, ct);
+
+            // If not found by email, try by Telegram ID
+            if (!userResult.IsSuccess && long.TryParse(authData.Login, out var telegramId))
+            {
+                userResult = await _userService.GetByTgIdAsync(telegramId, ct);
+            }
+
             if (!userResult.IsSuccess)
             {
                 return result.WithError("Incorrect email or password");
