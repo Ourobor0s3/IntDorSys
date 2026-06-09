@@ -1,5 +1,6 @@
 using System.Globalization;
 using IntDorSys.Core.Entities.Users;
+using IntDorSys.Core.Enums;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models.Filters;
@@ -18,7 +19,7 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly IAppSettingService _settings;
         private readonly ILogger<LaundressService> _logger;
         private const int defaultWashDurationHours = 2;
-        private const int maxConcurrentBookings = 2;
+        private const int defaultMaxConcurrentBookings = 2;
 
         public LaundressService(AppDataContext db, IAppSettingService settings, ILogger<LaundressService> logger)
         {
@@ -31,6 +32,12 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             var val = await _settings.GetValueAsync("WashDurationHours", ct);
             return int.TryParse(val, out var hours) ? hours : defaultWashDurationHours;
+        }
+
+        private async Task<int> GetMaxConcurrentBookingsAsync(CancellationToken ct)
+        {
+            var val = await _settings.GetValueAsync("MaxConcurrentBookings", ct);
+            return int.TryParse(val, out var max) ? max : defaultMaxConcurrentBookings;
         }
 
         private async Task<bool> HasOverlappingSlotsAsync(DateTime timeWash, int washDurationHours, CancellationToken ct)
@@ -158,14 +165,15 @@ namespace IntDorSys.Laundress.Services.Impl
             var res = new DataResult<bool>();
 
             var washDuration = await GetWashDurationHoursAsync(ct);
+            var maxConcurrent = await GetMaxConcurrentBookingsAsync(ct);
 
             var useWash = await _db.Set<UseLaundress>()
                 .Where(x => x.TimeWash > DateTime.Now)
                 .Where(x => x.SelectUserId == userId)
                 .CountAsync(ct);
-            if (useWash >= maxConcurrentBookings)
+            if (useWash >= maxConcurrent)
             {
-                return res.WithError($"{userId} use two time wash already exists");
+                return res.WithError($"User already has {maxConcurrent} active booking(s)");
             }
 
             var wash = await _db.Set<UseLaundress>()
@@ -184,8 +192,17 @@ namespace IntDorSys.Laundress.Services.Impl
                 return res.WithError($"User id = {userId} not found");
             }
 
+            if (user.Status == UserStatus.Blocked)
+            {
+                return res.WithError($"User id = {userId} is blocked");
+            }
+
+            if (!user.IsConfirm)
+            {
+                return res.WithError($"User id = {userId} is not confirmed");
+            }
+
             wash.SelectUser = user;
-            _db.AddOrUpdateEntity(wash);
             await _db.SaveChangesAsync(ct);
             return res.WithData(true);
         }

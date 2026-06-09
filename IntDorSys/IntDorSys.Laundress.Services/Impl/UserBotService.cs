@@ -13,7 +13,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace IntDorSys.Laundress.Services.Impl
 {
-    public class UserBotService : IUserBotService
+    internal sealed class UserBotService : IUserBotService
     {
         private readonly IUserService _userService;
         private readonly ILogger<UserBotService> _logger;

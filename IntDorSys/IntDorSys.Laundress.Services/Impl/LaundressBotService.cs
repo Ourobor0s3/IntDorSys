@@ -613,7 +613,6 @@ namespace IntDorSys.Laundress.Services.Impl
                 }
 
                 wash.SelectUser = user;
-                _db.AddOrUpdateEntity(wash);
                 await _db.SaveChangesAsync(ct);
 
                 await _audit.RecordAsync(admin.Id, "BookSlot", "UseLaundress", time.ToString("O"), $"Booked user {user.Id} ({user.FullName})");
@@ -651,7 +650,6 @@ namespace IntDorSys.Laundress.Services.Impl
                         ct);
 
                     time.IsSendDay = true;
-                    _db.AddOrUpdateEntity(time);
                     await _db.SaveChangesAsync(ct);
                 }
 
@@ -673,7 +671,6 @@ namespace IntDorSys.Laundress.Services.Impl
                         ct);
 
                     time.IsSendHours = true;
-                    _db.AddOrUpdateEntity(time);
                     await _db.SaveChangesAsync(ct);
                 }
             }

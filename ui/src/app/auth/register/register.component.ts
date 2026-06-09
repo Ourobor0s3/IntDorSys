@@ -110,9 +110,9 @@ export class RegisterComponent extends BaseComponent {
                 password.value,
                 passwordConfirm.value,
             );
-            if (!isValidPasswordConfirm.isValid) {
+            if (!isValidPasswordConfirm.isSuccess) {
                 let obj = {};
-                obj[isValidPasswordConfirm.errorText] = true;
+                obj[isValidPasswordConfirm.errors[0].message] = true;
                 passwordConfirm.setErrors(obj);
             }
             // обновить валидацию данного элемента при совпадении паролей

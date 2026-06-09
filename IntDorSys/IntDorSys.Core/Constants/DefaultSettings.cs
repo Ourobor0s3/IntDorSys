@@ -17,6 +17,12 @@ namespace IntDorSys.Core.Constants
                 Key = "WashDurationHours",
                 Value = "2",
                 IsEditable = false
+            },
+            new()
+            {
+                Key = "MaxConcurrentBookings",
+                Value = "2",
+                IsEditable = true
             }
         ];
     }

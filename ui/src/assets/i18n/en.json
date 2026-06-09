@@ -99,7 +99,9 @@
     "hour_from": "From hour",
     "hour_to": "To hour",
     "range_hint": "Slots will be created every even hour in the selected range",
-    "edit_hint": "Book, unbook or delete time slots"
+    "edit_hint": "Book, unbook or delete time slots",
+    "user_blocked": "User is blocked",
+    "user_not_confirmed": "User is not confirmed by admin"
   },
   "audit": {
     "user": "User",

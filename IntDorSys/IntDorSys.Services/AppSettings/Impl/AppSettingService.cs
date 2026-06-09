@@ -51,7 +51,6 @@ namespace IntDorSys.Services.AppSettings.Impl
 
             var oldValue = setting.Value;
             setting.Value = value;
-            _db.AddOrUpdateEntity(setting);
             await _db.SaveChangesAsync(ct);
 
             try

@@ -96,7 +96,6 @@ namespace IntDorSys.Services.Users.Impl
 
                 if (hasChanged)
                 {
-                    _db.AddOrUpdateEntity(userInfo);
                     await _db.SaveChangesAsync(ct);
                 }
             }
@@ -119,7 +118,6 @@ namespace IntDorSys.Services.Users.Impl
             userInfo.NumGroup = newInfo.NumGroup;
             userInfo.NumRoom = newInfo.NumRoom;
 
-            _db.AddOrUpdateEntity(userInfo);
             await _db.SaveChangesAsync(ct);
             return result.WithData(userInfo);
         }
@@ -174,7 +172,6 @@ namespace IntDorSys.Services.Users.Impl
             userReg.Email = user.Email.ToLower();
             userReg.Password = user.Password;
 
-            _db.AddOrUpdateEntity(userReg);
             await _db.SaveChangesAsync(ct);
             return result.WithData(userReg);
         }
@@ -218,7 +215,6 @@ namespace IntDorSys.Services.Users.Impl
 
             user.Status = newStatus;
 
-            _db.AddOrUpdateEntity(user);
             await _db.SaveChangesAsync(ct);
             return res.WithData(true);
         }
@@ -237,7 +233,6 @@ namespace IntDorSys.Services.Users.Impl
 
             user.Password = passwordHash;
 
-            _db.AddOrUpdateEntity(user);
             await _db.SaveChangesAsync(ct);
             return res.WithData(user);
         }
