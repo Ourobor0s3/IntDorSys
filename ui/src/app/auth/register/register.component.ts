@@ -68,7 +68,7 @@ export class RegisterComponent extends BaseComponent {
         let rawTelegram: string = t.telegram.value;
         let parsedTelegram: number | null = rawTelegram ? Number(rawTelegram) : null;
         if (rawTelegram && isNaN(parsedTelegram!)) {
-            t.showError('Telegram ID must be a number');
+            t.showError(t.translate.instant('errors.telegramIdMustBeNumber'));
             t.setLoading(false);
             return;
         }
@@ -82,7 +82,7 @@ export class RegisterComponent extends BaseComponent {
             .then((res) => {
                 if (res.isSuccess) {
                     t.navigateToLogin();
-                    t.showSuccess("Successfully registered account");
+                    t.showSuccess(t.translate.instant('registered_success'));
                 } else {
                     t.showResponseError(res);
                 }

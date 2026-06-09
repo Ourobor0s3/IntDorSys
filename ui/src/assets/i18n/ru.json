@@ -1,12 +1,19 @@
 {
   "Register": "Регистрация",
   "Telegram": "Телеграм ID",
-  "errors.telegramIdMustBeNumber": "Telegram ID должен быть числом",
+  "Telegram ID": "Telegram ID",
   "Password": "Пароль",
   "Login": "Войти",
   "Registered": "Зарегистрироваться",
   "Email": "Почта",
   "Logout": "Выйти",
+  "registered_success": "Аккаунт успешно зарегистрирован",
+  "Confirm password": "Подтвердите пароль",
+  "Email is required": "Почта обязательна для заполнения",
+  "Password is required": "Пароль обязателен для заполнения",
+  "Please enter a valid email": "Пожалуйста, введите корректный email",
+  "Hide password": "Скрыть пароль",
+  "Show password": "Показать пароль",
   "account": {
     "create": "Создать новый аккаунт?",
     "login": "Уже есть аккаунт?"
@@ -22,7 +29,8 @@
     "mismatch": "Пароли не совпадают",
     "passwordConfirmation": {
       "notMatch": "Пароли не совпадают"
-    }
+    },
+    "telegramIdMustBeNumber": "Telegram ID должен быть числом"
   },
   "menu": {
     "home": "Главная",
@@ -45,7 +53,6 @@
     "edit": "Редактировать",
     "search": "Поиск",
     "filter": "Фильтр",
-    "copy": "Копировать",
     "copy_success": "Скопировано в буфер обмена",
     "system_error": "Системная ошибка. Пожалуйста, обратитесь в техническую поддержку",
     "status_changed": "Статус успешно обновлен",
@@ -99,9 +106,7 @@
     "hour_from": "От (час)",
     "hour_to": "До (час)",
     "range_hint": "Слоты будут созданы каждый четный час в выбранном диапазоне",
-    "edit_hint": "Запись, отмена или удаление слотов времени",
-    "user_blocked": "Пользователь заблокирован",
-    "user_not_confirmed": "Пользователь не подтвержден администратором"
+    "edit_hint": "Запись, отмена или удаление слотов времени"
   },
   "audit": {
     "user": "Пользователь",

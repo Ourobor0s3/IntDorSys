@@ -1,12 +1,17 @@
 <div class="auth-container">
-  <button class="auth-theme-toggle" (click)="toggleTheme()" [attr.title]="isDarkMode ? 'Light mode' : 'Dark mode'">
-    @if (isDarkMode) {
-      <img alt="Light mode" height="18" src="assets/image/table_icons/sun.svg" width="18"/>
-    }
-    @if (!isDarkMode) {
-      <img alt="Dark mode" height="18" src="assets/image/table_icons/moon.svg" width="18"/>
-    }
-  </button>
+  <div class="auth-actions">
+    <button class="auth-action-btn" (click)="changeLanguage()" [attr.title]="'language.' + (currentLang === 'en' ? 'ru' : 'en') | lang">
+      <span class="fw-bold">{{ currentLang | uppercase }}</span>
+    </button>
+    <button class="auth-action-btn" (click)="toggleTheme()" [attr.title]="isDarkMode ? ('theme.light' | lang) : ('theme.dark' | lang)">
+      @if (isDarkMode) {
+        <img alt="Light mode" height="18" src="assets/image/table_icons/sun.svg" width="18"/>
+      }
+      @if (!isDarkMode) {
+        <img alt="Dark mode" height="18" src="assets/image/table_icons/moon.svg" width="18"/>
+      }
+    </button>
+  </div>
   <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
