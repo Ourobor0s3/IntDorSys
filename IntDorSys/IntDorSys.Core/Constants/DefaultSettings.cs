@@ -23,7 +23,13 @@ namespace IntDorSys.Core.Constants
                 Key = "MaxConcurrentBookings",
                 Value = "2",
                 IsEditable = true
-            }
+            },
+            new()
+            {
+                Key = "TimeZone",
+                Value = "+03:00",
+                IsEditable = true
+            },
         ];
     }
 }

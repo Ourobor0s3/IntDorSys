@@ -10,6 +10,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { AuthService } from "./shared/services/auth.service";
 import { UserService } from "./shared/services/user.service";
 import { EventService } from "./shared/services/event.service";
+import { TimezoneService } from "./shared/services/timezone.service";
 import { environment } from '../environments/environment';
 
 interface StyleConfig {
@@ -46,6 +47,7 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         private authService: AuthService,
         private eventService: EventService,
         private userService: UserService,
+        private timezoneService: TimezoneService,
         private renderer: Renderer2,
     ) {
         super(translate, modalService);
@@ -65,6 +67,9 @@ export class AppComponent extends BaseComponent implements OnDestroy {
     private initializeApp(): void {
         // Initialize language
         this.translate.use(languages[Language.EN].shortName);
+
+        // Initialize timezone
+        this.timezoneService.init();
 
         // Load styles
         this.styleConfigs.forEach(config => this.createStyle(config.name, config.preload));

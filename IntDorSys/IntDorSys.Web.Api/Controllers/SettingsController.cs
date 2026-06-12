@@ -12,6 +12,16 @@ namespace IntDorSys.Web.Api.Controllers
     [Authorize(Roles = "Admin")]
     public sealed class SettingsController : ProtectedApiController
     {
+        [AllowAnonymous]
+        [HttpGet("timezone")]
+        public async Task<DataResult<string>> GetTimezoneAsync(
+            [FromServices] IAppSettingService settings,
+            CancellationToken ct)
+        {
+            var value = await settings.GetValueAsync("TimeZone", ct);
+            return new DataResult<string>().WithData(value ?? "+03:00");
+        }
+
         [HttpGet]
         public async Task<DataResult<List<AppSetting>>> GetAllAsync(
             [FromServices] IAppSettingService settings,
