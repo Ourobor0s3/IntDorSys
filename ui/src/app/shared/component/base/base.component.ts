@@ -8,6 +8,7 @@ import { formatDate } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '../../services/loading.service';
 import { Renderer2 } from '@angular/core';
+import { TimezoneService } from '../../services/timezone.service';
 
 export abstract class BaseComponent {
 
@@ -134,7 +135,7 @@ export abstract class BaseComponent {
      * @param yearDelta - Смещение в годах
      */
     public getCurrentDateWithDelta(
-        daysDelta = 2,
+        daysDelta = 6,
         monthDelta = 0,
         yearDelta = 0,
     ): { dateStart: Date; dateEnd: Date } {
@@ -152,31 +153,33 @@ export abstract class BaseComponent {
      * @param yearDelta - Смещение в годах
      */
     public getCurrentDateWithDeltaStr(
-        daysDelta: number = 2,
+        daysDelta: number = 6,
         monthDelta: number = 0,
         yearDelta: number = 0,
     ): { dateStart: string; dateEnd: string } {
-        const today = new Date();
+        const now = new Date();
+        const offsetMs = TimezoneService.getOffsetMs();
+        const tzMs = now.getTime() + offsetMs;
+        const tzDate = new Date(tzMs);
+
         const { year, month, day } = {
-            year: today.getFullYear(),
-            month: today.getMonth(),
-            day: today.getDate(),
+            year: tzDate.getFullYear(),
+            month: tzDate.getMonth(),
+            day: tzDate.getDate(),
         };
 
-        const dateStart = new Date(year - yearDelta, month - monthDelta, day - daysDelta / 2).toISOString();
-        const dateEnd = new Date(year, month, day + daysDelta * 3).toISOString();
+        const dateStart = new Date(Date.UTC(year - yearDelta, month - monthDelta, day - 2)).toISOString();
+        const dateEnd = new Date(Date.UTC(year + yearDelta, month + monthDelta, day + daysDelta)).toISOString();
 
         return { dateStart, dateEnd };
     }
 
     public getTodayDate(): Date {
-        const today = new Date();
-        const { year, month, day } = {
-            year: today.getFullYear(),
-            month: today.getMonth(),
-            day: today.getDate(),
-        };
-        return new Date(year, month, day);
+        const now = new Date();
+        const offsetMs = TimezoneService.getOffsetMs();
+        const tzMs = now.getTime() + offsetMs;
+        const tzDate = new Date(tzMs);
+        return new Date(Date.UTC(tzDate.getFullYear(), tzDate.getMonth(), tzDate.getDate()));
     }
 
     // if system error return true

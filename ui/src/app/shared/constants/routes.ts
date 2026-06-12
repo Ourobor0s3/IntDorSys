@@ -7,3 +7,4 @@ export const laundressRoute: string = "laundress";
 export const reportsRoute: string = "reports";
 export const auditRoute: string = "audit";
 export const settingsRoute: string = "settings";
+export const userProfileRoute: string = "user-profile";

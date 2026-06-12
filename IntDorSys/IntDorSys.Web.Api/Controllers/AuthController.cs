@@ -34,6 +34,7 @@ namespace IntDorSys.Web.Api.Controllers
                     Password = request.Password,
                 },
                 HttpContext.RequestAborted);
+
             return !authResult.IsSuccess
                 ? result.WithErrors(authResult.Errors)
                 : result.WithData(await tokenService.IssueTokenAsync(authResult.Data));

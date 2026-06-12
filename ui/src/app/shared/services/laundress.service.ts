@@ -7,20 +7,10 @@ import { lastValueFrom } from "rxjs";
 import { BaseFilterModel } from "../model/filter/baseFilter.model";
 import { QueryUtils } from "../utils/queryUtils";
 import { ReportModel } from "../model/report.model";
+import { AuditLogModel } from "../interface/audit-log";
 import { environment } from "../../../environments/environment";
 
 const apiLaundUrl = 'laund';
-
-export interface AuditLogModel {
-    id: number;
-    userId: number;
-    userName: string;
-    action: string;
-    entityName: string;
-    entityId: string;
-    details: string;
-    createdAt: string;
-}
 
 @Injectable({
     providedIn: 'root',

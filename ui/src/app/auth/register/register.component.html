@@ -1,23 +1,32 @@
-<div class="auth-form">
+<div class="app-form">
   <h2 class="text-center mb-4 f-w-600">{{ 'Register' | lang | uppercase }}</h2>
 
   <form (ngSubmit)="createAccount()" [formGroup]="regForm" class="needs-validation">
     <div class="form-group mb-3">
-      <label class="form-label" for="telegram-field">{{ 'Telegram ID' | lang }}</label>
+      <label class="form-label" for="telegram-field">
+        {{ 'Telegram ID' | lang }}
+      </label>
       <div class="input-group">
         <span class="input-group-text">
           <img alt="Telegram Icon" height="20" src="/assets/image/fields/telegram.svg" width="20">
         </span>
         <input
           [attr.aria-label]="'Telegram ID' | lang"
+          [attr.aria-required]="true"
           autofocus
           class="form-control"
           formControlName="telegram"
           id="telegram-field"
-           placeholder="{{ 'Telegram' | lang }} ({{ 'common.optional' | lang }})"
+          placeholder="{{ 'Telegram' | lang }}"
+          required
           type="text"
         >
       </div>
+      @if (elemIsInvalid(regForm.controls.telegram)) {
+        <div class="invalid-feedback d-block">
+          {{ 'Telegram ID is required' | lang }}
+        </div>
+      }
     </div>
 
     <div class="form-group mb-3">

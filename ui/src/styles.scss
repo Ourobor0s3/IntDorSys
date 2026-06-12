@@ -196,7 +196,7 @@ body.modal-open-scroll-lock {
     --bs-table-border-color: var(--app-border-color);
   }
 
-  .settings-card {
+  .content-card {
     background: var(--app-card-bg) !important;
     border: 1px solid var(--app-border-color);
     box-shadow: var(--app-card-shadow);
@@ -215,14 +215,19 @@ body.modal-open-scroll-lock {
     color: var(--app-text-muted);
   }
 
-  /* ============ Home (dashboard) ============ */
-  .home-card {
+  /* ============ Content cards ============ */
+  .content-card {
     background: var(--app-card-bg) !important;
     border-color: var(--app-card-border) !important;
     box-shadow: var(--app-card-shadow) !important;
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+      border-color: #6366f1 !important;
+    }
   }
 
-  .home-card-header {
+  .content-card-header {
     color: var(--app-text-primary) !important;
     border-bottom-color: var(--app-border-color) !important;
   }
@@ -251,17 +256,6 @@ body.modal-open-scroll-lock {
   .edit-toolbar {
     background: linear-gradient(135deg, #0d2d1a, #0a1f12) !important;
     border-color: #166534 !important;
-  }
-
-  .day-card {
-    background: var(--app-card-bg, #1e1e2d) !important;
-    border-color: var(--app-card-border, #2a2a3d) !important;
-    box-shadow: var(--app-card-shadow, 0 1px 3px rgba(0,0,0,0.3)) !important;
-  }
-
-  .day-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
-    border-color: #6366f1 !important;
   }
 
   .card-header-custom {
@@ -317,18 +311,7 @@ body.modal-open-scroll-lock {
   }
 
   /* ============ Reports ============ */
-  .report-card {
-    background: var(--app-card-bg) !important;
-    border-color: var(--app-card-border) !important;
-    box-shadow: var(--app-card-shadow) !important;
-
-    &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
-      border-color: #6366f1 !important;
-    }
-  }
-
-  .report-card-body {
+  .content-card-body {
     background: transparent !important;
   }
 
@@ -360,22 +343,22 @@ body.modal-open-scroll-lock {
     box-shadow: var(--app-card-shadow) !important;
   }
 
-  .users-table th,
-  .users-table td {
+  .data-table th,
+  .data-table td {
     color: var(--app-text-primary) !important;
   }
 
-  .users-table thead th {
+  .data-table thead th {
     color: var(--app-text-muted) !important;
     background: var(--app-hover-bg) !important;
     border-bottom-color: var(--app-border-color) !important;
   }
 
-  .users-table tbody tr {
+  .data-table tbody tr {
     border-bottom-color: var(--app-border-color) !important;
   }
 
-  .users-table tbody tr:hover {
+  .data-table tbody tr:hover {
     background: var(--app-hover-bg) !important;
   }
 
@@ -389,141 +372,129 @@ body.modal-open-scroll-lock {
   }
 
   /* ============ Auth page ============ */
-  .auth-container {
+  .fullscreen-container {
     background-color: var(--app-body-bg);
     background-image: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
   }
 
-  .auth-container .card {
+  .fullscreen-container .card {
     background-color: var(--app-card-bg);
     box-shadow: var(--app-card-shadow);
   }
 
-  .auth-container .card:hover {
+  .fullscreen-container .card:hover {
     box-shadow: var(--app-card-shadow);
   }
 
-  .auth-footer {
+  .app-footer {
     background-color: rgba(18, 18, 30, 0.9);
   }
 
-  .auth-form h2 {
+  .app-form h2 {
     color: var(--app-text-primary);
   }
 
-  .auth-form .form-label {
+  .app-form .form-label {
     color: var(--app-text-muted);
   }
 
-  .auth-form .input-group-text {
+  .app-form .input-group-text {
     background: #1e1e2d;
     border-color: var(--app-border-color);
   }
 
-  .auth-form .input-group:focus-within {
+  .app-form .input-group:focus-within {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
   }
 
-  .auth-form .input-group:focus-within .input-group-text {
+  .app-form .input-group:focus-within .input-group-text {
     border-color: #6366f1;
     background: rgba(99, 102, 241, 0.1);
   }
 
-  .auth-form .form-control {
+  .app-form .form-control {
     background: #1a1a2e;
     border-color: var(--app-border-color);
     border-left: none;
     color: var(--app-text-primary);
   }
 
-  .auth-form .form-control:focus {
+  .app-form .form-control:focus {
     background: #1a1a2e;
     border-color: #6366f1;
     color: var(--app-text-primary);
     box-shadow: none;
   }
 
-  .auth-form .btn-outline-secondary {
+  .app-form .btn-outline-secondary {
     border-color: var(--app-border-color);
     color: var(--app-text-muted);
   }
 
-  .auth-form .btn-outline-secondary:hover {
+  .app-form .btn-outline-secondary:hover {
     background: var(--app-hover-bg);
     color: var(--app-text-primary);
   }
 
-  .auth-form .btn-primary {
+  .app-form .btn-primary {
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     border: none;
     color: #fff;
     box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
   }
 
-  .auth-form .btn-primary:hover:not(:disabled) {
+  .app-form .btn-primary:hover:not(:disabled) {
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
     box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     transform: translateY(-2px);
   }
 
-  .auth-form .btn-primary:disabled {
+  .app-form .btn-primary:disabled {
     background: #373757;
     box-shadow: none;
   }
 
-  .auth-form a {
+  .app-form a {
     color: #818cf8;
   }
 
-  .auth-form a:hover {
+  .app-form a:hover {
     color: #a5b4fc;
   }
 
-  .auth-form a::after {
+  .app-form a::after {
     background-color: #a5b4fc;
   }
 
-  .auth-form .invalid-feedback {
+  .app-form .invalid-feedback {
     color: #f87171;
   }
 
-  .auth-form .text-muted {
+  .app-form .text-muted {
     color: var(--app-text-muted) !important;
   }
 
-  .auth-form .input-group-text img,
-  .auth-form .btn-outline-secondary img {
+  .app-form .input-group-text img,
+  .app-form .btn-outline-secondary img {
     filter: brightness(1.5);
   }
 
-  /* ============ Auth theme toggle ============ */
-  .auth-theme-toggle {
-    border-color: #374151 !important;
-    background: #1e1e2d !important;
-    color: #e4e4e7 !important;
-
-    &:hover {
-      background: #26263a !important;
-    }
-  }
-
-  /* SVG icon images inside buttons */
-  .theme-toggle-btn img,
-  .auth-theme-toggle img {
-    filter: brightness(0) invert(0.8);
-  }
-
-  /* ============ Auth page — missing details ============ */
-  .auth-container .card {
+  /* ============ Auth page overrides ============ */
+  .fullscreen-container .card {
     border-color: var(--app-border-color, #2a2a3d);
   }
 
-  .auth-footer .text-muted {
+  .app-footer .text-muted {
     color: var(--app-text-muted, #9ca3af) !important;
   }
 
-  .auth-logo img {
+  .app-logo img {
     filter: brightness(1.2);
+  }
+
+  /* SVG icon images inside buttons */
+  .theme-toggle-btn img {
+    filter: brightness(0) invert(0.8);
   }
 
   /* ============ Modal windows (confirm + result) ============ */

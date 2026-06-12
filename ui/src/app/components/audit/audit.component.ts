@@ -5,7 +5,8 @@ import { DataReloadService } from "../../shared/services/dataReload.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from "../../shared/services/loading.service";
-import { LaundressService, AuditLogModel } from "../../shared/services/laundress.service";
+import { LaundressService } from "../../shared/services/laundress.service";
+import { AuditLogModel } from "../../shared/interface/audit-log";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
 
 export const AUDIT_ACTIONS = ['CreateSlot', 'CreateSlotRange', 'BookSlot', 'UnbookSlot', 'DeleteSlot', 'ChangeUserStatus', 'UpdateSetting'] as const;

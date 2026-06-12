@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { LaundressService } from "../../shared/services/laundress.service";
-import { LaundressModel, PageLaundressModel } from "../../shared/model/laundress.model";
+import { PageLaundressModel } from "../../shared/model/laundress.model";
 import { DataReloadService } from "../../shared/services/dataReload.service";
 import { Subject, takeUntil } from "rxjs";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
@@ -102,7 +102,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         let t = this;
         t.usersInfoService.getUsers()
             .then(res => {
-                t.users = res.data ?? [];
+                t.users = res.data?.filter(x => !x.isBlocked && x.isConfirm ) ?? [];
             })
             .catch(err => console.error(err));
     }

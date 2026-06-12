@@ -1,7 +1,7 @@
 import { HostListener, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { menuitems } from '../constants/menuitems';
-import { auditRoute, laundressRoute, overviewRoute, reportsRoute, settingsRoute, userInfoRoute } from "../constants/routes";
+import { auditRoute, laundressRoute, overviewRoute, reportsRoute, settingsRoute, userInfoRoute, userProfileRoute } from "../constants/routes";
 import { HeaderButtonModel } from "../model/headerButton.model";
 
 // Menu
@@ -74,6 +74,13 @@ export class NavService {
             title: 'menu.settings',
             type: 'link',
             image: menuitems[settingsRoute],
+            roles: ['admin'],
+        },
+        {
+            path: '/' + userProfileRoute,
+            title: 'menu.profile',
+            type: 'link',
+            notShowInSidebar: true,
             roles: ['admin'],
         },
     ];

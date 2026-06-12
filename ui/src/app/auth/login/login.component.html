@@ -1,32 +1,27 @@
-<div class="auth-form">
+<div class="app-form">
   <h2 class="text-center mb-4 f-w-600">{{ 'Login' | lang | uppercase }}</h2>
 
   <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="needs-validation">
     <div class="form-group mb-3">
       <div class="input-group">
         <span class="input-group-text">
-          <img alt="Email Icon" height="20" src="/assets/image/fields/email.svg" width="20">
+          <img alt="Login Icon" height="20" src="/assets/image/fields/email.svg" width="20">
         </span>
         <input
-          [attr.aria-label]="'Email' | lang"
+          [attr.aria-label]="'Login' | lang"
           [attr.aria-required]="true"
           autofocus
           class="form-control"
-          formControlName="email"
-          id="email-field"
-          placeholder="{{ 'Email' | lang }}"
+          formControlName="login"
+          id="login-field"
+          placeholder="{{ 'Login' | lang }}"
           required
-          type="email"
+          type="text"
         >
       </div>
-      @if (loginForm.get('email')?.errors?.['required'] && loginForm.get('email')?.touched) {
+      @if (loginForm.get('login')?.errors?.['required'] && loginForm.get('login')?.touched) {
         <div class="invalid-feedback d-block">
-          {{ 'Email is required' | lang }}
-        </div>
-      }
-      @if (loginForm.get('email')?.errors?.['email'] && loginForm.get('email')?.touched) {
-        <div class="invalid-feedback d-block">
-          {{ 'Please enter a valid email' | lang }}
+          {{ 'Login is required' | lang }}
         </div>
       }
     </div>

@@ -30,7 +30,7 @@ export class RegisterComponent extends BaseComponent {
         let t = this;
         t.regForm = fb.group(
             {
-                telegram: [''],
+                telegram: ['', [Validators.required]],
                 email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
                 password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(t.passwordPattern)]],
                 passwordConfirm: ['', [Validators.required]],
@@ -68,7 +68,7 @@ export class RegisterComponent extends BaseComponent {
         let rawTelegram: string = t.telegram.value;
         let parsedTelegram: number | null = rawTelegram ? Number(rawTelegram) : null;
         if (rawTelegram && isNaN(parsedTelegram!)) {
-            t.showError('Telegram ID must be a number');
+            t.showError(t.translate.instant('errors.telegramIdMustBeNumber'));
             t.setLoading(false);
             return;
         }
@@ -82,7 +82,7 @@ export class RegisterComponent extends BaseComponent {
             .then((res) => {
                 if (res.isSuccess) {
                     t.navigateToLogin();
-                    t.showSuccess("Successfully registered account");
+                    t.showSuccess(t.translate.instant('registered_success'));
                 } else {
                     t.showResponseError(res);
                 }
@@ -110,9 +110,9 @@ export class RegisterComponent extends BaseComponent {
                 password.value,
                 passwordConfirm.value,
             );
-            if (!isValidPasswordConfirm.isValid) {
+            if (!isValidPasswordConfirm.isSuccess) {
                 let obj = {};
-                obj[isValidPasswordConfirm.errorText] = true;
+                obj[isValidPasswordConfirm.errors[0].message] = true;
                 passwordConfirm.setErrors(obj);
             }
             // обновить валидацию данного элемента при совпадении паролей

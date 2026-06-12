@@ -1,11 +1,21 @@
 {
   "Register": "Register",
   "Telegram": "Telegram ID",
+  "Telegram ID": "Telegram ID",
+  "Telegram ID is required": "Telegram ID is required",
   "Password": "Password",
   "Login": "Login",
+  "Login is required": "Login is required",
   "Registered": "Registered",
   "Email": "Email",
   "Logout": "Logout",
+  "registered_success": "Account registered successfully",
+  "Confirm password": "Confirm password",
+  "Email is required": "Email is required",
+  "Password is required": "Password is required",
+  "Please enter a valid email": "Please enter a valid email",
+  "Hide password": "Hide password",
+  "Show password": "Show password",
   "account": {
     "create": "Create new account?",
     "login": "Already have an account?"
@@ -22,8 +32,7 @@
     "passwordConfirmation": {
       "notMatch": "Passwords does not match"
     },
-    "telegramIdMustBeNumber": "Telegram ID must be a number",
-    "telegram_id_must_be_number": "Telegram ID must be a number"
+    "telegramIdMustBeNumber": "Telegram ID must be a number"
   },
   "menu": {
     "home": "Home",
@@ -31,7 +40,8 @@
     "laundress": "Laundress",
     "reports": "Reports",
     "audit": "Audit log",
-    "settings": "Settings"
+    "settings": "Settings",
+    "profile": "User Profile"
   },
   "common": {
     "ok": "Ok",
@@ -52,7 +62,14 @@
     "operation_cancelled": "Operation cancelled",
     "prev": "Prev",
     "next": "Next",
-    "saved": "Saved successfully"
+    "saved": "Saved successfully",
+    "view": "View",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "user_page": {
+    "title": "User Profile"
   },
   "users": {
     "name": "Name",

@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Ouro.TelegramBot.Core" Version="1.0.0" />
     <PackageReference Include="Ouro.Backup" Version="1.0.0" />
   </ItemGroup>

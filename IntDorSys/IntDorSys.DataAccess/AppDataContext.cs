@@ -1,6 +1,6 @@
 using IntDorSys.Core.Entities;
 using IntDorSys.Core.Entities.Users;
-using IntDorSys.Laundress.Core;
+using IntDorSys.Laundress.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Ouro.DatabaseUtils.Conventions;
 using Ouro.DatabaseUtils.DbContexts;
@@ -71,7 +71,27 @@ namespace IntDorSys.DataAccess
                     builder.Property(x => x.GroupId);
                 });
 
-            modelBuilder.AddLaundressMap();
+            modelBuilder.AddPersistentEntity<UseLaundress>(
+                builder =>
+                {
+                    builder.Property(x => x.TimeWash).IsRequired();
+                    builder.Property(x => x.IsSendDay);
+                    builder.Property(x => x.IsSendHours);
+
+                    builder.RequiredReference(x => x.CreatedUser, x => x.CreatedUserId);
+                    builder.OptionalReference(x => x.SelectUser, x => x.SelectUserId);
+
+                    builder.HasIndex(x => x.TimeWash).IsUnique();
+                });
+
+            modelBuilder.AddPersistentEntity<Report>(
+                builder =>
+                {
+                    builder.Property(x => x.GroupId);
+                    builder.Property(x => x.Description);
+
+                    builder.RequiredReference(x => x.User, x => x.UserId);
+                });
 
             modelBuilder.AddPersistentEntity<AuditLog>(
                 builder =>

@@ -26,6 +26,7 @@ export class AuthComponent extends BaseComponent implements OnInit {
     currentActiveTab: Subpages | undefined;
     currentYear: number = new Date().getFullYear();
     isDarkMode = false;
+    currentLang: string = languages[Language.EN].shortName;
 
     constructor(
         private activateRoute: ActivatedRoute,
@@ -40,6 +41,11 @@ export class AuthComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        const storedLang = localStorage.getItem('localization');
+        this.currentLang = storedLang && Object.values(languages).some(l => l.shortName === storedLang)
+            ? storedLang
+            : languages[Language.EN].shortName;
+        this.translate.use(this.currentLang);
         this.isDarkMode = this.themeService.getTheme() === 'dark';
         const subpageRoute = this.activateRoute.snapshot.paramMap.get('subpageRoute');
         const found = this.subpagesMenu.find((tab) => tab.route == subpageRoute);
@@ -51,6 +57,14 @@ export class AuthComponent extends BaseComponent implements OnInit {
 
         this.currentActiveTab = found;
         found.isActive = true;
+    }
+
+    changeLanguage(): void {
+        this.currentLang = this.currentLang === languages[Language.EN].shortName
+            ? languages[Language.RU].shortName
+            : languages[Language.EN].shortName;
+        this.translate.use(this.currentLang);
+        localStorage.setItem('localization', this.currentLang);
     }
 
     toggleTheme(): void {

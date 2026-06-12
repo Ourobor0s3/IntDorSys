@@ -1,45 +1,34 @@
 import { RegexUtils } from "./regexUtils";
+import { IResponse } from "../interface/response";
 
 const ERROR_REQUIRED = 'errors.required';
 
 export class ValidationUtils {
 
-    /** валидация подтверждения пароля */
     public static validatePasswordConfirmation(
         password: string,
         confirmation: string,
-    ): IValidationResult {
+    ): IResponse<null> {
         if (RegexUtils.isNullOrWhitespace(confirmation)) {
             return {
-                isValid: false,
-                errorText: ERROR_REQUIRED,
+                isSuccess: false,
+                errors: [{ message: ERROR_REQUIRED }],
+                data: null,
             };
         }
 
         if (password !== confirmation) {
             return {
-                isValid: false,
-                errorText: 'errors.passwordConfirmation.notMatch',
+                isSuccess: false,
+                errors: [{ message: 'errors.passwordConfirmation.notMatch' }],
+                data: null,
             };
         }
 
         return {
-            isValid: true,
-            errorText: '',
+            isSuccess: true,
+            errors: [],
+            data: null,
         };
     }
-}
-
-/**
- * Результат валидации
- */
-export interface IValidationResult {
-    /**
-     * Валидно/невалидно
-     */
-    isValid: boolean;
-    /**
-     * Текст сообщения об ошибке
-     */
-    errorText: string;
 }

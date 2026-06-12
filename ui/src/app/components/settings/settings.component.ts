@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
+import { ClipboardService } from "ngx-clipboard";
 import { LoadingService } from "../../shared/services/loading.service";
 import { ApiService } from "../../shared/services/api.service";
 
@@ -37,6 +38,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
         private modal: NgbModal,
         private translate: TranslateService,
         private loading: LoadingService,
+        private clipboardService: ClipboardService,
     ) {
         super(translate, modal, loading);
     }
@@ -72,6 +74,13 @@ export class SettingsComponent extends BaseComponent implements OnInit {
             this.botStatus = res?.data ?? null;
         } catch {
             this.botStatus = null;
+        }
+    }
+
+    copyUsername() {
+        if (this.botStatus?.username) {
+            this.clipboardService.copy('@' + this.botStatus.username);
+            this.showToast(this.translate.instant('common.copy_success'));
         }
     }
 

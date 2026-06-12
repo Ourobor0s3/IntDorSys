@@ -28,17 +28,9 @@ export class LoginComponent extends BaseComponent {
         super(translate, modal);
         let t = this;
         t.loginForm = fb.group({
-            email: ['', [Validators.required, Validators.email]],
+            login: ['', [Validators.required]],
             password: ['', [Validators.required]],
         });
-    }
-
-    get email() {
-        return this.loginForm.get('email');
-    }
-
-    get password() {
-        return this.loginForm.get('password');
     }
 
     onSubmit(): void {
@@ -50,8 +42,8 @@ export class LoginComponent extends BaseComponent {
         t.setLoading(true);
 
         let loginCred: Credentials = {
-            email: t.email!.value,
-            password: t.password!.value,
+            login: t.loginForm.get('login')!.value,
+            password: t.loginForm.get('password')!.value,
         };
 
         t.authService.login(loginCred)

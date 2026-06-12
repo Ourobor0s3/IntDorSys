@@ -1,6 +1,6 @@
 <div class="page-content">
   <!-- Bot status -->
-  <div class="settings-card mb-3">
+  <div class="content-card content-card--padded mb-3">
     <h5 class="card-title">{{ 'bot.title' | lang }}</h5>
     @if (botStatus) {
       <div class="d-flex align-items-center gap-3 flex-wrap">
@@ -15,7 +15,7 @@
         @if (botStatus.username) {
           <div>
             <span class="text-muted small">{{ 'bot.username' | lang }}:</span>
-            <span class="ms-1">{{ '@' + botStatus.username }}</span>
+            <span (click)="copyUsername()" class="copy-link ms-1">{{ '@' + botStatus.username }}</span>
           </div>
         }
         @if (botStatus.lastStarted) {
@@ -41,8 +41,8 @@
   }
 
   @if (items.length > 0) {
-    <div class="settings-card">
-      <table class="users-table">
+    <div class="content-card content-card--padded">
+      <table class="data-table">
         <thead>
           <tr>
             <th>{{ 'settings.key' | lang }}</th>

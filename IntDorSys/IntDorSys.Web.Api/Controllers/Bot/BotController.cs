@@ -1,14 +1,15 @@
+using IntDorSys.Core.Models;
 using IntDorSys.Web.Api.Bot;
 using IntDorSys.Web.Api.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Web.Api.Controllers.Bot
 {
-    [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class BotController : ProtectedApiController
+    public sealed class BotController : ProtectedApiController
     {
         private readonly BotStatus _botStatus;
         private readonly IBotControlService _botControl;
@@ -20,29 +21,22 @@ namespace IntDorSys.Web.Api.Controllers.Bot
         }
 
         [HttpGet("status")]
-        public IActionResult GetStatus()
+        public DataResult<BotStatusDto> GetStatus()
         {
-            return Ok(new
+            return new DataResult<BotStatusDto>().WithData(new BotStatusDto
             {
-                running = _botStatus.IsRunning,
-                username = _botStatus.BotUsername,
-                lastStarted = _botStatus.LastStartedAt,
+                Running = _botStatus.IsRunning,
+                Username = _botStatus.BotUsername,
+                LastStarted = _botStatus.LastStartedAt,
             });
         }
 
         [HttpPost("restart")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Restart()
+        public async Task<DataResult<bool>> Restart()
         {
-            try
-            {
-                await _botControl.RestartAsync();
-                return Ok(new { message = "Bot restarted successfully" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Bot restart failed", error = ex.Message });
-            }
+            await _botControl.RestartAsync();
+            return new DataResult<bool>().WithData(true);
         }
     }
 }

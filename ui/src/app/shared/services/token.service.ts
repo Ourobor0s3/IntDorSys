@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
 
 export interface Credentials {
-    email: string;
+    login: string;
     password: string;
 }
 
@@ -17,7 +17,7 @@ export class TokenService {
 
     auth(credentials: Credentials) {
         return this.api.postAnonym(tokenUrl, {
-            login: credentials.email,
+            login: credentials.login,
             password: credentials.password,
         });
     }
