@@ -1,9 +1,9 @@
-<div class="auth-container">
-  <div class="auth-actions">
-    <button class="auth-action-btn" (click)="changeLanguage()" [attr.title]="'language.' + (currentLang === 'en' ? 'ru' : 'en') | lang">
+<div class="fullscreen-container">
+  <div class="floating-actions">
+    <button class="icon-btn" (click)="changeLanguage()" [attr.title]="'language.' + (currentLang === 'en' ? 'ru' : 'en') | lang">
       <span class="fw-bold">{{ currentLang | uppercase }}</span>
     </button>
-    <button class="auth-action-btn" (click)="toggleTheme()" [attr.title]="isDarkMode ? ('theme.light' | lang) : ('theme.dark' | lang)">
+    <button class="icon-btn" (click)="toggleTheme()" [attr.title]="isDarkMode ? ('theme.light' | lang) : ('theme.dark' | lang)">
       @if (isDarkMode) {
         <img alt="Light mode" height="18" src="assets/image/table_icons/sun.svg" width="18"/>
       }
@@ -17,7 +17,7 @@
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div [@animateRoute]="getCurrentState()" class="card shadow-sm">
           <div class="card-body p-4">
-            <div class="auth-logo text-center">
+            <div class="app-logo text-center">
               <img alt="Logo" src="assets/image/logo/logo.svg">
             </div>
             @if (subpagesMenu[0].isActive) {
@@ -31,7 +31,7 @@
       </div>
     </div>
   </div>
-  <footer class="auth-footer">
+  <footer class="app-footer">
     <div class="text-muted text-center py-3">
       © {{ currentYear }} IntDorSys. All Rights Reserved
     </div>

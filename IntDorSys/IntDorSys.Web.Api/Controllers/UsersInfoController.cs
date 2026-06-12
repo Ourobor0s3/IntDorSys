@@ -20,6 +20,18 @@ namespace IntDorSys.Web.Api.Controllers
             return builder.BuildAsync(HttpContext.RequestAborted);
         }
 
+        [HttpGet("{userId:long}")]
+        public async Task<DataResult<UserInfoModel>> GetByIdAsync(
+            long userId,
+            [FromServices] IUserInfoBuilder builder,
+            [FromServices] IUserQueryService userService)
+        {
+            var user = await userService.GetAsync(userId, HttpContext.RequestAborted);
+            return !user.IsSuccess
+                ? new DataResult<UserInfoModel>().WithErrors(user.Errors)
+                : new DataResult<UserInfoModel>().WithData(builder.Build(user.Data));
+        }
+
         [HttpPut("change-status/{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<DataResult<bool>> ChangeStatusAsync(

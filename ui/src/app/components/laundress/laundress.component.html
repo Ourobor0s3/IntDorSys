@@ -73,7 +73,7 @@
   @if (laundList && laundList.length > 0) {
     <div class="cards-grid">
       @for (laund of laundList; track $index) {
-        <div class="day-card">
+        <div class="content-card">
           <div class="card-header-custom">
             {{ laund.date }}
             <span class="badge bg-light text-secondary rounded-pill fw-normal">{{ laund.laundModels?.length || 0 }} slots</span>

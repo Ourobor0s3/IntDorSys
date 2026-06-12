@@ -6,9 +6,9 @@
 
   <div class="home-grid">
     @if (laund != null) {
-      <div class="home-card">
-        <div class="home-card-header">{{ laund.date }}</div>
-        <div class="home-card-body">
+      <div class="content-card">
+        <div class="content-card-header">{{ laund.date }}</div>
+        <div class="content-card-body">
           @if (laund.laundModels == null || laund.laundModels.length === 0) {
             <div class="text-center py-4">
               <p class="text-muted">{{ 'common.no_data' | lang }}</p>
@@ -29,9 +29,9 @@
       </div>
     }
 
-    <div class="home-card chart-card">
-      <div class="home-card-header">{{ 'chart.all_time_records' | lang }}</div>
-      <div class="home-card-body">
+    <div class="content-card chart-card">
+      <div class="content-card-header">{{ 'chart.all_time_records' | lang }}</div>
+      <div class="content-card-body">
         <app-bar-chart [chartInfo]="chart"></app-bar-chart>
       </div>
     </div>

@@ -1,10 +1,10 @@
-<div class="users-page">
+<div class="page-content">
   <div class="filter-bar">
     <input class="form-control form-control-sm filter-input"
            [placeholder]="'common.search' | lang"
            [(ngModel)]="query"
-           (input)="applyFilter()" />
-    <select class="form-select form-select-sm filter-select" [(ngModel)]="sortKey" (change)="applyFilter()">
+           (input)="onFilterChange()" />
+    <select class="form-select form-select-sm filter-select" [(ngModel)]="sortKey" (change)="onFilterChange()">
       <option value="name">{{ 'users.name' | lang }}</option>
       <option value="status">{{ 'users.status' | lang }}</option>
       <option value="id">ID</option>
@@ -26,30 +26,29 @@
 
   @if (filteredUsers != null) {
     <div class="table-wrapper">
-      <table class="users-table">
+      <table class="data-table">
         <thead>
         <tr>
           <th class="col-num">№</th>
           <th class="col-name">{{ 'users.name' | lang }}</th>
           <th class="col-telegram">{{ 'users.telegram' | lang }}</th>
-          <th class="col-group">{{ 'users.group' | lang }}</th>
           <th class="col-room">{{ 'users.room' | lang }}</th>
           <th class="col-status">{{ 'users.status' | lang }}</th>
           <th class="col-action"></th>
           <th class="col-usage">{{ 'users.usage' | lang }}</th>
           <th class="col-date">{{ 'users.registered_date' | lang }}</th>
           <th class="col-confirm text-center">{{ 'users.is_confirm' | lang }}</th>
+          <th class="col-view"></th>
         </tr>
         </thead>
         <tbody>
-        @for (user of filteredUsers; track $index) {
+        @for (user of users; track $index) {
           <tr>
-            <td class="col-num">{{ $index + 1 }}</td>
+            <td class="col-num">{{ (page - 1) * pageSize + $index + 1 }}</td>
             <td class="col-name cell-ellipsis" [title]="user.fullName">{{ user.fullName }}</td>
             <td class="col-telegram">
               <span (click)="copyText(user.username)" class="copy-link">{{ user.username }}</span>
             </td>
-            <td class="col-group">{{ user.numGroup }}</td>
             <td class="col-room">{{ user.numRoom }}</td>
             <td class="col-status">
               <span class="status-tag" [ngClass]="getStatusStyle(user.status).classname">
@@ -71,10 +70,25 @@
                 <img alt="" height="12" ngSrc="assets/image/table_icons/x_status.svg" width="12"/>
               }
             </td>
+            <td class="col-view">
+              <button class="btn btn-sm btn-outline-primary px-2" routerLink="/user-profile/{{ user.id }}" title="{{ 'common.view' | lang }}">
+                {{ 'common.view' | lang }}
+              </button>
+            </td>
           </tr>
         }
         </tbody>
       </table>
+
+      <div class="pagination-controls">
+        <button (click)="prevPage()" [disabled]="page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
+          &laquo; {{ 'common.prev' | lang }}
+        </button>
+        <span class="page-info">{{ page }} / {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="page >= totalPages" class="btn btn-sm btn-outline-secondary" type="button">
+          {{ 'common.next' | lang }} &raquo;
+        </button>
+      </div>
     </div>
   }
 </div>

@@ -43,8 +43,8 @@
   @if (sortedReports.length > 0) {
     <div class="reports-grid">
       @for (report of sortedReports; track $index) {
-        <div class="report-card">
-          <div class="report-card-body">
+        <div class="content-card">
+          <div class="content-card-body">
             <div class="fw-semibold small text-primary text-truncate">{{ report.username }}</div>
 
             @if (report.files && report.files.length > 0) {

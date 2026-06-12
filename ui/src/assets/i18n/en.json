@@ -40,7 +40,8 @@
     "laundress": "Laundress",
     "reports": "Reports",
     "audit": "Audit log",
-    "settings": "Settings"
+    "settings": "Settings",
+    "profile": "User Profile"
   },
   "common": {
     "ok": "Ok",
@@ -61,7 +62,14 @@
     "operation_cancelled": "Operation cancelled",
     "prev": "Prev",
     "next": "Next",
-    "saved": "Saved successfully"
+    "saved": "Saved successfully",
+    "view": "View",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "user_page": {
+    "title": "User Profile"
   },
   "users": {
     "name": "Name",

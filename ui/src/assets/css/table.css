@@ -19,14 +19,14 @@
   border: 1px solid var(--table-wrapper-border);
 }
 
-.users-table {
+.data-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
 }
 
-.users-table th,
-.users-table td {
+.data-table th,
+.data-table td {
   padding: 0.6rem 0.75rem;
   text-align: left;
   white-space: nowrap;
@@ -34,7 +34,7 @@
   text-overflow: ellipsis;
 }
 
-.users-table thead th {
+.data-table thead th {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--table-header-color);
@@ -44,29 +44,29 @@
   border-bottom: 1px solid var(--table-header-border);
 }
 
-.users-table tbody tr {
+.data-table tbody tr {
   border-bottom: 1px solid var(--table-row-border);
   transition: background 0.15s;
 }
 
-.users-table tbody tr:last-child {
+.data-table tbody tr:last-child {
   border-bottom: none;
 }
 
-.users-table tbody tr:hover {
+.data-table tbody tr:hover {
   background: var(--table-row-hover);
 }
 
-.users-table .col-num { width: 40px; text-align: center; }
-.users-table .col-name { min-width: 120px; max-width: 200px; }
-.users-table .col-telegram { min-width: 120px; max-width: 180px; }
-.users-table .col-group { width: 60px; text-align: center; }
-.users-table .col-room { width: 60px; text-align: center; }
-.users-table .col-status { width: 100px; }
-.users-table .col-action { width: 44px; text-align: center; }
-.users-table .col-usage { width: 60px; text-align: center; }
-.users-table .col-date { min-width: 110px; }
-.users-table .col-confirm { width: 60px; }
+.data-table .col-num { width: 40px; text-align: center; }
+.data-table .col-name { min-width: 120px; max-width: 200px; }
+.data-table .col-telegram { min-width: 120px; max-width: 180px; }
+.data-table .col-group { width: 60px; text-align: center; }
+.data-table .col-room { width: 60px; text-align: center; }
+.data-table .col-status { width: 100px; }
+.data-table .col-action { width: 44px; text-align: center; }
+.data-table .col-usage { width: 60px; text-align: center; }
+.data-table .col-date { min-width: 110px; }
+.data-table .col-confirm { width: 60px; }
 
 .copy-link {
   cursor: pointer;

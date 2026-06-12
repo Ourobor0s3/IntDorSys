@@ -20,6 +20,10 @@ import { LoadingService } from "../../shared/services/loading.service";
 export class UserInfoComponent extends BaseComponent implements OnInit, OnDestroy {
     userList?: UserInfoModel[];
     filteredUsers?: UserInfoModel[];
+    users: UserInfoModel[] = [];
+    page: number = 1;
+    pageSize: number = 50;
+    totalPages: number = 1;
     modalRef?: NgbModalRef;
     query: string = '';
     sortKey: string = 'name';
@@ -106,16 +110,38 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         }
 
         t.filteredUsers = result;
+        t.totalPages = Math.max(1, Math.ceil(result.length / t.pageSize));
+        let start = (t.page - 1) * t.pageSize;
+        t.users = result.slice(start, start + t.pageSize);
+    }
+
+    onFilterChange() {
+        this.page = 1;
+        this.applyFilter();
+    }
+
+    prevPage() {
+        if (this.page > 1) {
+            this.page--;
+            this.applyFilter();
+        }
+    }
+
+    nextPage() {
+        if (this.page < this.totalPages) {
+            this.page++;
+            this.applyFilter();
+        }
     }
 
     toggleSortDir() {
         this.sortDesc = !this.sortDesc;
-        this.applyFilter();
+        this.onFilterChange();
     }
 
     toggleNameFilter() {
         this.showWithNameOnly = !this.showWithNameOnly;
-        this.applyFilter();
+        this.onFilterChange();
     }
 
     ngOnDestroy(): void {

@@ -1,4 +1,4 @@
-<div class="users-page">
+<div class="page-content">
   <div class="filter-bar">
     <div class="input-group input-group-sm filter-input">
       <span class="input-group-text px-2">
@@ -49,7 +49,7 @@
 
   @if (allLogs != null && logs.length > 0) {
     <div class="table-wrapper">
-      <table class="users-table">
+      <table class="data-table">
         <thead>
           <tr>
             <th>{{ 'common.date' | lang }}</th>
@@ -66,7 +66,7 @@
               <td class="small">{{ log.userName }}</td>
               <td class="small"><code>{{ 'audit.action.' + log.action | lang }}</code></td>
               <td class="small">{{ log.entityName }}@if (log.entityId) { <span> #{{ log.entityId }}</span> }</td>
-              <td class="small text-muted audit-details">{{ log.details }}</td>
+              <td class="small text-muted cell-details">{{ log.details }}</td>
             </tr>
           }
         </tbody>

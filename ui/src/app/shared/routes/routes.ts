@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { auditRoute, laundressRoute, overviewRoute, reportsRoute, settingsRoute, userInfoRoute } from "../constants/routes";
+import { auditRoute, laundressRoute, overviewRoute, reportsRoute, settingsRoute, userInfoRoute, userProfileRoute } from "../constants/routes";
 
 export const mainContent: Routes = [
     {
@@ -43,5 +43,11 @@ export const mainContent: Routes = [
         loadChildren: () =>
             import('../../components/settings/settings.module')
                 .then(m => m.SettingsModule),
+    },
+    {
+        path: userProfileRoute,
+        loadChildren: () =>
+            import('../../components/user-profile/user-profile.module')
+                .then(m => m.UserProfileModule),
     },
 ];

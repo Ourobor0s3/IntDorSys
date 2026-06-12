@@ -1,0 +1,79 @@
+<div class="page-content">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <button (click)="goBack()" class="btn btn-sm btn-outline-secondary" type="button">
+      &larr; {{ 'common.back' | lang }}
+    </button>
+  </div>
+
+  @if (!user) {
+    <div class="empty-state">
+      <p>{{ 'common.loading' | lang }}</p>
+    </div>
+  }
+
+  @if (user) {
+    <div class="content-card content-card--padded">
+        <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
+          <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white flex-shrink-0"
+               style="width:48px;height:48px;font-size:20px;font-weight:600">
+            {{ (user.fullName || user.username || '?') | slice:0:1 | uppercase }}
+          </div>
+          <div>
+            <h4 class="mb-1">{{ user.fullName || user.username }}</h4>
+            @if (user.fullName) {
+              <span class="text-muted small">{{ user.username }}</span>
+            }
+          </div>
+          <span class="status-tag ms-auto" [ngClass]="getStatusStyle(user.status).classname">
+            {{ 'user_status.' + user.status | lang }}
+          </span>
+        </div>
+
+        @if (user.fullName) {
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">{{ 'users.name' | lang }}</div>
+            <div class="col-sm-8">{{ user.fullName }}</div>
+          </div>
+        }
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">ID</div>
+          <div class="col-sm-8">{{ user.id }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">{{ 'users.telegram' | lang }}</div>
+          <div class="col-sm-8">{{ user.username }}</div>
+        </div>
+        @if (user.numGroup) {
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">{{ 'users.group' | lang }}</div>
+            <div class="col-sm-8">{{ user.numGroup }}</div>
+          </div>
+        }
+        @if (user.numRoom) {
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">{{ 'users.room' | lang }}</div>
+            <div class="col-sm-8">{{ user.numRoom }}</div>
+          </div>
+        }
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">{{ 'users.is_confirm' | lang }}</div>
+          <div class="col-sm-8">
+            @if (user.isConfirm) {
+              <span class="text-success">{{ 'common.yes' | lang }}</span>
+            }
+            @if (!user.isConfirm) {
+              <span class="text-danger">{{ 'common.no' | lang }}</span>
+            }
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">{{ 'users.usage' | lang }}</div>
+          <div class="col-sm-8">{{ user.usageCount }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">{{ 'users.registered_date' | lang }}</div>
+          <div class="col-sm-8">{{ user.registerDate }}</div>
+        </div>
+    </div>
+  }
+</div>

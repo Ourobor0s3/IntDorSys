@@ -69,10 +69,8 @@ body,
 .form-select,
 .btn,
 .toast-notification,
-.home-card,
-.day-card,
-.report-card,
-.auth-container {
+.content-card,
+.fullscreen-container {
     transition: background-color var(--theme-transition-duration) var(--theme-transition-timing),
                 color var(--theme-transition-duration) var(--theme-transition-timing),
                 border-color var(--theme-transition-duration) var(--theme-transition-timing),
@@ -100,8 +98,8 @@ body,
     font-weight: 600;
 }
 
-/* Auth container styles */
-.auth-container {
+/* Fullscreen container styles */
+.fullscreen-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -117,7 +115,7 @@ body,
         radial-gradient(ellipse at 50% 80%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
 }
 
-.auth-container .card {
+.fullscreen-container .card {
     background-color: var(--card-bg);
     border-radius: 16px;
     box-shadow: var(--shadow-md);
@@ -125,27 +123,27 @@ body,
     border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-.auth-container .card:hover {
+.fullscreen-container .card:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
 }
 
-.auth-logo img {
+.app-logo img {
     max-height: 60px;
     width: auto;
     transition: transform var(--transition-speed);
 }
 
-.auth-logo img:hover {
+.app-logo img:hover {
     transform: scale(1.05);
 }
 
-.auth-form {
+.app-form {
     width: 100%;
     animation: fadeIn 0.3s ease-out;
 }
 
-.auth-form .form-label {
+.app-form .form-label {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--text-muted);
@@ -153,21 +151,21 @@ body,
     transition: color var(--transition-speed);
 }
 
-.auth-form .form-control:focus + .form-label {
+.app-form .form-control:focus + .form-label {
     color: var(--primary-modern);
 }
 
-.auth-form .input-group {
+.app-form .input-group {
     border-radius: var(--border-radius);
     overflow: hidden;
     transition: all var(--transition-speed);
 }
 
-.auth-form .input-group:focus-within {
+.app-form .input-group:focus-within {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
-.auth-form .input-group-text {
+.app-form .input-group-text {
     background-color: var(--light-color);
     border: 1px solid var(--border);
     border-right: none;
@@ -175,12 +173,12 @@ body,
     transition: all var(--transition-speed);
 }
 
-.auth-form .input-group:focus-within .input-group-text {
+.app-form .input-group:focus-within .input-group-text {
     border-color: var(--primary-color);
     background-color: rgba(99, 102, 241, 0.05);
 }
 
-.auth-form .form-control {
+.app-form .form-control {
     border: 1px solid var(--border);
     border-left: none;
     padding: 0.75rem 1rem;
@@ -188,35 +186,35 @@ body,
     font-size: 0.95rem;
 }
 
-.auth-form .form-control:focus {
+.app-form .form-control:focus {
     border-color: var(--primary-color);
     box-shadow: none;
 }
 
-.auth-form .btn-outline-secondary {
+.app-form .btn-outline-secondary {
     border-color: var(--border);
     color: var(--text-muted);
     transition: all var(--transition-speed);
 }
 
-.auth-form .btn-outline-secondary:hover {
+.app-form .btn-outline-secondary:hover {
     background-color: var(--light-color);
     border-color: var(--border);
     color: var(--dark-color);
 }
 
-.auth-form .btn-outline-secondary:focus {
+.app-form .btn-outline-secondary:focus {
     box-shadow: none;
 }
 
-.auth-form .invalid-feedback {
+.app-form .invalid-feedback {
     font-size: 0.875rem;
     margin-top: 0.25rem;
     color: var(--danger-color);
     animation: fadeIn 0.2s ease-out;
 }
 
-.auth-form .btn-primary {
+.app-form .btn-primary {
     padding: 0.75rem 1.5rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -228,22 +226,22 @@ body,
     box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
 }
 
-.auth-form .btn-primary:hover:not(:disabled) {
+.app-form .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
 }
 
-.auth-form .btn-primary:active:not(:disabled) {
+.app-form .btn-primary:active:not(:disabled) {
     transform: translateY(0);
 }
 
-.auth-form .btn-primary:disabled {
+.app-form .btn-primary:disabled {
     opacity: 0.7;
     cursor: not-allowed;
     box-shadow: none;
 }
 
-.auth-form a {
+.app-form a {
     color: var(--primary-modern);
     transition: all var(--transition-speed);
     position: relative;
@@ -251,11 +249,11 @@ body,
     font-weight: 500;
 }
 
-.auth-form a:hover {
+.app-form a:hover {
     color: var(--primary-modern-hover);
 }
 
-.auth-form a::after {
+.app-form a::after {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -266,7 +264,7 @@ body,
     transition: width var(--transition-speed);
 }
 
-.auth-form a:hover::after {
+.app-form a:hover::after {
     width: 100%;
 }
 
@@ -295,30 +293,30 @@ body,
 
 /* Responsive form styles */
 @media (max-width: 576px) {
-    .auth-form .form-control,
-    .auth-form .input-group-text {
+    .app-form .form-control,
+    .app-form .input-group-text {
         padding: 0.5rem 0.75rem;
         font-size: 0.875rem;
     }
 
-    .auth-form .btn-primary {
+    .app-form .btn-primary {
         padding: 0.5rem 1rem;
         font-size: 0.875rem;
     }
 
-    .auth-form .form-label {
+    .app-form .form-label {
         font-size: 0.8125rem;
     }
 }
 
-.auth-footer {
+.app-footer {
     margin-top: auto;
     padding: 1rem;
     background-color: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
 }
 
-.auth-footer .text-muted {
+.app-footer .text-muted {
     font-size: 0.875rem;
 }
 
@@ -693,8 +691,8 @@ html {
     justify-content: center;
 }
 
-/* Data tables тАФ shared across users-info, audit, settings */
-.users-table {
+/* Data tables — shared across users-info, audit, settings */
+.data-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -801,20 +799,19 @@ code {
   }
 }
 
-/* Audit details column */
-.audit-details {
+/* Cell text constraints column */
+.cell-details {
   max-width: 260px;
   white-space: normal;
   word-break: break-word;
 }
 
-/* Settings card */
-.settings-card {
+/* Generic content card */
+.content-card {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   border: 1px solid #f0f0f0;
-  padding: 1.5rem;
   transition: box-shadow 0.2s;
 
   &:hover {
@@ -830,6 +827,28 @@ code {
   textarea {
     resize: vertical;
   }
+}
+
+/* Content card sub-elements */
+.content-card-header {
+  padding: 0.875rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  border-bottom: 1px solid #f3f4f6;
+
+  [data-bs-theme="dark"] & {
+    color: var(--app-text-primary, #e4e4e7);
+    border-color: var(--app-border-color, #2a2a3d);
+  }
+}
+
+.content-card-body {
+  padding: 0.75rem 1.25rem;
+}
+
+.content-card--padded {
+  padding: 1.5rem;
 }
 
 /* Main content wrapper */
@@ -930,22 +949,22 @@ body::-webkit-scrollbar-thumb:hover {
         font-size: 0.75rem;
     }
 
-    .auth-container .card {
+    .fullscreen-container .card {
         margin: 1rem;
     }
 
-    .auth-form .form-control,
-    .auth-form .input-group-text {
+    .app-form .form-control,
+    .app-form .input-group-text {
         padding: 0.5rem 0.75rem;
         font-size: 0.875rem;
     }
 
-    .auth-form .btn-primary {
+    .app-form .btn-primary {
         padding: 0.5rem 1rem;
         font-size: 0.875rem;
     }
 
-    .auth-logo img {
+    .app-logo img {
         max-height: 50px;
     }
 }
@@ -1227,24 +1246,14 @@ body::-webkit-scrollbar-thumb:hover {
     background-color: var(--primary-color, #4466f2) !important;
 }
 
-.chart-container {
+.content-card.chart-card,
+.chart-card.content-card {
     position: relative;
-    width: 100%;
-    max-width: 100%;
-    padding: 1.25rem;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    border: 1px solid #f0f0f0;
     overflow-x: auto;
-    transition: box-shadow 0.2s ease;
 }
 
-.chart-container:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.chart-container canvas {
+.content-card canvas,
+.chart-card canvas {
     display: block;
     width: 100% !important;
     height: auto !important;
