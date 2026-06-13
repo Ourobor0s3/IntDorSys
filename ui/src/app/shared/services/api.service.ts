@@ -15,10 +15,12 @@ export class ApiService {
     constructor(private http: HttpClient) {
     }
 
-    async getAccessToken() {
-        // потом поменять
-        let accessToken = localStorage.getItem('accessToken');
-        return accessToken;
+    async getAccessToken(): Promise<string | null> {
+        try {
+            return localStorage.getItem('accessToken');
+        } catch {
+            return null;
+        }
     }
 
     getAnonym<T>(url: string): Observable<IResponse<T>> {

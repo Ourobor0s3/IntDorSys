@@ -15,7 +15,7 @@ export class EventService {
     private funcImpl: (() => void)[] = [];
     private arrForLogOut: { clear: () => void }[] = [];
 
-    Langchanged(msg: string) {
+    langChanged(msg: string): void {
         this.LangChangeEvent.next(msg);
     }
 

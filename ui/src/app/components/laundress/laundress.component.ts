@@ -78,7 +78,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
                 this.laundList = res.data;
             })
             .catch((err) => {
-                console.error(err);
+                this.showResponseError(err);
             })
             .finally(() => {
                 if (isRunLoading)
@@ -100,7 +100,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
             .then(res => {
                 this.users = res.data?.filter(x => !x.isBlocked && x.isConfirm ) ?? [];
             })
-            .catch(err => console.error(err));
+            .catch(err => this.showResponseError(err));
     }
 
     openCreateModal(content: unknown) {
@@ -152,46 +152,46 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
             .catch(err => this.showResponseError(err));
     }
 
-    confirmUnbook(timeWash: string, userId: number) {
-        this.showConfirm(
-            this.translate.instant('laundress.confirm_unbook'),
-            '',
-        )
-            .then(() => {
-                this.laundService.unbookUser(timeWash, userId)
-                    .then(res => {
-                        if (res.isSuccess) {
-                            this.searchTimeLaund();
-                        } else {
-                            this.showResponseError(res);
-                        }
-                    })
-                    .catch(err => this.showResponseError(err));
-            })
-            .catch(() => {
-                this.showError(this.translate.instant('common.operation_cancelled'));
-            });
+    async confirmUnbook(timeWash: string, userId: number) {
+        try {
+            await this.showConfirm(
+                this.translate.instant('laundress.confirm_unbook'),
+                '',
+            );
+            try {
+                const res = await this.laundService.unbookUser(timeWash, userId);
+                if (res.isSuccess) {
+                    this.searchTimeLaund();
+                } else {
+                    this.showResponseError(res);
+                }
+            } catch (err) {
+                this.showResponseError(err);
+            }
+        } catch {
+            this.showError(this.translate.instant('common.operation_cancelled'));
+        }
     }
 
-    confirmDelete(timeWash: string) {
-        this.showConfirm(
-            this.translate.instant('laundress.confirm_delete_slot'),
-            '',
-        )
-            .then(() => {
-                this.laundService.deleteTime(timeWash)
-                    .then(res => {
-                        if (res.isSuccess) {
-                            this.searchTimeLaund();
-                        } else {
-                            this.showResponseError(res);
-                        }
-                    })
-                    .catch(err => this.showResponseError(err));
-            })
-            .catch(() => {
-                this.showError(this.translate.instant('common.operation_cancelled'));
-            });
+    async confirmDelete(timeWash: string) {
+        try {
+            await this.showConfirm(
+                this.translate.instant('laundress.confirm_delete_slot'),
+                '',
+            );
+            try {
+                const res = await this.laundService.deleteTime(timeWash);
+                if (res.isSuccess) {
+                    this.searchTimeLaund();
+                } else {
+                    this.showResponseError(res);
+                }
+            } catch (err) {
+                this.showResponseError(err);
+            }
+        } catch {
+            this.showError(this.translate.instant('common.operation_cancelled'));
+        }
     }
 
     // Export

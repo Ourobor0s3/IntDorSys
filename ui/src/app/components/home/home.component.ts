@@ -57,7 +57,7 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
         this.analiticService.getAnaliticLaund().then(res => {
             this.chart = res.data;
         }).catch((err) => {
-                console.error(err);
+                this.showResponseError(err);
             })
             .finally(() => {
                 if (isRunLoading)
@@ -75,7 +75,7 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
                 this.laund = res.data && res.data.length > 0 ? res.data[0] : undefined;
             })
             .catch((err) => {
-                console.error(err);
+                this.showResponseError(err);
             })
             .finally(() => {
                 if (isRunLoading)

@@ -32,7 +32,9 @@
     "passwordConfirmation": {
       "notMatch": "Пароли не совпадают"
     },
-    "telegramIdMustBeNumber": "Telegram ID должен быть числом"
+    "telegramIdMustBeNumber": "Telegram ID должен быть числом",
+    "network_error": "Невозможно подключиться к Интернету. Пожалуйста, проверьте сетевое подключение",
+    "network_title": "Ошибка загрузки ресурса"
   },
   "menu": {
     "home": "Главная",
@@ -66,7 +68,10 @@
     "view": "Просмотр",
     "back": "Назад",
     "yes": "Да",
-    "no": "Нет"
+    "no": "Нет",
+    "logout": "Выйти",
+    "id": "ID",
+    "export_xlsx": "Экспорт XLSX"
   },
   "user_page": {
     "title": "Профиль пользователя"

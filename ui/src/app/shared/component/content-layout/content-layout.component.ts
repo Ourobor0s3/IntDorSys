@@ -21,6 +21,7 @@ export class ContentLayoutComponent implements OnInit, AfterViewInit, OnDestroy 
     @ViewChild('pageBodyWrapper', { static: false }) pageBodyWrapperEl!: ElementRef;
     pageBodyWidth: number = 0;
     private destroy$ = new Subject<void>();
+    private resizeTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     constructor(
         public navServices: NavService,
@@ -34,10 +35,15 @@ export class ContentLayoutComponent implements OnInit, AfterViewInit, OnDestroy 
     ngOnInit(): void {
         this.eventService.LangChangeEvent
             .pipe(takeUntil(this.destroy$))
-            .subscribe(() => setTimeout(() => this.calculatePageBodyWrapperWidth(), 0));
+            .subscribe(() => {
+                this.resizeTimeoutId = setTimeout(() => this.calculatePageBodyWrapperWidth(), 0);
+            });
     }
 
     ngOnDestroy(): void {
+        if (this.resizeTimeoutId !== null) {
+            clearTimeout(this.resizeTimeoutId);
+        }
         this.destroy$.next();
         this.destroy$.complete();
     }

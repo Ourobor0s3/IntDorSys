@@ -64,7 +64,7 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
             this.userList = res.data;
             this.applyFilter();
         }).catch((err) => {
-                console.error(err);
+                this.showResponseError(err);
             })
             .finally(() => {
                 this.setLoading(false);
@@ -158,7 +158,7 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         return USER_STATUS_STYLES[status];
     }
 
-    changeStatus(user: UserInfoModel) {
+    async changeStatus(user: UserInfoModel) {
         this.modalRef = this.modalService.open(ConfirmModal, this.getModalOptions('sm'));
 
         this.modalRef.componentInstance.title = this.translate.instant('common.confirm')
@@ -169,16 +169,15 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         this.modalRef.componentInstance.buttonConfirm = this.translate.instant('common.ok');
         this.modalRef.componentInstance.buttonDecline = this.translate.instant('common.cancel');
 
-        this.modalRef.result
-            .then((result) => {
-                if (result) this.userService.changeUserStatus(user.id, !user.isBlocked).then(() => {
-                    this.showToast(this.translate.instant('common.status_changed'));
-                }).finally(() => {
-                    this.searchUsers();
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        try {
+            const result = await this.modalRef.result;
+            if (result) {
+                await this.userService.changeUserStatus(user.id, !user.isBlocked);
+                this.showToast(this.translate.instant('common.status_changed'));
+                this.searchUsers();
+            }
+        } catch (err) {
+            this.showResponseError(err);
+        }
     }
 }

@@ -1,11 +1,11 @@
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Component, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Component, Input, OnDestroy, OnInit, Renderer2, SecurityContext } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-confirm-modal',
     templateUrl: 'confirm.modal.html',
-    styleUrls: ['./confirm.modal.scss'],
+
 })
 export class ConfirmModal implements OnInit, OnDestroy {
     @Input() title: string = '';
@@ -18,7 +18,7 @@ export class ConfirmModal implements OnInit, OnDestroy {
     @Input() showDeclineButton: boolean = true;
     @Input() buttonError: string = '';
     @Input() showErrorButton: boolean = false;
-    public descriptionHTML: SafeHtml | undefined;
+    public descriptionHTML: string;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -28,7 +28,7 @@ export class ConfirmModal implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.descriptionHTML = this.sanitizer.bypassSecurityTrustHtml(this.description);
+        this.descriptionHTML = this.sanitizer.sanitize(SecurityContext.HTML, this.description) ?? '';
         this.renderer.addClass(document.body, 'modal-open-scroll-lock');
     }
 

@@ -51,7 +51,7 @@ export class LoginComponent extends BaseComponent {
                 } else if (res.errors && res.errors.length > 0) {
                     this.showError(res.errors[0].message);
                 } else {
-                    console.error('Login failed with unknown error', res);
+                    this.showResponseError(res);
                 }
             })
             .catch((e) => {

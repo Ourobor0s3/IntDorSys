@@ -65,7 +65,7 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
                 this.allLogs = res.data ?? [];
                 this.applyFilter();
             })
-            .catch(err => console.error(err))
+            .catch(err => this.showResponseError(err))
             .finally(() => this.setLoading(false));
     }
 

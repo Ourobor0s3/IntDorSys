@@ -21,7 +21,7 @@ interface StyleConfig {
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
+
     animations: [
         trigger('mainAnimation', [
             transition('* <=> *', [
@@ -47,7 +47,6 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         private authService: AuthService,
         private eventService: EventService,
         private userService: UserService,
-        private timezoneService: TimezoneService,
         private renderer: Renderer2,
     ) {
         super(translate, modalService);
@@ -102,9 +101,7 @@ export class AppComponent extends BaseComponent implements OnDestroy {
             link.onload = () => { this.renderer.setAttribute(link, 'rel', 'stylesheet'); };
         }
 
-        link.onerror = () => {
-            console.warn(`Failed to load style: ${styleName}.css`);
-        };
+        link.onerror = () => {};
 
         this.renderer.appendChild(document.head, link);
     }

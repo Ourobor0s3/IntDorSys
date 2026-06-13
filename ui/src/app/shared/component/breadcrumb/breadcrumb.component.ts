@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { HeaderButtonModel } from "../../model/headerButton.model";
 import { NavService } from "../../services/nav.service";
 import { EventService } from "../../services/event.service";
@@ -9,7 +9,7 @@ import { EventService } from "../../services/event.service";
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
-    styleUrls: ['./breadcrumb.component.scss'],
+
 })
 
 export class BreadcrumbComponent implements OnDestroy {
@@ -18,8 +18,6 @@ export class BreadcrumbComponent implements OnDestroy {
     button1: HeaderButtonModel = new HeaderButtonModel();
     button2: HeaderButtonModel = new HeaderButtonModel();
     showInput: boolean = false;
-    buttonsSubscription: Subscription | undefined;
-    inputSubscription: Subscription | undefined;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -27,7 +25,7 @@ export class BreadcrumbComponent implements OnDestroy {
         private navService: NavService,
         private eventService: EventService,
     ) {
-        this.buttonsSubscription = this.eventService.SubpageEvent.pipe(takeUntil(this.destroy$)).subscribe(
+        this.eventService.SubpageEvent.pipe(takeUntil(this.destroy$)).subscribe(
             (headerButton: HeaderButtonModel) => {
                 switch (headerButton.buttonNumber) {
                     case 0:
@@ -42,7 +40,7 @@ export class BreadcrumbComponent implements OnDestroy {
             },
         );
 
-        this.inputSubscription = this.eventService.ShowUploadButtonEvent.pipe(takeUntil(this.destroy$)).subscribe(
+        this.eventService.ShowUploadButtonEvent.pipe(takeUntil(this.destroy$)).subscribe(
             (showUploadInput: boolean) => {
                 this.showInput = showUploadInput;
             },
@@ -101,12 +99,6 @@ export class BreadcrumbComponent implements OnDestroy {
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
-        if (!!this.buttonsSubscription) {
-            this.buttonsSubscription.unsubscribe();
-        }
-        if (!!this.inputSubscription) {
-            this.inputSubscription.unsubscribe();
-        }
     }
 
     setButtonOptions(model: HeaderButtonModel, newModel: HeaderButtonModel) {

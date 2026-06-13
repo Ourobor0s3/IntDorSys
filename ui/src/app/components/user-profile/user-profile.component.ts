@@ -47,7 +47,7 @@ export class UserProfileComponent extends BaseComponent implements OnInit, OnDes
                 this.user = res.data;
             })
             .catch(err => {
-                console.error(err);
+                this.showResponseError(err);
                 this.router.navigate(['/user-info']);
             })
             .finally(() => this.setLoading(false));

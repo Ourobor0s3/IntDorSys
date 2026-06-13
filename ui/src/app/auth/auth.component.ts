@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { authSubpages, Subpages } from './auth.subpages';
@@ -21,7 +21,7 @@ import { ThemeService } from '../shared/services/theme.service';
         ]),
     ],
 })
-export class AuthComponent extends BaseComponent implements OnInit {
+export class AuthComponent extends BaseComponent implements OnInit, OnDestroy {
     subpagesMenu: Subpages[] = authSubpages;
     currentActiveTab: Subpages | undefined;
     currentYear: number = new Date().getFullYear();

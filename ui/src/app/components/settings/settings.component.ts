@@ -24,7 +24,7 @@ interface BotStatus {
 @Component({
     selector: 'app-settings',
     templateUrl: './settings.component.html',
-    styleUrls: ['./settings.component.scss'],
+
 })
 export class SettingsComponent extends BaseComponent implements OnInit {
     items: SettingItem[] = [];
@@ -61,7 +61,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
                 editing: false,
             }));
         } catch (err) {
-            console.error(err);
+            this.showResponseError(err);
         } finally {
             this.setLoading(false);
         }
@@ -123,7 +123,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
                 this.showToast(this.translate.instant('common.saved'));
             }
         } catch (err) {
-            console.error(err);
+            this.showResponseError(err);
         } finally {
             this.saving = false;
         }

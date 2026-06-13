@@ -32,7 +32,9 @@
     "passwordConfirmation": {
       "notMatch": "Passwords does not match"
     },
-    "telegramIdMustBeNumber": "Telegram ID must be a number"
+    "telegramIdMustBeNumber": "Telegram ID must be a number",
+    "network_error": "Unable to connect to the Internet. Please check your network connection",
+    "network_title": "Failed to Load Resource"
   },
   "menu": {
     "home": "Home",
@@ -66,7 +68,10 @@
     "view": "View",
     "back": "Back",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "logout": "Logout",
+    "id": "ID",
+    "export_xlsx": "Export XLSX"
   },
   "user_page": {
     "title": "User Profile"

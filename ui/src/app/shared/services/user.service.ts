@@ -17,7 +17,7 @@ export class UserService {
 
     public init(): Promise<UserInfoModel> {
         let promise: Promise<UserInfoModel>;
-        if (this.get() == undefined || this.get() == null) {
+        if (this.get() === undefined || this.get() === null) {
             promise = this.refreshUser();
         } else {
             promise = new Promise<UserInfoModel>((resolve) => {

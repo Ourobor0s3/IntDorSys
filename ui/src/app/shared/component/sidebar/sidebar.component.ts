@@ -31,8 +31,18 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         private renderer: Renderer2,
     ) {
         super(translate, modalService);
-        let items = this.navService.mainItems;
-        items.pipe(takeUntil(this.destroy$)).subscribe(menuItems => {
+        this.getUser = () => this.userService.get() ?? new UserInfoModel();
+    }
+
+    ngAfterViewChecked(): void {
+        const scrollPosition = sessionStorage.getItem('sidebarScrollY');
+        if (!!scrollPosition && this.sidebarEl) {
+            this.renderer.setProperty(this.sidebarEl.nativeElement, 'scrollTop', +scrollPosition);
+        }
+    }
+
+    ngOnInit(): void {
+        this.navService.mainItems.pipe(takeUntil(this.destroy$)).subscribe(menuItems => {
             this.menuItems = menuItems;
         });
 
@@ -51,17 +61,6 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
             }
         });
 
-        this.getUser = () => this.userService.get() ?? new UserInfoModel();
-    }
-
-    ngAfterViewChecked(): void {
-        const scrollPosition = sessionStorage.getItem('sidebarScrollY');
-        if (!!scrollPosition && this.sidebarEl) {
-            this.sidebarEl.nativeElement.scrollTop = +scrollPosition;
-        }
-    }
-
-    ngOnInit(): void {
         if (this.menuItems) {
             this.updateActiveTabs(this.router.url);
         }
@@ -80,32 +79,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     updateActiveTabs(url: string) {
-        //ищем выбранный элемент среди menuItems
-        let curItem = this.menuItems!.find(x => x.path == url && x.type == 'link');
-        if (!curItem) {
-            //если выбранного элемента нет среди menuItems - смотрим детей
-            this.menuItems!.forEach(items => {
-                if (!!items?.children && !curItem) {
-                    curItem = items.children.find(x => x.path === url);
-                }
-            })
-        }
-        //возврат, если выбранного эл-та нет среди menuItems и детей
-        if (!curItem)
-            return;
-
-        curItem.active = true;
-        //проходимся по всем эл-там, которые не являются выбранным
-        this.menuItems!.filter(x => x.path != curItem!.path).forEach(menuItem => {
-            //делаем эл-т активным, если у среди его детей есть выбранный
-            menuItem.active = !!menuItem.children?.find(x => x.path === url);
-            if (!!menuItem.children) {
-                //проходимся по всем дочерним не выбранным эл-там и проставляем им false
-                menuItem.children.filter(x => x.path != curItem!.path).forEach(child => {
-                    child.active = false;
-                });
-            }
-        });
+        this.navService.updateActiveTabs(this.menuItems!, url);
     }
 
     toggleMobileMenu() {

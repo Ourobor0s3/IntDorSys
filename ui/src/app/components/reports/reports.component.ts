@@ -60,7 +60,7 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
                 this.applySort();
             })
             .catch((err) => {
-                console.error(err);
+                this.showResponseError(err);
             })
             .finally(() => {
                 this.setLoading(false);
@@ -68,21 +68,7 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
     }
 
     searchReports() {
-        this.setLoading(true);
-        this.filter.startDate = this.startDate.toISOString();
-        this.filter.endDate = this.endDate.toISOString();
-
-        this.laundService.getReports(this.filter)
-            .then(res => {
-                this.reportList = res.data ?? [];
-                this.applySort();
-            })
-            .catch((err) => {
-                console.error(err);
-            })
-            .finally(() => {
-                this.setLoading(false);
-            });
+        this.loadData();
     }
 
     applySort() {

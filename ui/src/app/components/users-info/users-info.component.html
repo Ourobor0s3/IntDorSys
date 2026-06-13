@@ -7,7 +7,7 @@
     <select class="form-select form-select-sm filter-select" [(ngModel)]="sortKey" (change)="onFilterChange()">
       <option value="name">{{ 'users.name' | lang }}</option>
       <option value="status">{{ 'users.status' | lang }}</option>
-      <option value="id">ID</option>
+      <option value="id">{{ 'common.id' | lang }}</option>
     </select>
     <button type="button" class="btn btn-sm btn-outline-secondary" (click)="toggleSortDir()">
       {{ sortDesc ? ('users.sort_desc' | lang) : ('users.sort_asc' | lang) }}
@@ -42,7 +42,7 @@
         </tr>
         </thead>
         <tbody>
-        @for (user of users; track $index) {
+        @for (user of users; track user.id) {
           <tr>
             <td class="col-num">{{ (page - 1) * pageSize + $index + 1 }}</td>
             <td class="col-name cell-ellipsis" [title]="user.fullName">{{ user.fullName }}</td>

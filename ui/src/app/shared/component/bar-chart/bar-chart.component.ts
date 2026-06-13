@@ -10,7 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
     selector: 'app-bar-chart',
     templateUrl: './bar-chart.component.html',
-    styleUrls: ['./bar-chart.component.scss'],
+
 })
 export class BarChartComponent implements OnInit, OnDestroy {
     @ViewChild('customChart', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
@@ -96,7 +96,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
     createChart() {
         if (!this.chartInfo || this.chartInfo.length === 0) {
-            console.warn('No chart data available');
+            // no chart data
             return;
         }
 
@@ -212,7 +212,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
 
             this.chart.update('none');
         } else {
-            console.warn('Chart is not initialized yet');
+            // not initialized
         }
     }
 
@@ -225,7 +225,7 @@ export class BarChartComponent implements OnInit, OnDestroy {
             this.chart.options.scales.y.grid.color = t.grid;
             this.chart.options.plugins.legend.labels.color = t.text;
             this.chart.options.plugins.tooltip.backgroundColor = t.tooltipBg;
-            (this.chart as any).options.plugins.tooltip.borderColor = t.tooltipBorder;
+            this.chart!.options.plugins.tooltip.borderColor = t.tooltipBorder;
             this.chart.update('none');
         }
     }

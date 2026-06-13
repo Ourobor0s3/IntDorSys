@@ -100,4 +100,27 @@ export class NavService {
     onResize() {
         this.screenWidth = window.innerWidth;
     }
+
+    updateActiveTabs(menuItems: Page[], url: string) {
+        let curItem = menuItems.find(x => x.path == url && x.type == 'link');
+        if (!curItem) {
+            menuItems.forEach(items => {
+                if (!!items?.children && !curItem) {
+                    curItem = items.children.find(x => x.path === url);
+                }
+            })
+        }
+        if (!curItem)
+            return;
+
+        curItem.active = true;
+        menuItems.filter(x => x.path != curItem!.path).forEach(menuItem => {
+            menuItem.active = !!menuItem.children?.find(x => x.path === url);
+            if (!!menuItem.children) {
+                menuItem.children.filter(x => x.path != curItem!.path).forEach(child => {
+                    child.active = false;
+                });
+            }
+        });
+    }
 }
