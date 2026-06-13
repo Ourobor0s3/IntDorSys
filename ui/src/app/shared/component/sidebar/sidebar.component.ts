@@ -31,8 +31,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         private renderer: Renderer2,
     ) {
         super(translate, modalService);
-        let t = this;
-        let items = t.navService.mainItems;
+        let items = this.navService.mainItems;
         items.pipe(takeUntil(this.destroy$)).subscribe(menuItems => {
             this.menuItems = menuItems;
         });
@@ -40,11 +39,11 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
             if (event instanceof NavigationEnd) {
                 if (this.menuItems) {
-                    t.updateActiveTabs(event.url);
+                    this.updateActiveTabs(event.url);
                 }
-                if (event.url != t.navService.currentUrl) {
-                    t.navService.previousUrl = t.navService.currentUrl;
-                    t.navService.currentUrl = event.url;
+                if (event.url != this.navService.currentUrl) {
+                    this.navService.previousUrl = this.navService.currentUrl;
+                    this.navService.currentUrl = event.url;
                 }
             }
             if (event instanceof NavigationStart) {
@@ -52,7 +51,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
             }
         });
 
-        t.getUser = () => t.userService.get() ?? new UserInfoModel();
+        this.getUser = () => this.userService.get() ?? new UserInfoModel();
     }
 
     ngAfterViewChecked(): void {
@@ -69,9 +68,8 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     ngOnDestroy() {
-        let t = this;
-        t.destroy$.next();
-        t.destroy$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     needHidden(navRoles: string[] | undefined): boolean {
@@ -82,12 +80,11 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     updateActiveTabs(url: string) {
-        let t = this;
         //ищем выбранный элемент среди menuItems
-        let curItem = t.menuItems!.find(x => x.path == url && x.type == 'link');
+        let curItem = this.menuItems!.find(x => x.path == url && x.type == 'link');
         if (!curItem) {
             //если выбранного элемента нет среди menuItems - смотрим детей
-            t.menuItems!.forEach(items => {
+            this.menuItems!.forEach(items => {
                 if (!!items?.children && !curItem) {
                     curItem = items.children.find(x => x.path === url);
                 }
@@ -99,7 +96,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
 
         curItem.active = true;
         //проходимся по всем эл-там, которые не являются выбранным
-        t.menuItems!.filter(x => x.path != curItem!.path).forEach(menuItem => {
+        this.menuItems!.filter(x => x.path != curItem!.path).forEach(menuItem => {
             //делаем эл-т активным, если у среди его детей есть выбранный
             menuItem.active = !!menuItem.children?.find(x => x.path === url);
             if (!!menuItem.children) {
@@ -122,13 +119,12 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
 
     // Click Toggle menu
     toggletNavActive(item: Page) {
-        let t = this;
-        if (item.path == t.router.url) {
+        if (item.path == this.router.url) {
             return;
         }
 
-        t.menuItems!.forEach((a) => {
-            if (t.menuItems!.includes(item))
+        this.menuItems!.forEach((a) => {
+            if (this.menuItems!.includes(item))
                 a.active = false
             if (!a.children) return false
             a.children.forEach(b => {
@@ -138,8 +134,8 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
             })
         });
         //Закрытие навбара при переходе на другие страницы в мобилке
-        if (window.innerWidth < 569 && t.navService.collapseSidebar)
-            t.collapseSidebar();
+        if (window.innerWidth < 569 && this.navService.collapseSidebar)
+            this.collapseSidebar();
         item.active = !item.active;
     }
 

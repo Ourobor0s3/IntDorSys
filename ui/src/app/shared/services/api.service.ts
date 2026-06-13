@@ -16,7 +16,6 @@ export class ApiService {
     }
 
     async getAccessToken() {
-        let t = this;
         // потом поменять
         let accessToken = localStorage.getItem('accessToken');
         return accessToken;

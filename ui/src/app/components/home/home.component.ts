@@ -32,59 +32,54 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
         private loading: LoadingService,
     ) {
         super(translate, modal, loading);
-        let t = this;
-        t.filter.startDate = t.getTodayDate().toISOString();
-        t.filter.endDate = t.getTodayDate().toISOString();
+        this.filter.startDate = this.getTodayDate().toISOString();
+        this.filter.endDate = this.getTodayDate().toISOString();
     }
 
     ngOnInit() {
-        let t = this;
-        t.loadData();
-        t.dataReloadService.dataReload$
-            .pipe(takeUntil(t.destroy$))
+        this.loadData();
+        this.dataReloadService.dataReload$
+            .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
-                t.loadData();
+                this.loadData();
             });
     }
 
     loadData() {
-        let t = this;
-        t.getAnaliticLaund();
-        t.searchTimeLaund()
+        this.getAnaliticLaund();
+        this.searchTimeLaund()
     }
 
     getAnaliticLaund(isRunLoading: boolean = true) {
-        let t = this;
         if (isRunLoading)
-            t.setLoading(true);
+            this.setLoading(true);
 
-        t.analiticService.getAnaliticLaund().then(res => {
-            t.chart = res.data;
+        this.analiticService.getAnaliticLaund().then(res => {
+            this.chart = res.data;
         }).catch((err) => {
                 console.error(err);
             })
             .finally(() => {
                 if (isRunLoading)
-                    t.setLoading(false);
+                    this.setLoading(false);
             });
     }
 
     searchTimeLaund(isRunLoading: boolean = true) {
-        let t = this;
         if (isRunLoading) {
-            t.setLoading(true);
+            this.setLoading(true);
         }
 
-        t.laundService.getLaund(t.filter)
+        this.laundService.getLaund(this.filter)
             .then(res => {
-                t.laund = res.data && res.data.length > 0 ? res.data[0] : undefined;
+                this.laund = res.data && res.data.length > 0 ? res.data[0] : undefined;
             })
             .catch((err) => {
                 console.error(err);
             })
             .finally(() => {
                 if (isRunLoading)
-                    t.setLoading(false);
+                    this.setLoading(false);
             });
     }
 

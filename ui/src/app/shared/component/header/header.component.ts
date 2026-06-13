@@ -48,9 +48,8 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         private renderer: Renderer2,
     ) {
         super(translate, modalService, loading);
-        const t = this;
-        t.initializeLanguage();
-        t.getUser = () => this.userService.get() ?? new UserInfoModel();
+        this.initializeLanguage();
+        this.getUser = () => this.userService.get() ?? new UserInfoModel();
     }
 
     ngOnInit(): void {
@@ -123,12 +122,11 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     }
 
     updateActiveTabs(url: string) {
-        let t = this;
         //ищем выбранный элемент среди menuItems
-        let curItem = t.menuItems!.find(x => x.path == url && x.type == 'link');
+        let curItem = this.menuItems!.find(x => x.path == url && x.type == 'link');
         if (!curItem) {
             //если выбранного элемента нет среди menuItems - смотрим детей
-            t.menuItems!.forEach(items => {
+            this.menuItems!.forEach(items => {
                 if (!!items?.children && !curItem) {
                     curItem = items.children.find(x => x.path === url);
                 }
@@ -140,7 +138,7 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
 
         curItem.active = true;
         //проходимся по всем эл-там, которые не являются выбранным
-        t.menuItems!.filter(x => x.path != curItem!.path).forEach(menuItem => {
+        this.menuItems!.filter(x => x.path != curItem!.path).forEach(menuItem => {
             //делаем эл-т активным, если у среди его детей есть выбранный
             menuItem.active = !!menuItem.children?.find(x => x.path === url);
             if (!!menuItem.children) {
@@ -153,11 +151,10 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     }
 
     loadData() {
-        let t = this;
-        t.setLoading(true);
-        Promise.all([t.refreshUser()])
+        this.setLoading(true);
+        Promise.all([this.refreshUser()])
             .finally(() => {
-                t.setLoading(false);
+                this.setLoading(false);
             });
     }
 
@@ -237,7 +234,6 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     }
 
     private async refreshUser() {
-        let t = this;
-        t.user = await t.userService.refreshUser();
+        this.user = await this.userService.refreshUser();
     }
 }

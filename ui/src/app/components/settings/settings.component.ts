@@ -49,11 +49,10 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     }
 
     async loadSettings() {
-        let t = this;
-        t.setLoading(true);
+        this.setLoading(true);
         try {
-            let res = await (await t.api.get<unknown>('settings')).toPromise();
-            t.items = ((res?.data ?? []) as Array<{ id: number; key: string; value: string; isEditable: boolean }>).map((s) => ({
+            let res = await (await this.api.get<unknown>('settings')).toPromise();
+            this.items = ((res?.data ?? []) as Array<{ id: number; key: string; value: string; isEditable: boolean }>).map((s) => ({
                 id: s.id,
                 key: s.key,
                 value: s.value,
@@ -64,7 +63,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
         } catch (err) {
             console.error(err);
         } finally {
-            t.setLoading(false);
+            this.setLoading(false);
         }
     }
 
@@ -111,23 +110,22 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     }
 
     async saveItem(item: SettingItem) {
-        let t = this;
         if (item.value === item.originalValue) {
             item.editing = false;
             return;
         }
-        t.saving = true;
+        this.saving = true;
         try {
-            let res = await (await t.api.put<unknown>('settings/' + item.id, { value: item.value })).toPromise();
+            let res = await (await this.api.put<unknown>('settings/' + item.id, { value: item.value })).toPromise();
             if (res?.isSuccess) {
                 item.originalValue = item.value;
                 item.editing = false;
-                t.showToast(t.translate.instant('common.saved'));
+                this.showToast(this.translate.instant('common.saved'));
             }
         } catch (err) {
             console.error(err);
         } finally {
-            t.saving = false;
+            this.saving = false;
         }
     }
 }

@@ -49,45 +49,42 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         private loading: LoadingService,
     ) {
         super(translate, modal, loading);
-        let t = this;
-        let dateBE = t.getCurrentDateWithDelta();
-        t.startDate = dateBE.dateStart;
-        t.endDate = dateBE.dateEnd;
+        let dateBE = this.getCurrentDateWithDelta();
+        this.startDate = dateBE.dateStart;
+        this.endDate = dateBE.dateEnd;
     }
 
     ngOnInit() {
-        let t = this;
-        t.isAdmin = t.authService.isAdmin();
-        t.searchTimeLaund();
-        t.dataReloadService.dataReload$
-            .pipe(takeUntil(t.destroy$))
+        this.isAdmin = this.authService.isAdmin();
+        this.searchTimeLaund();
+        this.dataReloadService.dataReload$
+            .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
-                t.searchTimeLaund();
+                this.searchTimeLaund();
             });
     }
 
     searchTimeLaund(isRunLoading: boolean = true) {
-        let t = this;
         if (isRunLoading) {
-            t.setLoading(true);
-            t.disableAutoRefresh()
+            this.setLoading(true);
+            this.disableAutoRefresh()
         }
 
-        t.filter.startDate = t.startDate.toISOString();
-        t.filter.endDate = t.endDate.toISOString();
+        this.filter.startDate = this.startDate.toISOString();
+        this.filter.endDate = this.endDate.toISOString();
 
-        t.laundService.getLaund(t.filter)
+        this.laundService.getLaund(this.filter)
             .then(res => {
-                t.laundList = res.data;
+                this.laundList = res.data;
             })
             .catch((err) => {
                 console.error(err);
             })
             .finally(() => {
                 if (isRunLoading)
-                    t.setLoading(false);
-                if (t.isAutoRefresh)
-                    t.timerId = setTimeout(() => t.searchTimeLaund(false), 1000 * 60);
+                    this.setLoading(false);
+                if (this.isAutoRefresh)
+                    this.timerId = setTimeout(() => this.searchTimeLaund(false), 1000 * 60);
             });
     }
 
@@ -99,10 +96,9 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
     }
 
     loadUsers() {
-        let t = this;
-        t.usersInfoService.getUsers()
+        this.usersInfoService.getUsers()
             .then(res => {
-                t.users = res.data?.filter(x => !x.isBlocked && x.isConfirm ) ?? [];
+                this.users = res.data?.filter(x => !x.isBlocked && x.isConfirm ) ?? [];
             })
             .catch(err => console.error(err));
     }
@@ -116,19 +112,17 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
     }
 
     async createTimeSlotRange(modal: NgbModalRef) {
-        let t = this;
-
-        t.laundService.createTimeRange(t.newTimeWashDate, t.newTimeRangeStartHour, t.newTimeRangeEndHour)
+        this.laundService.createTimeRange(this.newTimeWashDate, this.newTimeRangeStartHour, this.newTimeRangeEndHour)
             .then(res => {
                 if (res.isSuccess) {
-                    t.showSuccess(t.translate.instant('laundress.create_success'));
+                    this.showSuccess(this.translate.instant('laundress.create_success'));
                     modal.close();
-                    t.searchTimeLaund();
+                    this.searchTimeLaund();
                 } else {
-                    t.showResponseError(res);
+                    this.showResponseError(res);
                 }
             })
-            .catch(err => t.showResponseError(err));
+            .catch(err => this.showResponseError(err));
     }
 
     openBookModal(content: unknown, timeWash: string) {
@@ -141,73 +135,69 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
     }
 
     bookUser(modal: NgbModalRef) {
-        let t = this;
-        if (t.selectedUserId <= 0) {
-            t.showError(t.translate.instant('laundress.select_user_required'));
+        if (this.selectedUserId <= 0) {
+            this.showError(this.translate.instant('laundress.select_user_required'));
             return;
         }
-        t.laundService.bookUser(t.selectedTimeWash, t.selectedUserId)
+        this.laundService.bookUser(this.selectedTimeWash, this.selectedUserId)
             .then(res => {
                 if (res.isSuccess) {
-                    t.showSuccess(t.translate.instant('laundress.book_success'));
+                    this.showSuccess(this.translate.instant('laundress.book_success'));
                     modal.close();
-                    t.searchTimeLaund();
+                    this.searchTimeLaund();
                 } else {
-                    t.showResponseError(res);
+                    this.showResponseError(res);
                 }
             })
-            .catch(err => t.showResponseError(err));
+            .catch(err => this.showResponseError(err));
     }
 
     confirmUnbook(timeWash: string, userId: number) {
-        let t = this;
-        t.showConfirm(
-            t.translate.instant('laundress.confirm_unbook'),
+        this.showConfirm(
+            this.translate.instant('laundress.confirm_unbook'),
             '',
         )
             .then(() => {
-                t.laundService.unbookUser(timeWash, userId)
+                this.laundService.unbookUser(timeWash, userId)
                     .then(res => {
                         if (res.isSuccess) {
-                            t.searchTimeLaund();
+                            this.searchTimeLaund();
                         } else {
-                            t.showResponseError(res);
+                            this.showResponseError(res);
                         }
                     })
-                    .catch(err => t.showResponseError(err));
+                    .catch(err => this.showResponseError(err));
             })
             .catch(() => {
-                t.showError(t.translate.instant('common.operation_cancelled'));
+                this.showError(this.translate.instant('common.operation_cancelled'));
             });
     }
 
     confirmDelete(timeWash: string) {
-        let t = this;
-        t.showConfirm(
-            t.translate.instant('laundress.confirm_delete_slot'),
+        this.showConfirm(
+            this.translate.instant('laundress.confirm_delete_slot'),
             '',
         )
             .then(() => {
-                t.laundService.deleteTime(timeWash)
+                this.laundService.deleteTime(timeWash)
                     .then(res => {
                         if (res.isSuccess) {
-                            t.searchTimeLaund();
+                            this.searchTimeLaund();
                         } else {
-                            t.showResponseError(res);
+                            this.showResponseError(res);
                         }
                     })
-                    .catch(err => t.showResponseError(err));
+                    .catch(err => this.showResponseError(err));
             })
             .catch(() => {
-                t.showError(t.translate.instant('common.operation_cancelled'));
+                this.showError(this.translate.instant('common.operation_cancelled'));
             });
     }
 
     // Export
     exportExcel() {
-        let t = this;
-        t.laundService.exportExcel(t.startDate.toISOString(), t.endDate.toISOString())
-            .catch(err => t.showResponseError(err));
+        this.laundService.exportExcel(this.startDate.toISOString(), this.endDate.toISOString())
+            .catch(err => this.showResponseError(err));
     }
 
     isSlotExpired(timeWash: string): boolean {

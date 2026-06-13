@@ -9,7 +9,6 @@ export class FooterComponent {
     currentYear: number;
 
     constructor() {
-        let t = this;
-        t.currentYear = new Date().getFullYear();
+        this.currentYear = new Date().getFullYear();
     }
 }

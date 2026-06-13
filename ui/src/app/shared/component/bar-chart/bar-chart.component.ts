@@ -68,7 +68,9 @@ export class BarChartComponent implements OnInit, OnDestroy {
         return {
             text: isDark ? '#e4e4e7' : '#374151',
             muted: isDark ? '#9ca3af' : '#6b7280',
-            grid: isDark ? '#2a2a3d' : '#e5e7eb',
+            grid: isDark ? '#ffffff0d' : '#0000000a',
+            tooltipBg: isDark ? '#1e1e2d' : '#ffffff',
+            tooltipBorder: isDark ? '#2a2a3d' : '#e5e7eb',
         };
     }
 
@@ -83,6 +85,13 @@ export class BarChartComponent implements OnInit, OnDestroy {
         if (context) {
             context.scale(dpr, dpr);
         }
+    }
+
+    private createGradient(ctx: CanvasRenderingContext2D, color1: string, color2: string) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height * 0.7);
+        gradient.addColorStop(0, color1);
+        gradient.addColorStop(1, color2);
+        return gradient;
     }
 
     createChart() {
@@ -103,9 +112,12 @@ export class BarChartComponent implements OnInit, OnDestroy {
         const canvas = this.canvasRef.nativeElement;
         this.setupCanvasDPI(canvas);
 
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
         const t = this.chartTheme();
 
-        new Chart(canvas, {
+        this.chart = new Chart(canvas, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -113,57 +125,76 @@ export class BarChartComponent implements OnInit, OnDestroy {
                     {
                         label: this.translate.instant('chart.all_time_records'),
                         data: dataValue1,
-                        backgroundColor: '#6366f1',
-                        borderColor: '#6366f1',
-                        borderWidth: 1,
+                        backgroundColor: this.createGradient(ctx, '#6366f1', '#a5b4fc'),
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barPercentage: 0.6,
                     },
                     {
                         label: this.translate.instant('chart.used_time_records'),
                         data: dataValue2,
-                        backgroundColor: '#22c55e',
-                        borderColor: '#22c55e',
-                        borderWidth: 1,
+                        backgroundColor: this.createGradient(ctx, '#22c55e', '#86efac'),
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barPercentage: 0.6,
                     },
                 ],
             },
             options: {
                 responsive: true,
-                aspectRatio: 2.5,
+                maintainAspectRatio: true,
+                aspectRatio: 1.8,
+                animation: {
+                    duration: 800,
+                    easing: 'easeOutQuart',
+                },
                 plugins: {
                     legend: {
                         display: true,
                         position: 'top',
                         labels: {
                             color: t.text,
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            padding: 16,
                         },
+                    },
+                    tooltip: {
+                        backgroundColor: t.tooltipBg,
+                        titleColor: t.text,
+                        bodyColor: t.muted,
+                        borderColor: t.tooltipBorder,
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        padding: 10,
+                        boxPadding: 4,
                     },
                 },
                 scales: {
                     x: {
                         ticks: {
                             color: t.muted,
+                            font: {
+                                size: 11,
+                            },
                         },
                         grid: {
-                            color: t.grid,
-                        },
-                        title: {
-                            display: true,
-                            text: this.translate.instant('chart.time'),
-                            color: t.text,
+                            display: false,
                         },
                     },
                     y: {
                         beginAtZero: true,
                         ticks: {
                             color: t.muted,
+                            font: {
+                                size: 11,
+                            },
+                            precision: 0,
                         },
                         grid: {
                             color: t.grid,
-                        },
-                        title: {
-                            display: true,
-                            text: this.translate.instant('chart.count'),
-                            color: t.text,
                         },
                     },
                 },
@@ -175,14 +206,9 @@ export class BarChartComponent implements OnInit, OnDestroy {
         if (this.chart) {
             const allTimeRecordsLabel = this.translate.instant('chart.all_time_records');
             const usedTimeRecordsLabel = this.translate.instant('chart.used_time_records');
-            const timeAxisLabel = this.translate.instant('chart.time');
-            const countAxisLabel = this.translate.instant('chart.count');
 
             this.chart.data.datasets[0].label = allTimeRecordsLabel;
             this.chart.data.datasets[1].label = usedTimeRecordsLabel;
-
-            (this.chart as any).options.scales.x.title.text = timeAxisLabel;
-            (this.chart as any).options.scales.y.title.text = countAxisLabel;
 
             this.chart.update('none');
         } else {
@@ -195,11 +221,11 @@ export class BarChartComponent implements OnInit, OnDestroy {
             const t = this.chartTheme();
             this.chart.options.scales.x.ticks.color = t.muted;
             this.chart.options.scales.x.grid.color = t.grid;
-            (this.chart as any).options.scales.x.title.color = t.text;
             this.chart.options.scales.y.ticks.color = t.muted;
             this.chart.options.scales.y.grid.color = t.grid;
-            (this.chart as any).options.scales.y.title.color = t.text;
             this.chart.options.plugins.legend.labels.color = t.text;
+            this.chart.options.plugins.tooltip.backgroundColor = t.tooltipBg;
+            (this.chart as any).options.plugins.tooltip.borderColor = t.tooltipBorder;
             this.chart.update('none');
         }
     }

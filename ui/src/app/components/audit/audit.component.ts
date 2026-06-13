@@ -43,43 +43,40 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        let t = this;
-        t.loadLogs();
-        t.dataReloadService.dataReload$
-            .pipe(takeUntil(t.destroy$))
+        this.loadLogs();
+        this.dataReloadService.dataReload$
+            .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
-                t.loadLogs();
+                this.loadLogs();
             });
     }
 
     loadLogs() {
-        let t = this;
-        t.setLoading(true);
+        this.setLoading(true);
 
         let filter = new BaseFilterModel();
         filter.skip = 0;
         filter.take = 9999;
-        filter.startDate = t.startDate ? t.startDate.toISOString() : undefined;
-        filter.endDate = t.endDate ? t.endDate.toISOString() : undefined;
+        filter.startDate = this.startDate ? this.startDate.toISOString() : undefined;
+        filter.endDate = this.endDate ? this.endDate.toISOString() : undefined;
 
-        t.laundService.getAudit(filter)
+        this.laundService.getAudit(filter)
             .then(res => {
-                t.allLogs = res.data ?? [];
-                t.applyFilter();
+                this.allLogs = res.data ?? [];
+                this.applyFilter();
             })
             .catch(err => console.error(err))
-            .finally(() => t.setLoading(false));
+            .finally(() => this.setLoading(false));
     }
 
     applyFilter() {
-        let t = this;
-        let filtered = t.allLogs;
-        if (t.actionFilter) {
-            filtered = filtered.filter(x => x.action === t.actionFilter);
+        let filtered = this.allLogs;
+        if (this.actionFilter) {
+            filtered = filtered.filter(x => x.action === this.actionFilter);
         }
-        t.totalPages = Math.max(1, Math.ceil(filtered.length / t.pageSize));
-        let start = (t.page - 1) * t.pageSize;
-        t.logs = filtered.slice(start, start + t.pageSize);
+        this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
+        let start = (this.page - 1) * this.pageSize;
+        this.logs = filtered.slice(start, start + this.pageSize);
     }
 
     onFilterChange() {

@@ -27,16 +27,15 @@ export class RegisterComponent extends BaseComponent {
         private translate: TranslateService,
     ) {
         super(translate, modal);
-        let t = this;
-        t.regForm = fb.group(
+        this.regForm = fb.group(
             {
                 telegram: ['', [Validators.required]],
                 email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
-                password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(t.passwordPattern)]],
+                password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(this.passwordPattern)]],
                 passwordConfirm: ['', [Validators.required]],
             },
             {
-                validator: [t.validatePassword.bind(this)],
+                validator: [this.validatePassword.bind(this)],
             });
     }
 
@@ -57,41 +56,39 @@ export class RegisterComponent extends BaseComponent {
     }
 
     createAccount(): void {
-        const t = this;
-
-        if (t.regForm.invalid) {
-            t.markFormGroupTouchedAndDirty(t.regForm);
+        if (this.regForm.invalid) {
+            this.markFormGroupTouchedAndDirty(this.regForm);
             return;
         }
 
-        t.setLoading(true);
-        let rawTelegram: string = t.telegram.value;
+        this.setLoading(true);
+        let rawTelegram: string = this.telegram.value;
         let parsedTelegram: number | null = rawTelegram ? Number(rawTelegram) : null;
         if (rawTelegram && isNaN(parsedTelegram!)) {
-            t.showError(t.translate.instant('errors.telegramIdMustBeNumber'));
-            t.setLoading(false);
+            this.showError(this.translate.instant('errors.telegramIdMustBeNumber'));
+            this.setLoading(false);
             return;
         }
         let regCreds: IRegister = {
             telegramId: parsedTelegram,
-            email: t.email.value,
-            password: t.password.value,
+            email: this.email.value,
+            password: this.password.value,
         };
 
-        t.accountService.register(regCreds)
+        this.accountService.register(regCreds)
             .then((res) => {
                 if (res.isSuccess) {
-                    t.navigateToLogin();
-                    t.showSuccess(t.translate.instant('registered_success'));
+                    this.navigateToLogin();
+                    this.showSuccess(this.translate.instant('registered_success'));
                 } else {
-                    t.showResponseError(res);
+                    this.showResponseError(res);
                 }
             })
             .catch((e) => {
-                t.showResponseError(e);
+                this.showResponseError(e);
             })
             .finally(() => {
-                t.setLoading(false);
+                this.setLoading(false);
             });
     }
 

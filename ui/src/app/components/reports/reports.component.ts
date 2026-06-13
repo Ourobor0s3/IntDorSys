@@ -34,66 +34,61 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
         private loading: LoadingService,
     ) {
         super(translate, modal, loading);
-        let t = this;
-        let dateBE = t.getCurrentDateWithDelta();
-        t.startDate = dateBE.dateStart;
-        t.endDate = dateBE.dateEnd;
+        let dateBE = this.getCurrentDateWithDelta();
+        this.startDate = dateBE.dateStart;
+        this.endDate = dateBE.dateEnd;
     }
 
     ngOnInit() {
-        let t = this;
-        t.loadData();
-        t.startAutoRefresh();
-        t.dataReloadService.dataReload$
-            .pipe(takeUntil(t.destroy$))
+        this.loadData();
+        this.startAutoRefresh();
+        this.dataReloadService.dataReload$
+            .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
-                t.loadData();
+                this.loadData();
             });
     }
 
     loadData() {
-        let t = this;
-        t.setLoading(true);
-        t.filter.startDate = t.startDate.toISOString();
-        t.filter.endDate = t.endDate.toISOString();
+        this.setLoading(true);
+        this.filter.startDate = this.startDate.toISOString();
+        this.filter.endDate = this.endDate.toISOString();
 
-        t.laundService.getReports(t.filter)
+        this.laundService.getReports(this.filter)
             .then(res => {
-                t.reportList = res.data ?? [];
-                t.applySort();
+                this.reportList = res.data ?? [];
+                this.applySort();
             })
             .catch((err) => {
                 console.error(err);
             })
             .finally(() => {
-                t.setLoading(false);
+                this.setLoading(false);
             });
     }
 
     searchReports() {
-        let t = this;
-        t.setLoading(true);
-        t.filter.startDate = t.startDate.toISOString();
-        t.filter.endDate = t.endDate.toISOString();
+        this.setLoading(true);
+        this.filter.startDate = this.startDate.toISOString();
+        this.filter.endDate = this.endDate.toISOString();
 
-        t.laundService.getReports(t.filter)
+        this.laundService.getReports(this.filter)
             .then(res => {
-                t.reportList = res.data ?? [];
-                t.applySort();
+                this.reportList = res.data ?? [];
+                this.applySort();
             })
             .catch((err) => {
                 console.error(err);
             })
             .finally(() => {
-                t.setLoading(false);
+                this.setLoading(false);
             });
     }
 
     applySort() {
-        let t = this;
-        t.sortedReports = t.sortDesc
-            ? [...t.reportList].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            : [...t.reportList].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        this.sortedReports = this.sortDesc
+            ? [...this.reportList].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            : [...this.reportList].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     }
 
     toggleSort() {
@@ -102,11 +97,10 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
     }
 
     startAutoRefresh() {
-        let t = this;
-        clearTimeout(t.timerId);
-        t.timerId = setTimeout(() => {
-            t.searchReports();
-            t.startAutoRefresh();
+        clearTimeout(this.timerId);
+        this.timerId = setTimeout(() => {
+            this.searchReports();
+            this.startAutoRefresh();
         }, 60000);
     }
 
