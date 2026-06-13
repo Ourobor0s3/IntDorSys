@@ -220,11 +220,6 @@ body.modal-open-scroll-lock {
     background: var(--app-card-bg) !important;
     border-color: var(--app-card-border) !important;
     box-shadow: var(--app-card-shadow) !important;
-
-    &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
-      border-color: #6366f1 !important;
-    }
   }
 
   .content-card-header {
