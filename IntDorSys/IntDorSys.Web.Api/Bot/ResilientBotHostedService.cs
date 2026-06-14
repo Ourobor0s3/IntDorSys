@@ -18,6 +18,7 @@ namespace IntDorSys.Web.Api.Bot
         private readonly IConfiguration _configuration;
         private readonly ILogger<ResilientBotHostedService> _logger;
         private readonly BotStatus _botStatus;
+        private readonly BotConnectivityCheck _connectivityCheck;
 
         private CancellationTokenSource? _globalCts;
         private CancellationTokenSource? _botCts;
@@ -27,19 +28,33 @@ namespace IntDorSys.Web.Api.Bot
             IServiceProvider serviceProvider,
             IConfiguration configuration,
             BotStatus botStatus,
-            ILogger<ResilientBotHostedService> logger)
+            ILogger<ResilientBotHostedService> logger,
+            BotConnectivityCheck connectivityCheck)
         {
             _serviceProvider = serviceProvider;
             _configuration = configuration;
             _botStatus = botStatus;
             _logger = logger;
+            _connectivityCheck = connectivityCheck;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _globalCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            _ = RunAsync(_globalCts.Token);
+            _ = TryRunAsync(_globalCts.Token);
             return Task.CompletedTask;
+        }
+
+        private async Task TryRunAsync(CancellationToken ct)
+        {
+            try
+            {
+                await RunAsync(ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Bot loop terminated unexpectedly");
+            }
         }
 
         private async Task RunAsync(CancellationToken globalCt)
@@ -84,7 +99,7 @@ namespace IntDorSys.Web.Api.Bot
         {
             try
             {
-                if (!BotConnectivityCheck.IsTelegramReachable())
+                if (!_connectivityCheck.IsTelegramReachable())
                 {
                     _logger.LogWarning("Telegram API unreachable — retry in {Interval}", _retryInterval);
                     return;
@@ -169,7 +184,7 @@ namespace IntDorSys.Web.Api.Bot
             return Task.CompletedTask;
         }
 
-        private async Task StopBotAsync()
+        private async Task StopBotAsync(CancellationToken ct = default)
         {
             _logger.LogInformation("Stopping bot...");
             _botRunning = false;
@@ -182,7 +197,7 @@ namespace IntDorSys.Web.Api.Bot
                 oldCts.Dispose();
             }
 
-            await Task.Delay(500);
+            await Task.Delay(500, ct);
         }
 
         public async Task RestartAsync()

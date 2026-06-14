@@ -28,11 +28,11 @@ namespace IntDorSys.Security.Services.Impl
                 SecurityAlgorithms.HmacSha256);
         }
 
-        public async Task<AuthToken> IssueTokenAsync(UserInfo user)
+        public async Task<AuthToken> IssueTokenAsync(UserInfo user, CancellationToken ct = default)
         {
             var now = DateTime.UtcNow;
 
-            var roles = await _userRoleService.GetByIdAsync(user.Id, CancellationToken.None);
+            var roles = await _userRoleService.GetByIdAsync(user.Id, ct);
             var userRoles = roles.IsSuccess ? roles.Data ?? [] : [];
 
             var role = user.Status == Core.Enums.UserStatus.Blocked ? "blocked"

@@ -17,7 +17,7 @@ namespace IntDorSys.Services.Audit
         /// <param name="entityName">Entity type name (e.g. "UseLaundress", "UserInfo")</param>
         /// <param name="entityId">Optional entity identifier</param>
         /// <param name="details">Optional additional details</param>
-        Task RecordAsync(long userId, string action, string entityName, string? entityId = null, string? details = null);
+        Task RecordAsync(long userId, string action, string entityName, string? entityId = null, string? details = null, CancellationToken ct = default);
 
         /// <summary>
         ///     Returns paginated audit log entries, optionally filtered by date range

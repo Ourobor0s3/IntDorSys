@@ -184,7 +184,7 @@ namespace IntDorSys.Laundress.Services.Impl
 
         public async Task SavePhotoAsync(Message message, CancellationToken ct)
         {
-            if (message.Type != MessageType.Photo && message.Photo?.Length == 0)
+            if (message.Type != MessageType.Photo || message.Photo?.Length == 0)
             {
                 return;
             }

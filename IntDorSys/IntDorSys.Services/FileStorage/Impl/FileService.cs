@@ -1,5 +1,7 @@
+using IntDorSys.Core.Constants;
 using IntDorSys.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Ouro.CommonUtils.Results;
 using FileInfo = IntDorSys.Core.Entities.FileInfo;
@@ -15,13 +17,13 @@ namespace IntDorSys.Services.FileStorage.Impl
 
         public FileService(
             ILogger<FileService> logger,
-            AppDataContext db)
+            AppDataContext db,
+            IConfiguration configuration)
         {
             _logger = logger;
             _db = db;
 
-            const string relativePath = "FileFolderStorage";
-
+            var relativePath = configuration.GetValue<string>(ConfigSectionNames.FileStorageFolder) ?? "FileFolderStorage";
             _storagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
         }
 

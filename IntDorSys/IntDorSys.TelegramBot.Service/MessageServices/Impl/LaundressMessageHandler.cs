@@ -10,18 +10,21 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
 {
     internal sealed class LaundressMessageHandler : ILaundressMessageHandler
     {
-        private readonly ILaundressBotService _laundBot;
+        private readonly ILaundressBotMenuService _laundMenu;
+        private readonly ILaundressBotBookingService _laundBooking;
         private readonly IUserQueryService _userService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly ILogger<LaundressMessageHandler> _logger;
 
         public LaundressMessageHandler(
-            ILaundressBotService laundBot,
+            ILaundressBotMenuService laundMenu,
+            ILaundressBotBookingService laundBooking,
             IUserQueryService userService,
             IOptionsMonitor<AdminSettings> adminSettings,
             ILogger<LaundressMessageHandler> logger)
         {
-            _laundBot = laundBot;
+            _laundMenu = laundMenu;
+            _laundBooking = laundBooking;
             _userService = userService;
             _adminSettings = adminSettings;
             _logger = logger;
@@ -31,7 +34,9 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
         {
             try
             {
-                var userInfo = (await _userService.GetByTgIdAsync(message.From!.Id, ct)).Data;
+                var userResult = await _userService.GetByTgIdAsync(message.From!.Id, ct);
+                if (!userResult.IsSuccess) return;
+                var userInfo = userResult.Data;
 
                 if (message.Text != null)
                 {
@@ -39,20 +44,20 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
 
                     if (userMessage.Equals(MessageKeyConstants.Menu))
                     {
-                        await _laundBot.SendMenuAsync(userInfo, ct: ct);
+                        await _laundMenu.SendMenuAsync(userInfo, ct: ct);
                     }
                     else if (userMessage.Equals(MessageText.AllFreeRecords))
                     {
-                        await _laundBot.SendFreeDateAsync(userInfo.TelegramId, ct: ct);
+                        await _laundMenu.SendFreeDateAsync(userInfo.TelegramId, ct: ct);
                     }
                     else if (userMessage.Equals(MessageText.MyRecords))
                     {
-                        await _laundBot.SendUseTimeByUserAsync(userInfo, ct: ct);
+                        await _laundMenu.SendUseTimeByUserAsync(userInfo, ct: ct);
                     }
                     else if (userMessage.Equals(MessageText.AllRecords)
                           && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
                     {
-                        await _laundBot.SendAllTimeAsync(userInfo.TelegramId, ct: ct);
+                        await _laundMenu.SendAllTimeAsync(userInfo.TelegramId, ct: ct);
                     }
                 }
 
@@ -66,14 +71,14 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
                             switch (specialMessage.Length)
                             {
                                 case 3:
-                                    await _laundBot.CreateTimesAsync(userInfo,
+                                    await _laundBooking.CreateTimesAsync(userInfo,
                                         specialMessage[1].Replace('.', '-'),
                                         int.Parse(specialMessage[2]),
                                         int.Parse(specialMessage[2]),
                                         ct);
                                     break;
                                 case 4:
-                                    await _laundBot.CreateTimesAsync(userInfo,
+                                    await _laundBooking.CreateTimesAsync(userInfo,
                                         specialMessage[1].Replace('.', '-'),
                                         int.Parse(specialMessage[2]),
                                         int.Parse(specialMessage[3]),
@@ -82,9 +87,9 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
                                 case 5:
                                     for (var i = 0; i < int.Parse(specialMessage[2]); i++)
                                     {
-                                        var date = DateTime.Parse(specialMessage[1].Replace('.', '-')).AddDays(i).ToString("yyyy-MM-dd");
+                                        var date = DateTime.Parse(specialMessage[1].Replace('.', '-')).AddDays(i).ToString(DateFormatConstants.DateFormat);
 
-                                        await _laundBot.CreateTimesAsync(userInfo,
+                                        await _laundBooking.CreateTimesAsync(userInfo,
                                             date,
                                             int.Parse(specialMessage[3]),
                                             int.Parse(specialMessage[4]),
@@ -97,12 +102,12 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
                             switch (specialMessage.Length)
                             {
                                 case 2:
-                                    await _laundBot.DeleteLaundAsync(userInfo, DateTime.Parse(specialMessage[1].Replace('.', '-')), ct);
+                                    await _laundBooking.DeleteLaundAsync(userInfo, DateTime.Parse(specialMessage[1].Replace('.', '-')), ct);
                                     break;
                                 case 4:
                                     for (var i = int.Parse(specialMessage[2]); i <= int.Parse(specialMessage[3]); i += 2)
                                     {
-                                        await _laundBot.DeleteLaundAsync(userInfo,
+                                        await _laundBooking.DeleteLaundAsync(userInfo,
                                             DateTime.Parse($"{specialMessage[1].Replace('.', '-')} {i}:00:00"),
                                             ct);
                                     }
@@ -114,10 +119,10 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
                                     var endHour = int.Parse(specialMessage[4]);
                                     for (var i = 0; i < dayCountDel; i++)
                                     {
-                                        var date = startDay.AddDays(i).ToString("yyyy-MM-dd");
+                                        var date = startDay.AddDays(i).ToString(DateFormatConstants.DateFormat);
                                         for (var h = startHour; h <= endHour; h += 2)
                                         {
-                                            await _laundBot.DeleteLaundAsync(userInfo,
+                                            await _laundBooking.DeleteLaundAsync(userInfo,
                                                 DateTime.Parse($"{date} {h}:00:00"),
                                                 ct);
                                         }
@@ -126,13 +131,13 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
                             }
                             break;
                         case "/unuse" when specialMessage.Length == 2:
-                            await _laundBot.UnUseLaundAsync(userInfo, DateTime.Parse(specialMessage[1].Replace('.', '-')), ct);
+                            await _laundBooking.UnUseLaundAsync(userInfo, DateTime.Parse(specialMessage[1].Replace('.', '-')), ct);
                             break;
                         case "/rmuse" when specialMessage.Length == 2:
-                            await _laundBot.DelUseTimeByAdminAsync(userInfo, DateTime.Parse(specialMessage[1].Replace('.', '-')), ct);
+                            await _laundBooking.DelUseTimeByAdminAsync(userInfo, DateTime.Parse(specialMessage[1].Replace('.', '-')), ct);
                             break;
                         case "/setuser" when specialMessage.Length == 3:
-                            await _laundBot.AddUserToTimeAsync(userInfo, specialMessage[1], DateTime.Parse(specialMessage[2].Replace('.', '-')), ct);
+                            await _laundBooking.AddUserToTimeAsync(userInfo, specialMessage[1], DateTime.Parse(specialMessage[2].Replace('.', '-')), ct);
                             break;
                     }
                 }

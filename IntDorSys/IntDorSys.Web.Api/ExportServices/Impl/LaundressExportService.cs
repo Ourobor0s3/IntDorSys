@@ -1,4 +1,5 @@
 using ClosedXML.Excel;
+using IntDorSys.Core.Constants;
 using IntDorSys.Laundress.Core.Models.Filters;
 using IntDorSys.Laundress.Services;
 
@@ -36,7 +37,7 @@ namespace IntDorSys.Web.Api.ExportServices.Impl
             foreach (var r in records.Data)
             {
                 var user = r.SelectUser;
-                ws.Cell(row, 1).Value = r.TimeWash.ToString("yyyy-MM-dd");
+                ws.Cell(row, 1).Value = r.TimeWash.ToString(DateFormatConstants.DateFormat);
                 ws.Cell(row, 2).Value = r.TimeWash.ToString("HH:mm");
                 ws.Cell(row, 3).Value = user?.FullName ?? "";
                 ws.Cell(row, 4).Value = user?.Username ?? "";

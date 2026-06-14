@@ -23,10 +23,9 @@ namespace IntDorSys.Laundress.Services
                 .AddTransient<ILaundAnaliticService, LaundAnaliticService>();
 
             services
-                .AddTransient<ILaundressBotService, LaundressBotService>()
-                .AddTransient<ILaundressBotMenuService, LaundressBotService>()
-                .AddTransient<ILaundressBotBookingService, LaundressBotService>()
-                .AddTransient<ILaundressBotNotificationService, LaundressBotService>();
+                .AddTransient<ILaundressBotMenuService, LaundressBotMenuService>()
+                .AddTransient<ILaundressBotBookingService, LaundressBotBookingService>()
+                .AddTransient<ILaundressBotNotificationService, LaundressBotNotificationService>();
 
             services.AddQuartzCoreServices(
                 jobConfigurator =>

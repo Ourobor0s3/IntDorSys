@@ -18,9 +18,8 @@ namespace IntDorSys.Services
         {
             services
                 .AddTransient<IAppSettingService, AppSettingService>()
-                .AddTransient<IUserService, UserService>()
-                .AddTransient<IUserQueryService, UserService>()
-                .AddTransient<IUserCommandService, UserService>()
+                .AddTransient<IUserQueryService, UserQueryService>()
+                .AddTransient<IUserCommandService, UserCommandService>()
                 .AddTransient<IFileService, FileService>()
                 .AddTransient<IUserRoleService, UserRoleService>()
                 .AddTransient<IAuditService, AuditService>()

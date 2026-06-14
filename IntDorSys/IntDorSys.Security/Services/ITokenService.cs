@@ -13,6 +13,6 @@ namespace IntDorSys.Security.Services
         /// </summary>
         /// <param name="user">User entity to issue token for</param>
         /// <returns>Authentication token with access token and role</returns>
-        Task<AuthToken> IssueTokenAsync(UserInfo user);
+        Task<AuthToken> IssueTokenAsync(UserInfo user, CancellationToken ct = default);
     }
 }

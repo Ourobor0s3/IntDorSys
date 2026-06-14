@@ -1,6 +1,7 @@
 using IntDorSys.Core.Entities;
 using IntDorSys.DataAccess;
 using IntDorSys.Services.Audit;
+using Ouro.CommonUtils.Results;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -41,13 +42,13 @@ namespace IntDorSys.Services.AppSettings.Impl
                 .FirstOrDefaultAsync(x => x.Id == id, ct);
         }
 
-        public async Task UpdateAsync(long id, string value, long userId, CancellationToken ct)
+        public async Task<Result> UpdateAsync(long id, string value, long userId, CancellationToken ct)
         {
             var setting = await _db.Set<AppSetting>()
                 .FirstOrDefaultAsync(x => x.Id == id, ct);
 
             if (setting == null || !setting.IsEditable)
-                throw new InvalidOperationException("Setting not found or not editable");
+                return new Result().WithError("Setting not found or not editable");
 
             var oldValue = setting.Value;
             setting.Value = value;
@@ -64,6 +65,8 @@ namespace IntDorSys.Services.AppSettings.Impl
             {
                 _logger.LogWarning(ex, "Failed to audit UpdateSetting for key={Key}", setting.Key);
             }
+
+            return new Result();
         }
     }
 }

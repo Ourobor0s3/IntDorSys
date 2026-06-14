@@ -272,6 +272,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 catch (DbUpdateException ex)
                 {
                     _logger.LogWarning(ex, "Concurrent slot creation conflict at CreateTimeRangeAsync (date={Date}, start={Start}, end={End})", date, startHour, endHour);
+                    return res.WithError($"Concurrent slot creation conflict: {ex.Message}");
                 }
             }
 
