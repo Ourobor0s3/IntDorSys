@@ -4,7 +4,6 @@ import { Subject, takeUntil } from "rxjs";
 import { DataReloadService } from "../../shared/services/dataReload.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
-import { LoadingService } from "../../shared/services/loading.service";
 import { LaundressService } from "../../shared/services/laundress.service";
 import { AuditLogModel } from "../../shared/interface/audit-log";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
@@ -29,14 +28,12 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     constructor(
-        private modalService: NgbModal,
         private laundService: LaundressService,
         private dataReloadService: DataReloadService,
-        private modal: NgbModal,
-        private translate: TranslateService,
-        private loading: LoadingService,
+        modal: NgbModal,
+        translate: TranslateService,
     ) {
-        super(translate, modal, loading);
+        super(translate, modal);
         let dates = this.getCurrentDateWithDelta(30);
         this.startDate = dates.dateStart;
         this.endDate = dates.dateEnd;
@@ -71,6 +68,11 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
 
     applyFilter() {
         let filtered = this.allLogs;
+        if (!filtered) {
+            this.logs = [];
+            this.totalPages = 1;
+            return;
+        }
         if (this.actionFilter) {
             filtered = filtered.filter(x => x.action === this.actionFilter);
         }

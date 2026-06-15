@@ -28,7 +28,7 @@ namespace IntDorSys.Web.Api
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             builder
-                .ConfigureAppConfiguration()
+                .ConfigureAppConfiguration(args)
                 .ConfigureAppLogging()
                 .ConfigureAuthentication();
 

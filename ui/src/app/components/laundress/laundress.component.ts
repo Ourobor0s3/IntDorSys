@@ -11,7 +11,6 @@ import { UsersInfoService } from "../../shared/services/user-info.service";
 import { UserInfoModel } from "../../shared/model/userInfo.model";
 import { UserService } from "../../shared/services/user.service";
 import { AuthService } from "../../shared/services/auth.service";
-import { LoadingService } from "../../shared/services/loading.service";
 
 @Component({
     selector: 'app-laundress',
@@ -44,11 +43,9 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         private modal: NgbModal,
         private translate: TranslateService,
         private usersInfoService: UsersInfoService,
-        private userService: UserService,
         private authService: AuthService,
-        private loading: LoadingService,
     ) {
-        super(translate, modal, loading);
+        super(translate, modal);
         let dateBE = this.getCurrentDateWithDelta();
         this.startDate = dateBE.dateStart;
         this.endDate = dateBE.dateEnd;

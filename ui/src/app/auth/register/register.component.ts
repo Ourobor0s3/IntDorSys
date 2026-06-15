@@ -40,19 +40,19 @@ export class RegisterComponent extends BaseComponent {
     }
 
     get telegram() {
-        return this.regForm.get('telegram');
+        return this.regForm.get('telegram')!;
     }
 
     get email() {
-        return this.regForm.get('email');
+        return this.regForm.get('email')!;
     }
 
     get password() {
-        return this.regForm.get('password');
+        return this.regForm.get('password')!;
     }
 
     get confirmPassword() {
-        return this.regForm.get('passwordConfirm');
+        return this.regForm.get('passwordConfirm')!;
     }
 
     createAccount(): void {
@@ -93,13 +93,13 @@ export class RegisterComponent extends BaseComponent {
     }
 
     validatePassword(g: FormGroup): void {
-        let password = g.get('password');
+        let password = g.get('password')!;
         if (password.dirty || !!password.value) {
             password.markAsDirty();
             password.markAsTouched();
         }
 
-        let passwordConfirm = g.get('passwordConfirm');
+        let passwordConfirm = g.get('passwordConfirm')!;
         if (passwordConfirm.dirty || !!passwordConfirm.value) {
             passwordConfirm.markAsDirty();
             passwordConfirm.markAsTouched();

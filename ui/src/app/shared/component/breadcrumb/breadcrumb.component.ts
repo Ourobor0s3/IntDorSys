@@ -54,7 +54,8 @@ export class BreadcrumbComponent implements OnDestroy {
                 let pages = navService.MainPages;
                 for (let i = 0; i < pages.length; i++) {
                     let item = pages[i];
-                    let splitItemPath = item.path!.split('/');
+                    let itemPath = item.path ?? '';
+                    let splitItemPath = itemPath.split('/');
                     let splitEventPath = event.urlAfterRedirects.split('/');
                     let firstItemPath = 'itemDefault';
                     let firstEventPath = 'eventDefault';
@@ -63,10 +64,10 @@ export class BreadcrumbComponent implements OnDestroy {
                         firstEventPath = splitEventPath[1];
                     }
 
-                    let isFullPathMatch = item.path!.includes(event.urlAfterRedirects);
+                    let isFullPathMatch = itemPath.includes(event.urlAfterRedirects);
                     let isPartPathMatch = firstItemPath.includes(firstEventPath);
                     //если в руте есть двоеточие, значит нужно проверить сходимость рутов без айдишника(или другого параметра)
-                    if (item.path!.includes(':')) {
+                    if (itemPath.includes(':')) {
                         isFullPathMatch = (firstItemPath + '/' + splitItemPath[2]).includes(
                             firstEventPath + '/' + splitEventPath[2],
                         );

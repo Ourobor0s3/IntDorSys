@@ -11,7 +11,6 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EventService } from '../../services/event.service';
 import { ThemeService } from '../../services/theme.service';
-import { LoadingService } from '../../services/loading.service';
 import { UserInfoModel } from "../../model/userInfo.model";
 import { UserService } from "../../services/user.service";
 import { DataReloadService } from "../../services/dataReload.service";
@@ -39,15 +38,14 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         protected router: Router,
         private translate: TranslateService,
         private dataReloadService: DataReloadService,
-        private modalService: NgbModal,
+        modal: NgbModal,
         private userService: UserService,
         private navService: NavService,
         private eventService: EventService,
         private themeService: ThemeService,
-        private loading: LoadingService,
         private renderer: Renderer2,
     ) {
-        super(translate, modalService, loading);
+        super(translate, modal);
         this.initializeLanguage();
         this.getUser = () => this.userService.get() ?? new UserInfoModel();
     }
@@ -106,13 +104,13 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
             return;
         }
 
-        this.menuItems!.forEach(a => {
-            if (this.menuItems!.includes(item)) {
+        this.menuItems?.forEach(a => {
+            if (this.menuItems?.includes(item)) {
                 a.active = false;
             }
             if (a.children) {
                 a.children.forEach(b => {
-                    if (a.children!.includes(item)) {
+                    if (a.children?.includes(item)) {
                         b.active = false;
                     }
                 });
@@ -122,7 +120,8 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     }
 
     updateActiveTabs(url: string) {
-        this.navService.updateActiveTabs(this.menuItems!, url);
+        if (!this.menuItems) return;
+        this.navService.updateActiveTabs(this.menuItems, url);
     }
 
     loadData() {

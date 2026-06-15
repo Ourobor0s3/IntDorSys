@@ -6,7 +6,6 @@ import { UserInfoModel } from "../../shared/model/userInfo.model";
 import { UsersInfoService } from "../../shared/services/user-info.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
-import { LoadingService } from "../../shared/services/loading.service";
 import { UserStatus } from "../../shared/enums/UserStatus";
 import { USER_STATUS_STYLES } from "../../shared/constants/statusStyle";
 
@@ -24,11 +23,10 @@ export class UserProfileComponent extends BaseComponent implements OnInit, OnDes
         private route: ActivatedRoute,
         private router: Router,
         private userService: UsersInfoService,
-        private modal: NgbModal,
-        private translate: TranslateService,
-        private loading: LoadingService,
+        modal: NgbModal,
+        translate: TranslateService,
     ) {
-        super(translate, modal, loading);
+        super(translate, modal);
     }
 
     ngOnInit() {

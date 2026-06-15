@@ -9,8 +9,6 @@ import { AnaliticService } from "../../shared/services/analitic.service";
 import { ChartData } from "../../shared/model/chartData.model";
 import { TranslateService } from '@ngx-translate/core';
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
-import { LoadingService } from "../../shared/services/loading.service";
-
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
@@ -27,11 +25,10 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
         private laundService: LaundressService,
         private analiticService: AnaliticService,
         private dataReloadService: DataReloadService,
-        private modal: NgbModal,
-        private translate: TranslateService,
-        private loading: LoadingService,
+        modal: NgbModal,
+        translate: TranslateService,
     ) {
-        super(translate, modal, loading);
+        super(translate, modal);
         this.filter.startDate = this.getTodayDate().toISOString();
         this.filter.endDate = this.getTodayDate().toISOString();
     }

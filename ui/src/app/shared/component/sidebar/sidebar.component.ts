@@ -79,7 +79,8 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     updateActiveTabs(url: string) {
-        this.navService.updateActiveTabs(this.menuItems!, url);
+        if (!this.menuItems) return;
+        this.navService.updateActiveTabs(this.menuItems, url);
     }
 
     toggleMobileMenu() {
@@ -97,12 +98,12 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
             return;
         }
 
-        this.menuItems!.forEach((a) => {
-            if (this.menuItems!.includes(item))
+        this.menuItems?.forEach((a) => {
+            if (this.menuItems?.includes(item))
                 a.active = false
-            if (!a.children) return false
+            if (!a.children) return
             a.children.forEach(b => {
-                if (a.children!.includes(item)) {
+                if (a.children?.includes(item)) {
                     b.active = false
                 }
             })

@@ -4,7 +4,6 @@ import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
 import { ClipboardService } from "ngx-clipboard";
-import { LoadingService } from "../../shared/services/loading.service";
 import { ApiService } from "../../shared/services/api.service";
 
 interface SettingItem {
@@ -36,12 +35,11 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
     constructor(
         private api: ApiService,
-        private modal: NgbModal,
+        modal: NgbModal,
         private translate: TranslateService,
-        private loading: LoadingService,
         private clipboardService: ClipboardService,
     ) {
-        super(translate, modal, loading);
+        super(translate, modal);
     }
 
     ngOnInit() {

@@ -22,11 +22,11 @@ export abstract class BaseComponent {
     };
     private modalRefBase: NgbModalRef | null = null;
     protected timezoneService = inject(TimezoneService);
+    protected loadingService = inject(LoadingService);
 
     protected constructor(
         protected translateBase: TranslateService,
         protected modalServiceBase: NgbModal,
-        protected loadingService?: LoadingService,
         protected rendererBase?: Renderer2,
     ) {
     }

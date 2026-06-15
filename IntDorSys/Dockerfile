@@ -12,6 +12,7 @@ RUN dotnet restore "IntDorSys.Web.Api/IntDorSys.Web.Api.csproj" --configfile NuG
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+ARG BACKEND_PORT=5050
 WORKDIR /app
 
 RUN apt-get update && \
@@ -20,9 +21,9 @@ RUN apt-get update && \
 
 COPY --from=build /out .
 
-EXPOSE 5050
+EXPOSE ${BACKEND_PORT}
 
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-    CMD curl -f http://localhost:5050/health || exit 1
+    CMD curl -f http://localhost:${BACKEND_PORT}/health || exit 1
 
 ENTRYPOINT ["dotnet", "IntDorSys.Web.Api.dll"]

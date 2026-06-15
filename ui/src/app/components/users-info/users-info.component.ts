@@ -10,8 +10,6 @@ import { UsersInfoService } from "../../shared/services/user-info.service";
 import { TranslateService } from '@ngx-translate/core';
 import { UserStatus } from "../../shared/enums/UserStatus";
 import { USER_STATUS_STYLES } from "../../shared/constants/statusStyle";
-import { LoadingService } from "../../shared/services/loading.service";
-
 @Component({
     selector: 'app-users-info',
     templateUrl: './users-info.component.html',
@@ -37,11 +35,10 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         private userService: UsersInfoService,
         private dataReloadService: DataReloadService,
         private clipboardService: ClipboardService,
-        private modal: NgbModal,
+        modal: NgbModal,
         private translate: TranslateService,
-        private loading: LoadingService,
     ) {
-        super(translate, modal, loading);
+        super(translate, modal);
     }
 
     ngOnInit() {
