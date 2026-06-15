@@ -1,3 +1,4 @@
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Models;
 using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models;
@@ -148,8 +149,8 @@ namespace IntDorSys.Web.Api.Controllers.Laundress
         {
             var filter = new LaundressFilterModel
             {
-                StartDate = startDate ?? DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd"),
-                EndDate = endDate ?? DateTime.Today.ToString("yyyy-MM-dd"),
+                StartDate = startDate ?? DateTime.Today.AddMonths(-1).ToString(DateFormatConstants.DateFormat),
+                EndDate = endDate ?? DateTime.Today.ToString(DateFormatConstants.DateFormat),
             };
 
             var bytes = await export.ExportToExcelAsync(filter, HttpContext.RequestAborted);

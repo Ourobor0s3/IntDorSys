@@ -15,20 +15,23 @@ namespace IntDorSys.Laundress.Services.Impl
 {
     internal sealed class UserBotService : IUserBotService
     {
-        private readonly IUserService _userService;
+        private readonly IUserQueryService _userQuery;
+        private readonly IUserCommandService _userCommand;
         private readonly ILogger<UserBotService> _logger;
         private readonly ITelegramService _telegramService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly IAuditService _audit;
 
         public UserBotService(
-            IUserService userService,
+            IUserQueryService userQuery,
+            IUserCommandService userCommand,
             ILogger<UserBotService> logger,
             ITelegramService telegramService,
             IOptionsMonitor<AdminSettings> adminSettings,
             IAuditService audit)
         {
-            _userService = userService;
+            _userQuery = userQuery;
+            _userCommand = userCommand;
             _logger = logger;
             _telegramService = telegramService;
             _adminSettings = adminSettings;
@@ -44,7 +47,7 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
-                var filteredUsers = (await _userService.GetListUsersAsync(ct)).Data
+                var filteredUsers = (await _userQuery.GetListUsersAsync(ct)).Data
                     .Where(user => !_adminSettings.CurrentValue.ManagersLaundress.Contains(user.TelegramId))
                     .Where(user => user.Status == (isBlockedUsers ? UserStatus.Blocked : UserStatus.Registered))
                     .ToList();
@@ -106,8 +109,12 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
-                var user = (await _userService.GetAsync(forUserId, ct)).Data;
-                var res = (await _userService.ChangeUserStatus(forUserId, newStatus, ct)).Data;
+                var userResult = await _userQuery.GetAsync(forUserId, ct);
+                if (!userResult.IsSuccess) return;
+                var user = userResult.Data;
+                var statusResult = await _userCommand.ChangeUserStatus(forUserId, newStatus, ct);
+                if (!statusResult.IsSuccess) return;
+                var res = statusResult.Data;
                 if (res)
                 {
                     await _audit.RecordAsync(userId, "ChangeUserStatus", "UserInfo", forUserId.ToString(), $"New status: {newStatus}");

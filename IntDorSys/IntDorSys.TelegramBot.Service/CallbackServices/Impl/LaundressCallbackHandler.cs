@@ -10,18 +10,21 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
 {
     internal sealed class LaundressCallbackHandler : ILaundressCallbackHandler
     {
-        private readonly ILaundressBotService _laundBot;
+        private readonly ILaundressBotMenuService _laundMenu;
+        private readonly ILaundressBotBookingService _laundBooking;
         private readonly IUserQueryService _userService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly ILogger<LaundressCallbackHandler> _logger;
 
         public LaundressCallbackHandler(
-            ILaundressBotService laundBot,
+            ILaundressBotMenuService laundMenu,
+            ILaundressBotBookingService laundBooking,
             IUserQueryService userService,
             IOptionsMonitor<AdminSettings> adminSettings,
             ILogger<LaundressCallbackHandler> logger)
         {
-            _laundBot = laundBot;
+            _laundMenu = laundMenu;
+            _laundBooking = laundBooking;
             _userService = userService;
             _adminSettings = adminSettings;
             _logger = logger;
@@ -39,14 +42,14 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                     case "laund":
                         if (listCallback[1].Equals(MessageText.AllFreeRecords))
                         {
-                            await _laundBot.SendFreeDateAsync(
+                            await _laundMenu.SendFreeDateAsync(
                                 userInfo.TelegramId,
                                 callbackQuery.Message?.MessageId ?? 0,
                                 ct);
                         }
                         else if (listCallback[1].Equals(MessageText.MyRecords))
                         {
-                            await _laundBot.SendUseTimeByUserAsync(
+                            await _laundMenu.SendUseTimeByUserAsync(
                                 userInfo,
                                 callbackQuery.Message?.MessageId ?? 0,
                                 ct);
@@ -54,7 +57,7 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                         else if (listCallback[1].Equals(MessageText.AllRecords)
                                                       && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
                         {
-                            await _laundBot.SendAllTimeAsync(
+                            await _laundMenu.SendAllTimeAsync(
                                 userInfo.TelegramId,
                                 callbackQuery.Message?.MessageId ?? 0,
                                 ct);
@@ -62,7 +65,7 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                         else if (listCallback[1].Equals(MessageText.DeleteRecords)
                               && _adminSettings.CurrentValue.ManagersLaundress.Contains(userInfo.TelegramId))
                         {
-                            await _laundBot.SendDatesForDeleteAsync(
+                            await _laundMenu.SendDatesForDeleteAsync(
                                 userInfo.TelegramId,
                                 callbackQuery.Message?.MessageId ?? 0,
                                 ct);
@@ -70,39 +73,39 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
 
                         break;
                     case "UseDate":
-                        await _laundBot.SendFreeTimeAsync(
+                        await _laundMenu.SendFreeTimeAsync(
                             userInfo.TelegramId,
                             callbackQuery.Message!.MessageId,
                             DateTime.Parse(listCallback[1]),
                             ct);
                         break;
                     case "UseTime":
-                        await _laundBot.UseTimeLaundByUserAsync(
+                        await _laundBooking.UseTimeLaundByUserAsync(
                             userInfo,
                             DateTime.Parse(listCallback[1]),
                             callbackQuery.Message?.MessageId ?? 0,
                             ct);
                         break;
                     case "DeleteUserTime":
-                        await _laundBot.RemoveTimeByUserAsync(userInfo, DateTime.Parse(listCallback[1]), ct);
-                        await _laundBot.SendUseTimeByUserAsync(userInfo, callbackQuery.Message!.MessageId, ct);
+                        await _laundBooking.RemoveTimeByUserAsync(userInfo, DateTime.Parse(listCallback[1]), ct);
+                        await _laundMenu.SendUseTimeByUserAsync(userInfo, callbackQuery.Message!.MessageId, ct);
                         break;
                     case "DelDate":
-                        await _laundBot.SendTimesForDeleteAsync(
+                        await _laundMenu.SendTimesForDeleteAsync(
                             userInfo.TelegramId,
                             callbackQuery.Message!.MessageId,
                             DateTime.Parse(listCallback[1]),
                             ct);
                         break;
                     case "DelUseTime":
-                        await _laundBot.DelUseTimeByAdminAsync(userInfo, DateTime.Parse(listCallback[1]), ct);
-                        await _laundBot.SendDatesForDeleteAsync(userInfo.TelegramId, callbackQuery.Message!.MessageId, ct);
+                        await _laundBooking.DelUseTimeByAdminAsync(userInfo, DateTime.Parse(listCallback[1]), ct);
+                        await _laundMenu.SendDatesForDeleteAsync(userInfo.TelegramId, callbackQuery.Message!.MessageId, ct);
                         break;
 
                     case MessageKeyConstants.Back:
                         if (listCallback[1].Equals(MessageKeyConstants.Menu))
                         {
-                            await _laundBot.SendMenuAsync(
+                            await _laundMenu.SendMenuAsync(
                                 userInfo,
                                 callbackQuery.Message!.MessageId,
                                 ct);

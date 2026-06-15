@@ -20,7 +20,7 @@ import { NavService, Page } from "../../services/nav.service";
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss'],
+
 })
 export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy {
     currentLang: string = languages[Language.EN].shortName;
@@ -48,9 +48,8 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         private renderer: Renderer2,
     ) {
         super(translate, modalService, loading);
-        const t = this;
-        t.initializeLanguage();
-        t.getUser = () => this.userService.get() ?? new UserInfoModel();
+        this.initializeLanguage();
+        this.getUser = () => this.userService.get() ?? new UserInfoModel();
     }
 
     ngOnInit(): void {
@@ -123,41 +122,14 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     }
 
     updateActiveTabs(url: string) {
-        let t = this;
-        //ищем выбранный элемент среди menuItems
-        let curItem = t.menuItems!.find(x => x.path == url && x.type == 'link');
-        if (!curItem) {
-            //если выбранного элемента нет среди menuItems - смотрим детей
-            t.menuItems!.forEach(items => {
-                if (!!items?.children && !curItem) {
-                    curItem = items.children.find(x => x.path === url);
-                }
-            })
-        }
-        //возврат, если выбранного эл-та нет среди menuItems и детей
-        if (!curItem)
-            return;
-
-        curItem.active = true;
-        //проходимся по всем эл-там, которые не являются выбранным
-        t.menuItems!.filter(x => x.path != curItem!.path).forEach(menuItem => {
-            //делаем эл-т активным, если у среди его детей есть выбранный
-            menuItem.active = !!menuItem.children?.find(x => x.path === url);
-            if (!!menuItem.children) {
-                //проходимся по всем дочерним не выбранным эл-там и проставляем им false
-                menuItem.children.filter(x => x.path != curItem!.path).forEach(child => {
-                    child.active = false;
-                });
-            }
-        });
+        this.navService.updateActiveTabs(this.menuItems!, url);
     }
 
     loadData() {
-        let t = this;
-        t.setLoading(true);
-        Promise.all([t.refreshUser()])
+        this.setLoading(true);
+        Promise.all([this.refreshUser()])
             .finally(() => {
-                t.setLoading(false);
+                this.setLoading(false);
             });
     }
 
@@ -179,7 +151,7 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
             this.translate.use(langCode);
             localStorage.setItem('localization', langCode);
             // Emit language change event
-            this.eventService.Langchanged(langCode);
+            this.eventService.langChanged(langCode);
         }
     }
 
@@ -213,7 +185,7 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         this.updateCurrentLanguageInfo();
 
         // Emit initial language
-        this.eventService.Langchanged(this.currentLang);
+        this.eventService.langChanged(this.currentLang);
     }
 
     private updateCurrentLanguageInfo(): void {
@@ -237,7 +209,6 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     }
 
     private async refreshUser() {
-        let t = this;
-        t.user = await t.userService.refreshUser();
+        this.user = await this.userService.refreshUser();
     }
 }

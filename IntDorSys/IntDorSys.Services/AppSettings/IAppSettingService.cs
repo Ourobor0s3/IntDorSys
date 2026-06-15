@@ -1,4 +1,5 @@
 using IntDorSys.Core.Entities;
+using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Services.AppSettings
 {
@@ -10,6 +11,6 @@ namespace IntDorSys.Services.AppSettings
 
         Task<AppSetting?> GetByIdAsync(long id, CancellationToken ct = default);
 
-        Task UpdateAsync(long id, string value, long userId, CancellationToken ct = default);
+        Task<Result> UpdateAsync(long id, string value, long userId, CancellationToken ct = default);
     }
 }

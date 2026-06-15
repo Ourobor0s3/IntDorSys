@@ -1,7 +1,7 @@
 export class BaseFilterModel {
-    userId: number;
-    skip: number;
-    take: number;
+    userId: number = 0;
+    skip: number = 0;
+    take: number = 10;
     search?: string;
     startDate?: string;
     endDate?: string;

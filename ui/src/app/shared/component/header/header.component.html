@@ -18,7 +18,7 @@
                   {{ currentLanguageInfo.flag }}
                 </button>
                 <ul aria-labelledby="languageDropdown" class="dropdown-menu">
-                  @for (lang of availableLanguages; track $index) {
+                  @for (lang of availableLanguages; track lang.shortName) {
                     <li>
                       <a (click)="changeLanguage(lang.shortName)" class="dropdown-item" href="javascript:void(0)">
                         {{ lang.flag }}
@@ -41,7 +41,7 @@
             <li class="d-none d-md-block">
               <button (click)="onLogout()" class="btn btn-outline-primary d-flex align-items-center gap-2">
                 <img alt="Logout" height="20" src="assets/image/buttons/logout.svg" width="20"/>
-                <span>{{ 'Logout' | lang }}</span>
+                <span>{{ 'common.logout' | lang }}</span>
               </button>
             </li>
 
@@ -72,7 +72,7 @@
 
   <div class="d-flex flex-column">
     <ul class="nav nav-pills d-flex flex-column gap-2">
-      @for (menuItem of menuItems; track $index) {
+      @for (menuItem of menuItems; track menuItem.path) {
         <li [hidden]="needHidden(menuItem.roles)"
             class="nav-item">
           @if (menuItem.type === 'link' && !menuItem.notShowInSidebar) {
@@ -107,7 +107,7 @@
             {{ currentLanguageInfo.flag }}
           </button>
           <ul class="dropdown-menu">
-            @for (lang of availableLanguages; track $index) {
+            @for (lang of availableLanguages; track lang.shortName) {
               <li>
                 <a (click)="changeLanguage(lang.shortName)" class="dropdown-item" href="javascript:void(0)">
                   {{ lang.flag }}

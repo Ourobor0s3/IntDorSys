@@ -86,6 +86,7 @@ namespace IntDorSys.Web.Api
 
             builder.Services
                 .AddSingleton<BotStatus>()
+                .AddTransient<BotConnectivityCheck>()
                 .ConfigureTelegramBot(isBattle
                     ? builder.Configuration.GetSection(ConfigSectionNames.TelegramBattleSection)
                     : builder.Configuration.GetSection(ConfigSectionNames.TelegramTestSection))
@@ -107,7 +108,7 @@ namespace IntDorSys.Web.Api
 
                     var problem = new
                     {
-                        type = "https://httpstatuses.com/500",
+                        type = "about:blank",
                         title = "An unexpected error occurred",
                         status = StatusCodes.Status500InternalServerError,
                         detail = "Internal server error",

@@ -1,7 +1,7 @@
 <div #sidebar class="sidebar custom-scrollbar" id="sidebar">
   <div class="d-flex flex-column h-100">
     <ul class="nav nav-pills d-flex flex-column gap-2">
-      @for (menuItem of menuItems; track $index) {
+      @for (menuItem of menuItems; track menuItem.path) {
         <li [hidden]="needHidden(menuItem.roles)"
             class="nav-item">
           @if (menuItem.type === 'link' && !menuItem.notShowInSidebar) {

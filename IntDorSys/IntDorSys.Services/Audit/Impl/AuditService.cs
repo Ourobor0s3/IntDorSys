@@ -17,7 +17,7 @@ namespace IntDorSys.Services.Audit.Impl
             _db = db;
         }
 
-        public async Task RecordAsync(long userId, string action, string entityName, string? entityId = null, string? details = null)
+        public async Task RecordAsync(long userId, string action, string entityName, string? entityId = null, string? details = null, CancellationToken ct = default)
         {
             _db.Set<AuditLog>().Add(new AuditLog
             {
@@ -28,7 +28,7 @@ namespace IntDorSys.Services.Audit.Impl
                 Details = details,
             });
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(ct);
         }
 
         public async Task<DataResult<List<AuditLogModel>>> GetLogsAsync(int page = 1, int pageSize = 50, DateTime? startDate = null, DateTime? endDate = null, CancellationToken ct = default)

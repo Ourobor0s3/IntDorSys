@@ -31,20 +31,29 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
         private renderer: Renderer2,
     ) {
         super(translate, modalService);
-        let t = this;
-        let items = t.navService.mainItems;
-        items.pipe(takeUntil(this.destroy$)).subscribe(menuItems => {
+        this.getUser = () => this.userService.get() ?? new UserInfoModel();
+    }
+
+    ngAfterViewChecked(): void {
+        const scrollPosition = sessionStorage.getItem('sidebarScrollY');
+        if (!!scrollPosition && this.sidebarEl) {
+            this.renderer.setProperty(this.sidebarEl.nativeElement, 'scrollTop', +scrollPosition);
+        }
+    }
+
+    ngOnInit(): void {
+        this.navService.mainItems.pipe(takeUntil(this.destroy$)).subscribe(menuItems => {
             this.menuItems = menuItems;
         });
 
         this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
             if (event instanceof NavigationEnd) {
                 if (this.menuItems) {
-                    t.updateActiveTabs(event.url);
+                    this.updateActiveTabs(event.url);
                 }
-                if (event.url != t.navService.currentUrl) {
-                    t.navService.previousUrl = t.navService.currentUrl;
-                    t.navService.currentUrl = event.url;
+                if (event.url != this.navService.currentUrl) {
+                    this.navService.previousUrl = this.navService.currentUrl;
+                    this.navService.currentUrl = event.url;
                 }
             }
             if (event instanceof NavigationStart) {
@@ -52,26 +61,14 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
             }
         });
 
-        t.getUser = () => t.userService.get() ?? new UserInfoModel();
-    }
-
-    ngAfterViewChecked(): void {
-        const scrollPosition = sessionStorage.getItem('sidebarScrollY');
-        if (!!scrollPosition && this.sidebarEl) {
-            this.sidebarEl.nativeElement.scrollTop = +scrollPosition;
-        }
-    }
-
-    ngOnInit(): void {
         if (this.menuItems) {
             this.updateActiveTabs(this.router.url);
         }
     }
 
     ngOnDestroy() {
-        let t = this;
-        t.destroy$.next();
-        t.destroy$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     needHidden(navRoles: string[] | undefined): boolean {
@@ -82,33 +79,7 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     updateActiveTabs(url: string) {
-        let t = this;
-        //ищем выбранный элемент среди menuItems
-        let curItem = t.menuItems!.find(x => x.path == url && x.type == 'link');
-        if (!curItem) {
-            //если выбранного элемента нет среди menuItems - смотрим детей
-            t.menuItems!.forEach(items => {
-                if (!!items?.children && !curItem) {
-                    curItem = items.children.find(x => x.path === url);
-                }
-            })
-        }
-        //возврат, если выбранного эл-та нет среди menuItems и детей
-        if (!curItem)
-            return;
-
-        curItem.active = true;
-        //проходимся по всем эл-там, которые не являются выбранным
-        t.menuItems!.filter(x => x.path != curItem!.path).forEach(menuItem => {
-            //делаем эл-т активным, если у среди его детей есть выбранный
-            menuItem.active = !!menuItem.children?.find(x => x.path === url);
-            if (!!menuItem.children) {
-                //проходимся по всем дочерним не выбранным эл-там и проставляем им false
-                menuItem.children.filter(x => x.path != curItem!.path).forEach(child => {
-                    child.active = false;
-                });
-            }
-        });
+        this.navService.updateActiveTabs(this.menuItems!, url);
     }
 
     toggleMobileMenu() {
@@ -122,13 +93,12 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
 
     // Click Toggle menu
     toggletNavActive(item: Page) {
-        let t = this;
-        if (item.path == t.router.url) {
+        if (item.path == this.router.url) {
             return;
         }
 
-        t.menuItems!.forEach((a) => {
-            if (t.menuItems!.includes(item))
+        this.menuItems!.forEach((a) => {
+            if (this.menuItems!.includes(item))
                 a.active = false
             if (!a.children) return false
             a.children.forEach(b => {
@@ -138,8 +108,8 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
             })
         });
         //Закрытие навбара при переходе на другие страницы в мобилке
-        if (window.innerWidth < 569 && t.navService.collapseSidebar)
-            t.collapseSidebar();
+        if (window.innerWidth < 569 && this.navService.collapseSidebar)
+            this.collapseSidebar();
         item.active = !item.active;
     }
 

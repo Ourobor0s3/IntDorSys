@@ -26,41 +26,39 @@ export class LoginComponent extends BaseComponent {
         private translate: TranslateService,
     ) {
         super(translate, modal);
-        let t = this;
-        t.loginForm = fb.group({
+        this.loginForm = fb.group({
             login: ['', [Validators.required]],
             password: ['', [Validators.required]],
         });
     }
 
     onSubmit(): void {
-        let t = this;
-        if (t.loginForm.invalid) {
-            t.markFormGroupTouchedAndDirty(t.loginForm);
+        if (this.loginForm.invalid) {
+            this.markFormGroupTouchedAndDirty(this.loginForm);
             return;
         }
-        t.setLoading(true);
+        this.setLoading(true);
 
         let loginCred: Credentials = {
-            login: t.loginForm.get('login')!.value,
-            password: t.loginForm.get('password')!.value,
+            login: this.loginForm.get('login')!.value,
+            password: this.loginForm.get('password')!.value,
         };
 
-        t.authService.login(loginCred)
+        this.authService.login(loginCred)
             .then(res => {
                 if (res.isSuccess) {
-                    t.navigateTab(overviewRoute);
+                    this.navigateTab(overviewRoute);
                 } else if (res.errors && res.errors.length > 0) {
-                    t.showError(res.errors[0].message);
+                    this.showError(res.errors[0].message);
                 } else {
-                    console.error('Login failed with unknown error', res);
+                    this.showResponseError(res);
                 }
             })
             .catch((e) => {
-                t.showError(t.translate.instant('common.system_error'));
+                this.showError(this.translate.instant('common.system_error'));
             })
             .finally(() => {
-                t.setLoading(false);
+                this.setLoading(false);
             });
     }
 
@@ -69,8 +67,7 @@ export class LoginComponent extends BaseComponent {
     }
 
     navigateTab(link: string): void {
-        let t = this;
-        t.router.navigateByUrl('/' + link);
+        this.router.navigateByUrl('/' + link);
     }
 
     hideOrShowPassword(): void {

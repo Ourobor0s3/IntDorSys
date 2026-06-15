@@ -32,7 +32,9 @@
     "passwordConfirmation": {
       "notMatch": "Пароли не совпадают"
     },
-    "telegramIdMustBeNumber": "Telegram ID должен быть числом"
+    "telegramIdMustBeNumber": "Telegram ID должен быть числом",
+    "network_error": "Невозможно подключиться к Интернету. Пожалуйста, проверьте сетевое подключение",
+    "network_title": "Ошибка загрузки ресурса"
   },
   "menu": {
     "home": "Главная",
@@ -66,7 +68,10 @@
     "view": "Просмотр",
     "back": "Назад",
     "yes": "Да",
-    "no": "Нет"
+    "no": "Нет",
+    "logout": "Выйти",
+    "id": "ID",
+    "export_xlsx": "Экспорт XLSX"
   },
   "user_page": {
     "title": "Профиль пользователя"
@@ -109,7 +114,7 @@
     "select_user": "Выберите пользователя",
     "select_user_placeholder": "-- Выберите пользователя --",
     "select_user_required": "Пожалуйста, выберите пользователя",
-    "create_success": "Слот времени успешно создан",
+    "create_success": "Создано временных слотов: {{ count }}",
     "book_success": "Пользователь успешно записан",
     "confirm_unbook": "Отменить запись пользователя с этого слота?",
     "confirm_delete_slot": "Удалить этот слот времени?",

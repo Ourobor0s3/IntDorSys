@@ -32,7 +32,9 @@
     "passwordConfirmation": {
       "notMatch": "Passwords does not match"
     },
-    "telegramIdMustBeNumber": "Telegram ID must be a number"
+    "telegramIdMustBeNumber": "Telegram ID must be a number",
+    "network_error": "Unable to connect to the Internet. Please check your network connection",
+    "network_title": "Failed to Load Resource"
   },
   "menu": {
     "home": "Home",
@@ -66,7 +68,10 @@
     "view": "View",
     "back": "Back",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "logout": "Logout",
+    "id": "ID",
+    "export_xlsx": "Export XLSX"
   },
   "user_page": {
     "title": "User Profile"
@@ -109,7 +114,7 @@
     "select_user": "Select user",
     "select_user_placeholder": "-- Select user --",
     "select_user_required": "Please select a user",
-    "create_success": "Time slot created successfully",
+    "create_success": "Created {{ count }} time slot(s)",
     "book_success": "User booked successfully",
     "confirm_unbook": "Remove user from this slot?",
     "confirm_delete_slot": "Delete this time slot?",

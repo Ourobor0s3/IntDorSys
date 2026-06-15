@@ -42,16 +42,7 @@ namespace IntDorSys.Web.Api.Controllers
             if (string.IsNullOrEmpty(value))
                 return new Result().WithError("Value is required");
 
-            try
-            {
-                await settings.UpdateAsync(id, value, UserId, ct);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return new Result().WithError(ex.Message);
-            }
-
-            return new Result();
+            return await settings.UpdateAsync(id, value, UserId, ct);
         }
     }
 }

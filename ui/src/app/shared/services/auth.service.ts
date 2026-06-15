@@ -5,7 +5,8 @@ import { Credentials, TokenService } from "./token.service";
 import { EventService } from "./event.service";
 import { UserService } from "./user.service";
 import { UserInfoModel } from "../model/userInfo.model";
-import { tap } from "rxjs";
+import { lastValueFrom, tap } from "rxjs";
+import { IResponse } from '../interface/response';
 
 export interface User {
     uid: string;
@@ -54,15 +55,14 @@ export class AuthService {
         AuthService._authData = newAuth;
     }
 
-    login(loginCred: Credentials) {
-        return this.tokenService
-            .auth(loginCred).pipe(
-                tap((data) => {
-                    const accessToken = (data as any)?.data?.accessToken;
-                    const refreshToken = (data as any)?.data?.refreshToken ?? "";
-                    const role = (data as any)?.data?.role ?? "";
+    login(loginCred: Credentials): Promise<IResponse<AuthData>> {
+        return lastValueFrom(
+            this.tokenService.auth<AuthData>(loginCred).pipe(
+                tap((data: IResponse<AuthData>) => {
+                    const accessToken = data?.data?.accessToken;
+                    const refreshToken = data?.data?.refreshToken ?? "";
+                    const role = data?.data?.role ?? "";
                     if (!accessToken) {
-                        console.error('Access token not found in response');
                         return;
                     }
                     localStorage.setItem('accessToken', accessToken);
@@ -73,8 +73,8 @@ export class AuthService {
                     };
                     this.authData = tokenObj;
                 }),
-            )
-            .toPromise();
+            ),
+        );
     }
 
     isAdmin(): boolean {

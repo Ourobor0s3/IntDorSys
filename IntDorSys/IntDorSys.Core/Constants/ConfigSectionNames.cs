@@ -34,5 +34,20 @@ namespace IntDorSys.Core.Constants
         ///     Section with admin ids
         /// </summary>
         public const string AdminIdsSection = "AdminIds";
+
+        /// <summary>
+        ///     Section with Telegram API connection configuration
+        /// </summary>
+        public const string TelegramApiHost = "Telegram:Api:Host";
+
+        /// <summary>
+        ///     Section with Telegram API port
+        /// </summary>
+        public const string TelegramApiPort = "Telegram:Api:Port";
+
+        /// <summary>
+        ///     Section with file storage folder path
+        /// </summary>
+        public const string FileStorageFolder = "FileStorage:Folder";
     }
 }

@@ -17,14 +17,13 @@ export class TranslateReplacePipe implements PipeTransform {
             return;
         }
 
-        const t = this;
-        var translated = t.translate.instant(text);
+        var translated = this.translate.instant(text);
         if (typeof translated !== 'string') {
             return translated;
         }
-        if (translated.match(t.variableRegEx) != null && replaces != null) {
+        if (translated.match(this.variableRegEx) != null && replaces != null) {
             const replaceMap: { key: string; value: string }[] = [];
-            translated.match(t.variableRegEx).forEach(result => {
+            translated.match(this.variableRegEx).forEach(result => {
                 replaceMap.push({ key: result, value: replaces[replaceMap.length] });
             });
             replaceMap.forEach(map => {

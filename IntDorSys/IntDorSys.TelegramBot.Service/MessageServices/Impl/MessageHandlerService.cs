@@ -32,8 +32,14 @@ namespace IntDorSys.TelegramBot.Service.MessageServices.Impl
         /// <inheritdoc />
         public async Task HandleAsync(Message message, CancellationToken ct)
         {
-            var userInfo = (await _userService.GetByTgIdAsync(message.From!.Id, ct)).Data;
-            var userRoles = (await _userRoleService.GetByIdAsync(userInfo.Id, ct)).Data;
+            var userResult = await _userService.GetByTgIdAsync(message.From!.Id, ct);
+            if (!userResult.IsSuccess) return;
+
+            var userInfo = userResult.Data;
+            var rolesResult = await _userRoleService.GetByIdAsync(userInfo.Id, ct);
+            if (!rolesResult.IsSuccess) return;
+
+            var userRoles = rolesResult.Data;
 
             if (userRoles.Contains(UserRoleKeys.Admin))
             {

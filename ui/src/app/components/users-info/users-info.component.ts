@@ -45,59 +45,55 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
     }
 
     ngOnInit() {
-        let t = this;
-        t.loadData();
-        t.dataReloadService.dataReload$
-            .pipe(takeUntil(t.destroy$))
+        this.loadData();
+        this.dataReloadService.dataReload$
+            .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
-                t.loadData();
+                this.loadData();
             });
     }
 
     loadData() {
-        let t = this;
-        t.searchUsers();
+        this.searchUsers();
     }
 
     searchUsers() {
-        let t = this;
-        t.setLoading(true);
+        this.setLoading(true);
 
-        t.userService.getUsers().then(res => {
-            t.userList = res.data;
-            t.applyFilter();
+        this.userService.getUsers().then(res => {
+            this.userList = res.data;
+            this.applyFilter();
         }).catch((err) => {
-                console.error(err);
+                this.showResponseError(err);
             })
             .finally(() => {
-                t.setLoading(false);
+                this.setLoading(false);
             });
     }
 
     applyFilter() {
-        let t = this;
-        if (!t.userList) { t.filteredUsers = []; return; }
+        if (!this.userList) { this.filteredUsers = []; return; }
 
-        let result = [...t.userList];
+        let result = [...this.userList];
 
-        if (t.showWithNameOnly) {
+        if (this.showWithNameOnly) {
             result = result.filter(x => !!x.fullName);
         }
 
-        if (t.query) {
-            let q = t.query.trim().toLowerCase();
+        if (this.query) {
+            let q = this.query.trim().toLowerCase();
             result = result.filter(x =>
                 (x.fullName && x.fullName.toLowerCase().includes(q)) ||
                 (x.username && x.username.toLowerCase().includes(q))
             );
         }
 
-        switch (t.sortKey) {
+        switch (this.sortKey) {
             case 'id':
-                result.sort((a, b) => t.sortDesc ? b.id - a.id : a.id - b.id);
+                result.sort((a, b) => this.sortDesc ? b.id - a.id : a.id - b.id);
                 break;
             case 'status':
-                result.sort((a, b) => t.sortDesc
+                result.sort((a, b) => this.sortDesc
                     ? Number(b.isBlocked) - Number(a.isBlocked)
                     : Number(a.isBlocked) - Number(b.isBlocked));
                 break;
@@ -105,14 +101,14 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
                 result.sort((a, b) => {
                     let nameA = (a.fullName || a.username || '').toLowerCase();
                     let nameB = (b.fullName || b.username || '').toLowerCase();
-                    return t.sortDesc ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
+                    return this.sortDesc ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
                 });
         }
 
-        t.filteredUsers = result;
-        t.totalPages = Math.max(1, Math.ceil(result.length / t.pageSize));
-        let start = (t.page - 1) * t.pageSize;
-        t.users = result.slice(start, start + t.pageSize);
+        this.filteredUsers = result;
+        this.totalPages = Math.max(1, Math.ceil(result.length / this.pageSize));
+        let start = (this.page - 1) * this.pageSize;
+        this.users = result.slice(start, start + this.pageSize);
     }
 
     onFilterChange() {
@@ -150,9 +146,8 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
     }
 
     copyText(text: string) {
-        let t = this;
-        t.clipboardService.copy(text);
-        t.showToast(t.translate.instant('common.copy_success'));
+        this.clipboardService.copy(text);
+        this.showToast(this.translate.instant('common.copy_success'));
     }
 
     trackByUser(index: number, item: UserInfoModel): number {
@@ -163,28 +158,26 @@ export class UserInfoComponent extends BaseComponent implements OnInit, OnDestro
         return USER_STATUS_STYLES[status];
     }
 
-    changeStatus(user: UserInfoModel) {
-        let t = this;
-        t.modalRef = t.modalService.open(ConfirmModal, t.getModalOptions('sm'));
+    async changeStatus(user: UserInfoModel) {
+        this.modalRef = this.modalService.open(ConfirmModal, this.getModalOptions('sm'));
 
-        t.modalRef.componentInstance.title = t.translate.instant('common.confirm')
-        t.modalRef.componentInstance.showConfirmButton = !user.isBlocked;
-        t.modalRef.componentInstance.showErrorButton = user.isBlocked;
-        t.modalRef.componentInstance.description = user.isBlocked ? t.translate.instant('users.confirm_unblock') : t.translate.instant('users.confirm_block');
-        t.modalRef.componentInstance.buttonError = t.translate.instant('common.ok');
-        t.modalRef.componentInstance.buttonConfirm = t.translate.instant('common.ok');
-        t.modalRef.componentInstance.buttonDecline = t.translate.instant('common.cancel');
+        this.modalRef.componentInstance.title = this.translate.instant('common.confirm')
+        this.modalRef.componentInstance.showConfirmButton = !user.isBlocked;
+        this.modalRef.componentInstance.showErrorButton = user.isBlocked;
+        this.modalRef.componentInstance.description = user.isBlocked ? this.translate.instant('users.confirm_unblock') : this.translate.instant('users.confirm_block');
+        this.modalRef.componentInstance.buttonError = this.translate.instant('common.ok');
+        this.modalRef.componentInstance.buttonConfirm = this.translate.instant('common.ok');
+        this.modalRef.componentInstance.buttonDecline = this.translate.instant('common.cancel');
 
-        t.modalRef.result
-            .then((result) => {
-                if (result) t.userService.changeUserStatus(user.id, !user.isBlocked).then(() => {
-                    t.showToast(t.translate.instant('common.status_changed'));
-                }).finally(() => {
-                    t.searchUsers();
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        try {
+            const result = await this.modalRef.result;
+            if (result) {
+                await this.userService.changeUserStatus(user.id, !user.isBlocked);
+                this.showToast(this.translate.instant('common.status_changed'));
+                this.searchUsers();
+            }
+        } catch (err) {
+            this.showResponseError(err);
+        }
     }
 }

@@ -42,14 +42,14 @@
 
   @if (sortedReports.length > 0) {
     <div class="reports-grid">
-      @for (report of sortedReports; track $index) {
+      @for (report of sortedReports; track report.createdAt) {
         <div class="content-card">
           <div class="content-card-body">
             <div class="fw-semibold small text-primary text-truncate">{{ report.username }}</div>
 
             @if (report.files && report.files.length > 0) {
               <div class="d-flex flex-wrap gap-2">
-                @for (file of report.files; track $index) {
+                  @for (file of report.files; track file.filePath) {
                   <img [src]="file.filePath" alt="report photo"
                        class="report-thumb" (click)="openLightbox(report, $index)" />
                 }

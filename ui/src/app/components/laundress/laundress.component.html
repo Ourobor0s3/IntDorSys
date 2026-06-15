@@ -29,7 +29,7 @@
         {{ 'laundress.filter' | lang }}
       </button>
       @if (isAdmin) {
-        <button (click)="exportExcel()" class="btn btn-sm btn-outline-secondary" title="Export XLSX" type="button">
+        <button (click)="exportExcel()" class="btn btn-sm btn-outline-secondary" title="{{ 'common.export_xlsx' | lang }}" type="button">
           XLSX
         </button>
       }
@@ -72,7 +72,7 @@
   <!-- Cards grid -->
   @if (laundList && laundList.length > 0) {
     <div class="cards-grid">
-      @for (laund of laundList; track $index) {
+      @for (laund of laundList; track laund.date) {
         <div class="content-card">
           <div class="card-header-custom">
             {{ laund.date }}
@@ -84,7 +84,7 @@
                 <p class="text-muted small mb-0">{{ 'common.no_data' | lang }}</p>
               </div>
             }
-            @for (l of laund.laundModels; track $index) {
+            @for (l of laund.laundModels; track l.timeWash) {
               <div class="slot-row"
                    [class.slot-expired]="isSlotExpired(l.timeWash)"
                    [class.slot-editing]="isEditMode && !isSlotExpired(l.timeWash)">
@@ -164,7 +164,7 @@
       <div class="col">
         <label class="form-label fw-medium">{{ 'laundress.hour_from' | lang }}</label>
         <select [(ngModel)]="newTimeRangeStartHour" class="form-select">
-          @for (h of evenHours; track $index) {
+          @for (h of evenHours; track h) {
             <option [value]="h">{{ h }}:00</option>
           }
         </select>
@@ -172,7 +172,7 @@
       <div class="col">
         <label class="form-label fw-medium">{{ 'laundress.hour_to' | lang }}</label>
         <select [(ngModel)]="newTimeRangeEndHour" class="form-select">
-          @for (h of evenHours; track $index) {
+          @for (h of evenHours; track h) {
             <option [value]="h">{{ h }}:00</option>
           }
         </select>
@@ -197,7 +197,7 @@
       <label class="form-label fw-medium">{{ 'laundress.select_user' | lang }}</label>
       <select [(ngModel)]="selectedUserId" class="form-select">
         <option [value]="0">{{ 'laundress.select_user_placeholder' | lang }}</option>
-        @for (u of users; track $index) {
+        @for (u of users; track u.id) {
           <option [value]="u.id">{{ u.fullName || u.username }}</option>
         }
       </select>

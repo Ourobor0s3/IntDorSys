@@ -1,4 +1,4 @@
-import { AbstractControl, UntypedFormGroup } from "@angular/forms";
+import { AbstractControl } from "@angular/forms";
 import { NgbModal, NgbModalOptions, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModal } from "../modals/confirm";
 import { ModalInfoModel } from "../../model/modalInfo.model";
@@ -7,7 +7,7 @@ import { BsDatepickerConfig } from "ngx-bootstrap/datepicker";
 import { formatDate } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '../../services/loading.service';
-import { Renderer2 } from '@angular/core';
+import { Renderer2, inject } from '@angular/core';
 import { TimezoneService } from '../../services/timezone.service';
 
 export abstract class BaseComponent {
@@ -21,6 +21,7 @@ export abstract class BaseComponent {
     };
     private modalRefBase: NgbModalRef | null = null;
     private translationCache: Map<string, string> = new Map();
+    protected timezoneService = inject(TimezoneService);
 
     protected constructor(
         protected translateBase: TranslateService,
@@ -34,12 +35,12 @@ export abstract class BaseComponent {
      * Помечает все поля формы как "тронутые" и "грязные"
      * @param formGroup - Форма для обработки
      */
-    public markFormGroupTouchedAndDirty(formGroup: UntypedFormGroup): void {
-        Object.values(formGroup.controls).forEach((control: UntypedFormGroup) => {
+    public markFormGroupTouchedAndDirty(formGroup: AbstractControl): void {
+        Object.values((formGroup as AbstractControl & { controls: Record<string, AbstractControl> }).controls ?? {}).forEach(control => {
             control.markAsTouched();
             control.markAsDirty();
             control.updateValueAndValidity();
-            if (control.controls) {
+            if ((control as AbstractControl & { controls: Record<string, AbstractControl> }).controls) {
                 this.markFormGroupTouchedAndDirty(control);
             }
         });
@@ -158,7 +159,7 @@ export abstract class BaseComponent {
         yearDelta: number = 0,
     ): { dateStart: string; dateEnd: string } {
         const now = new Date();
-        const offsetMs = TimezoneService.getOffsetMs();
+        const offsetMs = this.timezoneService.getOffsetMs();
         const tzMs = now.getTime() + offsetMs;
         const tzDate = new Date(tzMs);
 
@@ -176,31 +177,32 @@ export abstract class BaseComponent {
 
     public getTodayDate(): Date {
         const now = new Date();
-        const offsetMs = TimezoneService.getOffsetMs();
+        const offsetMs = this.timezoneService.getOffsetMs();
         const tzMs = now.getTime() + offsetMs;
         const tzDate = new Date(tzMs);
         return new Date(Date.UTC(tzDate.getFullYear(), tzDate.getMonth(), tzDate.getDate()));
     }
 
     // if system error return true
-    protected showResponseError(response: { errors?: Array<{ message: string }>; error?: string | { errors?: Array<{ message: string }>; error?: string; error_description?: string }; status?: number } | null, title: string | null = null): boolean {
+    protected showResponseError(response: unknown, title: string | null = null): boolean {
+        const r = response as { errors?: Array<{ message: string }>; error?: string | { errors?: Array<{ message: string }>; error?: string; error_description?: string }; status?: number } | null;
 
-        if (!response || !response.error && !response.errors || response.status === 401) {
+        if (!r || !r.error && !r.errors || r.status === 401) {
             return false;
         }
 
-        if (!!response.errors && response.errors.length != 0) {
-            this.showError(response.errors[0].message, title);
+        if (!!r.errors && r.errors.length != 0) {
+            this.showError(r.errors[0].message, title);
             return false;
         }
 
-        if (typeof response.error === 'string') {
-            this.showError(response.error, title);
+        if (typeof r.error === 'string') {
+            this.showError(r.error, title);
             return false;
         }
 
-        if (!!response.error.errors && response.error.errors.length != 0) {
-            for (let e of response.error.errors) {
+        if (!!r.error.errors && r.error.errors.length != 0) {
+            for (let e of r.error.errors) {
                 if (e.message == 'Chart loading error') continue;
 
                 this.showError(e.message, title);
@@ -209,20 +211,20 @@ export abstract class BaseComponent {
             return false;
         }
 
-        if (!!response.error.error && !!response.error.error_description) {
-            this.showError(response.error.error_description, title);
+        if (!!r.error.error && !!r.error.error_description) {
+            this.showError(r.error.error_description, title);
             return false;
         }
 
         if (!navigator.onLine) {
             this.showError(
-                'Unable to connect to the Internet. Please check your network connection',
-                'Failed to Load Resource',
+                this.translateBase.instant('errors.network_error'),
+                this.translateBase.instant('errors.network_title'),
             );
             return false;
         }
 
-        this.showError("System error, please contact support", title);
+        this.showError(this.translateBase.instant('common.system_error'), title);
         return true;
     }
 
@@ -314,14 +316,15 @@ export abstract class BaseComponent {
      */
     protected showToast(message: string, duration: number = 3000): void {
         const cachedMessage = this.getCachedTranslation(message);
-        const toast = this.rendererBase
-            ? this.rendererBase.createElement('div')
+        const renderer = this.rendererBase;
+        const toast = renderer
+            ? renderer.createElement('div')
             : document.createElement('div');
         toast.textContent = cachedMessage;
         toast.className = 'toast-notification';
 
-        if (this.rendererBase) {
-            this.rendererBase.appendChild(document.body, toast);
+        if (renderer) {
+            renderer.appendChild(document.body, toast);
         } else {
             document.body.appendChild(toast);
         }
@@ -333,8 +336,8 @@ export abstract class BaseComponent {
         setTimeout(() => {
             toast.classList.remove('show');
             toast.addEventListener('transitionend', () => {
-                if (this.rendererBase) {
-                    this.rendererBase.removeChild(document.body, toast);
+                if (renderer) {
+                    renderer.removeChild(document.body, toast);
                 } else {
                     toast.remove();
                 }

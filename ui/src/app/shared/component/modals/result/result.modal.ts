@@ -5,7 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
     selector: 'app-result-modal',
     templateUrl: 'result.modal.html',
-    styleUrls: ['./result.modal.scss'],
+
 })
 export class ResultModal implements OnInit, OnDestroy {
 

@@ -131,6 +131,24 @@ namespace IntDorSys.Laundress.Services.Impl
 
             var washDuration = await GetWashDurationHoursAsync(ct);
 
+            var existingWash = await _db.Set<UseLaundress>()
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.TimeWash == newWash.TimeWash, ct);
+
+            if (existingWash != null)
+            {
+                if (existingWash.Deleted)
+                {
+                    _db.RestoreEntity(existingWash);
+                    existingWash.SelectUser = null;
+                    existingWash.SelectUserId = null;
+                    await _db.SaveChangesAsync(ct);
+                    return res.WithData(true);
+                }
+
+                return res.WithError($"Time {newWash.TimeWash:dd.MM.yyyy HH:mm} overlaps with an existing slot");
+            }
+
             if (await HasOverlappingSlotsAsync(newWash.TimeWash, washDuration, ct))
             {
                 return res.WithError($"Time {newWash.TimeWash:dd.MM.yyyy HH:mm} overlaps with an existing slot");
@@ -248,6 +266,24 @@ namespace IntDorSys.Laundress.Services.Impl
             {
                 var timeWash = dateBase.AddHours(hour);
 
+                var existingWash = await _db.Set<UseLaundress>()
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(x => x.TimeWash == timeWash, ct);
+
+                if (existingWash != null)
+                {
+                    if (existingWash.Deleted)
+                    {
+                        existingWash.Deleted = false;
+                        existingWash.SelectUser = null;
+                        existingWash.SelectUserId = null;
+                        created++;
+                        continue;
+                    }
+
+                    continue;
+                }
+
                 if (await HasOverlappingSlotsAsync(timeWash, washDuration, ct))
                 {
                     continue;
@@ -272,6 +308,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 catch (DbUpdateException ex)
                 {
                     _logger.LogWarning(ex, "Concurrent slot creation conflict at CreateTimeRangeAsync (date={Date}, start={Start}, end={End})", date, startHour, endHour);
+                    return res.WithError($"Concurrent slot creation conflict: {ex.Message}");
                 }
             }
 

@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { HeaderButtonModel } from "../../model/headerButton.model";
 import { NavService } from "../../services/nav.service";
 import { EventService } from "../../services/event.service";
@@ -9,7 +9,7 @@ import { EventService } from "../../services/event.service";
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
-    styleUrls: ['./breadcrumb.component.scss'],
+
 })
 
 export class BreadcrumbComponent implements OnDestroy {
@@ -18,8 +18,6 @@ export class BreadcrumbComponent implements OnDestroy {
     button1: HeaderButtonModel = new HeaderButtonModel();
     button2: HeaderButtonModel = new HeaderButtonModel();
     showInput: boolean = false;
-    buttonsSubscription: Subscription | undefined;
-    inputSubscription: Subscription | undefined;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -27,15 +25,14 @@ export class BreadcrumbComponent implements OnDestroy {
         private navService: NavService,
         private eventService: EventService,
     ) {
-        const t = this;
-        t.buttonsSubscription = t.eventService.SubpageEvent.pipe(takeUntil(this.destroy$)).subscribe(
+        this.eventService.SubpageEvent.pipe(takeUntil(this.destroy$)).subscribe(
             (headerButton: HeaderButtonModel) => {
                 switch (headerButton.buttonNumber) {
                     case 0:
-                        t.setButtonOptions(t.button1, headerButton);
+                        this.setButtonOptions(this.button1, headerButton);
                         break;
                     case 1:
-                        t.setButtonOptions(t.button2, headerButton);
+                        this.setButtonOptions(this.button2, headerButton);
                         break;
                     default:
                         break;
@@ -43,16 +40,16 @@ export class BreadcrumbComponent implements OnDestroy {
             },
         );
 
-        t.inputSubscription = t.eventService.ShowUploadButtonEvent.pipe(takeUntil(this.destroy$)).subscribe(
+        this.eventService.ShowUploadButtonEvent.pipe(takeUntil(this.destroy$)).subscribe(
             (showUploadInput: boolean) => {
-                t.showInput = showUploadInput;
+                this.showInput = showUploadInput;
             },
         );
 
-        t.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
-            //t.title = '';
-            t.button1 = new HeaderButtonModel();
-            t.button2 = new HeaderButtonModel();
+        this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+            //this.title = '';
+            this.button1 = new HeaderButtonModel();
+            this.button2 = new HeaderButtonModel();
             if (event instanceof NavigationEnd) {
                 let pages = navService.MainPages;
                 for (let i = 0; i < pages.length; i++) {
@@ -75,23 +72,23 @@ export class BreadcrumbComponent implements OnDestroy {
                         );
                     }
                     if (isFullPathMatch || isPartPathMatch) {
-                        t.title = item.header ? item.header : item.title;
-                        t.sectionHeaderIsHidden = item.sectionHeaderIsHidden;
+                        this.title = item.header ? item.header : item.title;
+                        this.sectionHeaderIsHidden = item.sectionHeaderIsHidden;
                         if (isFullPathMatch) break;
                     }
                 }
 
                 navService.HEADERBUTTONS.filter((item: HeaderButtonModel) => {
                     if (
-                        item.itemTitle == t.title ||
-                        item.headerTitle == t.title ||
+                        item.itemTitle == this.title ||
+                        item.headerTitle == this.title ||
                         (!!item.url && event.urlAfterRedirects.includes(item.url))
                     ) {
                         if (item.buttonNumber == 0) {
-                            t.button1 = item;
+                            this.button1 = item;
                         }
                         if (item.buttonNumber == 1) {
-                            t.button2 = item;
+                            this.button2 = item;
                         }
                     }
                 });
@@ -100,15 +97,8 @@ export class BreadcrumbComponent implements OnDestroy {
     }
 
     ngOnDestroy() {
-        const t = this;
-        t.destroy$.next();
-        t.destroy$.complete();
-        if (!!t.buttonsSubscription) {
-            t.buttonsSubscription.unsubscribe();
-        }
-        if (!!t.inputSubscription) {
-            t.inputSubscription.unsubscribe();
-        }
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     setButtonOptions(model: HeaderButtonModel, newModel: HeaderButtonModel) {

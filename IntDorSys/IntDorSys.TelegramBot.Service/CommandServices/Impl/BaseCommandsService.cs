@@ -25,15 +25,17 @@ namespace IntDorSys.TelegramBot.Service.CommandServices.Impl
 
         public async Task StartHandleAsync(Message message, CancellationToken ct)
         {
-            var userInfo = (await _userService.GetByTgIdAsync(message.From!.Id, ct)).Data;
-            await _telegramService.SendMessageAsync(userInfo.TelegramId, MessageText.Start, ct);
+            var userResult = await _userService.GetByTgIdAsync(message.From!.Id, ct);
+            if (!userResult.IsSuccess) return;
+            await _telegramService.SendMessageAsync(userResult.Data.TelegramId, MessageText.Start, ct);
         }
 
         public async Task RulesHandleAsync(Message message, CancellationToken ct)
         {
-            var userInfo = (await _userService.GetByTgIdAsync(message.From!.Id, ct)).Data;
+            var userResult = await _userService.GetByTgIdAsync(message.From!.Id, ct);
+            if (!userResult.IsSuccess) return;
             var rules = await _settings.GetValueAsync("Rules", ct);
-            await _telegramService.SendMessageAsync(userInfo.TelegramId, rules ?? MessageText.Rules, ct);
+            await _telegramService.SendMessageAsync(userResult.Data.TelegramId, rules ?? MessageText.Rules, ct);
         }
     }
 }

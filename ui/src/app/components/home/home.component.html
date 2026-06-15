@@ -16,7 +16,7 @@
           }
           @if (laund.laundModels != null && laund.laundModels.length > 0) {
             <div>
-              @for (l of laund.laundModels; track $index) {
+              @for (l of laund.laundModels; track l.timeWash) {
                 <div class="slot-item">
                   <span class="slot-time">{{ l.timeWash | date:'HH:mm' }}</span>
                   <span class="slot-separator">—</span>
