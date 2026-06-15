@@ -1,4 +1,5 @@
 using System.Globalization;
+using IntDorSys.Core.Entities;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
@@ -14,7 +15,6 @@ using Ouro.CommonUtils.Results;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using FileInfo = IntDorSys.Core.Entities.FileInfo;
 
 namespace IntDorSys.Laundress.Services.Impl
 {
@@ -40,10 +40,10 @@ namespace IntDorSys.Laundress.Services.Impl
             _link = link.CurrentValue;
         }
 
-        public async Task<DataResult<List<FileInfo>>> GetFilterAsync(BaseFilterModel filter, CancellationToken ct)
+        public async Task<DataResult<List<StoredFileInfo>>> GetFilterAsync(BaseFilterModel filter, CancellationToken ct)
         {
-            var result = new DataResult<List<FileInfo>>();
-            var files = await _db.Set<FileInfo>()
+            var result = new DataResult<List<StoredFileInfo>>();
+            var files = await _db.Set<StoredFileInfo>()
                 .AsNoTracking()
                 .WhereIf(filter?.StartDate != null,
                     x => x.CreatedAt >= DateTime.Parse(filter!.StartDate!, CultureInfo.InvariantCulture))
@@ -94,7 +94,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
 
             // Fetch files
-            var filesQuery = _db.Set<FileInfo>()
+            var filesQuery = _db.Set<StoredFileInfo>()
                 .AsNoTracking()
                 .Where(x => !string.IsNullOrEmpty(x.GroupId));
 
@@ -116,7 +116,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
 
             var filesByGroup = files.Count == 0
-                ? new Dictionary<string, List<FileInfo>>()
+                ? new Dictionary<string, List<StoredFileInfo>>()
                 : files
                     .GroupBy(f => f.GroupId)
                     .ToDictionary(g => g.Key!, g => g.ToList());

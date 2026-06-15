@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { ApiService } from './api.service';
 import { Injectable } from "@angular/core";
 import { UserInfoModel } from "../model/userInfo.model";
@@ -9,45 +10,41 @@ const apiContactUrl = 'user/';
     providedIn: 'root',
 })
 export class UserService {
-    public user: UserInfoModel;
+    public user: UserInfoModel | undefined;
     public email: string = '';
 
     constructor(private api: ApiService) {
     }
 
-    public init(): Promise<UserInfoModel> {
-        let promise: Promise<UserInfoModel>;
-        if (this.get() === undefined || this.get() === null) {
-            promise = this.refreshUser();
-        } else {
-            promise = new Promise<UserInfoModel>((resolve) => {
-                resolve(this.get());
-            });
+    public init(): Promise<UserInfoModel | undefined> {
+        if (this.user == null) {
+            return this.refreshUser();
         }
-        return promise;
+        return Promise.resolve(this.user);
     }
 
     public clear() {
         this.user = undefined;
     }
 
-    public get(): UserInfoModel {
+    public get(): UserInfoModel | undefined {
         return this.user;
     }
 
-    public refreshUser = async (): Promise<UserInfoModel> => {
-        return (await this.api
-            .get<UserInfoModel>(apiContactUrl))
-            .toPromise()
-            .then((resp) => {
-                this.user = resp.data;
-                if (this.isAuthenticated()) return this.user;
-                else return new UserInfoModel();
-            });
+    public refreshUser = async (): Promise<UserInfoModel | undefined> => {
+        const resp = await lastValueFrom(await this.api.get<UserInfoModel>(apiContactUrl));
+        this.user = resp.data;
+        return this.user;
     };
 
     public isAuthenticated(): boolean {
-        let at = localStorage.getItem('accessToken');
-        return at != null && at.length > 0;
+        let raw = localStorage.getItem('auth');
+        if (!raw) return false;
+        try {
+            let data = JSON.parse(raw);
+            return !!data.accessToken;
+        } catch {
+            return false;
+        }
     }
 }

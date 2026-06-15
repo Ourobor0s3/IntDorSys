@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { ApiService } from './api.service';
 import { IResponse } from '../interface/response';
 import { Injectable } from "@angular/core";
@@ -14,7 +15,6 @@ export class AnaliticService {
     }
 
     async getAnaliticLaund(): Promise<IResponse<ChartData[]>> {
-        return (await this.api.get<ChartData[]>(apiContactUrl + '/laund')).toPromise() as Promise<IResponse<ChartData[]>>;
-
+        return await lastValueFrom(await this.api.get<ChartData[]>(apiContactUrl + '/laund'));
     }
 }

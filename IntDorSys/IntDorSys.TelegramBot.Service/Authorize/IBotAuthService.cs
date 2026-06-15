@@ -5,7 +5,7 @@ namespace IntDorSys.TelegramBot.Service.Authorize
     /// <summary>
     ///     Authenticates Telegram users against the system
     /// </summary>
-    public interface IAuthService
+    public interface IBotAuthService
     {
         /// <summary>
         ///     Validates whether the Telegram update comes from an authorized user

@@ -4,8 +4,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: intdorsys.web.api
+    env_file:
+      - ../.env
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT:-5050}:${BACKEND_PORT:-5050}"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Battle: "Host=host.docker.internal;Port=5433;Database=kai_dorm;Username=postgres;Password=admin"
+      ConnectionStrings__Battle: "Host=host.docker.internal;Port=${DB_PORT_HOST:-5433};Database=${DB_NAME:-dorm};Username=${DB_USER:-postgres};Password=${DB_PASSWORD:-admin}"

@@ -35,4 +35,14 @@
     outline: 2px solid #6366f1;
     outline-offset: 2px;
   }
+
+  :host-context([data-bs-theme="dark"]) & {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+
+    &:hover {
+      background: #4b5563;
+    }
+  }
 }

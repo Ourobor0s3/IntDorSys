@@ -1,12 +1,10 @@
 using IntDorSys.Core.Entities;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Laundress.Core.Entities;
-using Microsoft.EntityFrameworkCore;
 using Ouro.DatabaseUtils.Conventions;
 using Ouro.DatabaseUtils.DbContexts;
 using Ouro.DatabaseUtils.Entities;
 using Ouro.DatabaseUtils.Extensions;
-using FileInfo = IntDorSys.Core.Entities.FileInfo;
 
 namespace IntDorSys.DataAccess
 {
@@ -59,7 +57,7 @@ namespace IntDorSys.DataAccess
                     builder.RequiredReference(x => x.User, x => x.UserId);
                 });
 
-            modelBuilder.AddPersistentEntity<FileInfo>(
+            modelBuilder.AddPersistentEntity<StoredFileInfo>(
                 builder =>
                 {
                     // Fields
@@ -69,6 +67,9 @@ namespace IntDorSys.DataAccess
                     builder.Property(x => x.Guid).IsRequired().HasMaxLength(100);
                     builder.Property(x => x.Size);
                     builder.Property(x => x.GroupId);
+
+                    // REMOVE on a fresh server (new DB) — naming convention will derive stored_file_info from the class name
+                    builder.ToTable("file_info");
                 });
 
             modelBuilder.AddPersistentEntity<UseLaundress>(
@@ -125,28 +126,5 @@ namespace IntDorSys.DataAccess
             }
         }
 
-        public void DeleteEntity<T>(T entity) where T : class, ISoftDeletable
-        {
-            var prop = typeof(T).GetProperty("Deleted");
-            if (prop != null && prop.CanWrite)
-            {
-                prop.SetValue(entity, true);
-                Set<T>().Update(entity);
-            }
-            else
-            {
-                Set<T>().Remove(entity);
-            }
-        }
-
-        public void RestoreEntity<T>(T entity) where T : class, ISoftDeletable
-        {
-            var prop = typeof(T).GetProperty("Deleted");
-            if (prop != null && prop.CanWrite)
-            {
-                prop.SetValue(entity, false);
-                Set<T>().Update(entity);
-            }
-        }
     }
 }

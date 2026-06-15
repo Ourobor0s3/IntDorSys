@@ -23,7 +23,7 @@ namespace IntDorSys.TelegramBot.Service
             services
                 .AddTransient<IBaseCommandsService, BaseCommandsService>()
                 .AddTransient<ICommandService, CommandService>()
-                .AddTransient<IAuthService, AuthService>()
+                .AddTransient<IBotAuthService, AuthService>()
                 .AddTransient<IAdminService, AdminService>();
 
             // Register message handler services
@@ -49,15 +49,15 @@ namespace IntDorSys.TelegramBot.Service
         public static Handlers GetSettingsAndHandlers(
             ICallbackHandlerService callbackHandler,
             IMessageHandlerService messageHandler,
-            IAuthService authService,
+            IBotAuthService authService,
             ICommandService commandService)
         {
             return new Handlers
             {
                 CommandHandler = commandService.GetDictCommands(),
-                MessageHandler = async (message, ct) => await messageHandler.HandleAsync(message, ct),
-                CallbackHandler = async (callbackQuery, ct) => await callbackHandler.HandleAsync(callbackQuery, ct),
-                AuthorizationUser = async (update, ct) => await authService.AuthUser(update, ct),
+                MessageHandler = messageHandler.HandleAsync,
+                CallbackHandler = callbackHandler.HandleAsync,
+                AuthorizationUser = authService.AuthUser,
             };
         }
     }

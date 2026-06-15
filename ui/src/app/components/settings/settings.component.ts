@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
@@ -51,7 +52,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     async loadSettings() {
         this.setLoading(true);
         try {
-            let res = await (await this.api.get<unknown>('settings')).toPromise();
+            let res = await lastValueFrom(await this.api.get<unknown>('settings'));
             this.items = ((res?.data ?? []) as Array<{ id: number; key: string; value: string; isEditable: boolean }>).map((s) => ({
                 id: s.id,
                 key: s.key,
@@ -69,7 +70,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
     async loadBotStatus() {
         try {
-            let res = await (await this.api.get<BotStatus>('bot/status')).toPromise();
+            let res = await lastValueFrom(await this.api.get<BotStatus>('bot/status'));
             this.botStatus = res?.data ?? null;
         } catch {
             this.botStatus = null;
@@ -86,7 +87,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     async restartBot() {
         this.botRestarting = true;
         try {
-            let res = await (await this.api.post<unknown>('bot/restart', {})).toPromise();
+            let res = await lastValueFrom(await this.api.post<unknown>('bot/restart', {}));
             if (res?.isSuccess) {
                 this.showToast(this.translate.instant('bot.restart_success'));
                 await this.loadBotStatus();
@@ -116,7 +117,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
         }
         this.saving = true;
         try {
-            let res = await (await this.api.put<unknown>('settings/' + item.id, { value: item.value })).toPromise();
+            let res = await lastValueFrom(await this.api.put<unknown>('settings/' + item.id, { value: item.value }));
             if (res?.isSuccess) {
                 item.originalValue = item.value;
                 item.editing = false;

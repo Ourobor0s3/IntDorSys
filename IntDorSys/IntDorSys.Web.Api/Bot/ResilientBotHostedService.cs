@@ -152,7 +152,7 @@ namespace IntDorSys.Web.Api.Bot
             var handlers = ServicesInstaller.GetSettingsAndHandlers(
                 sp.GetRequiredService<ICallbackHandlerService>(),
                 sp.GetRequiredService<IMessageHandlerService>(),
-                sp.GetRequiredService<IAuthService>(),
+                sp.GetRequiredService<IBotAuthService>(),
                 sp.GetRequiredService<ICommandService>());
 
             if (!await handlers.AuthorizationUser(update, ct))

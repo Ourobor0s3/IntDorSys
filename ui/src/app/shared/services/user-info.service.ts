@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { ApiService } from './api.service';
 import { IResponse } from '../interface/response';
 import { Injectable } from "@angular/core";
@@ -15,16 +16,15 @@ export class UsersInfoService {
     }
 
     async getUsers(): Promise<IResponse<UserInfoModel[]>> {
-        return (await this.api.get<UserInfoModel[]>(apiContactUrl)).toPromise() as Promise<IResponse<UserInfoModel[]>>;
-
+        return await lastValueFrom(await this.api.get<UserInfoModel[]>(apiContactUrl));
     }
 
     async getUserById(id: number): Promise<IResponse<UserInfoModel>> {
-        return (await this.api.get<UserInfoModel>(`${apiContactUrl}/${id}`)).toPromise() as Promise<IResponse<UserInfoModel>>;
+        return await lastValueFrom(await this.api.get<UserInfoModel>(`${apiContactUrl}/${id}`));
     }
 
     async changeUserStatus(userId: number, isBlocked: boolean): Promise<IResponse<void>> {
         let newStatus = isBlocked ? UserStatus.Blocked : UserStatus.Registered;
-        return (await this.api.put<void>(apiContactUrl + "/change-status/" + userId, newStatus)).toPromise() as Promise<IResponse<void>>;
+        return await lastValueFrom(await this.api.put<void>(apiContactUrl + "/change-status/" + userId, newStatus));
     }
 }

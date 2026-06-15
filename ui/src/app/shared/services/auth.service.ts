@@ -82,10 +82,6 @@ export class AuthService {
     }
 
     logout(): void {
-        this.router.routeReuseStrategy.shouldReuseRoute = function () {
-            return false;
-        };
-
         this.showLoader = false;
         this.authData = undefined;
         this.userService.clear();

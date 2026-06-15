@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 
 namespace IntDorSys.TelegramBot.Service.Authorize.Impl
 {
-    internal sealed class AuthService : IAuthService
+    internal sealed class AuthService : IBotAuthService
     {
         private readonly IAdminService _adminService;
         private readonly ILogger<AuthService> _logger;

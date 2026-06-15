@@ -139,7 +139,7 @@ namespace IntDorSys.Laundress.Services.Impl
             {
                 if (existingWash.Deleted)
                 {
-                    _db.RestoreEntity(existingWash);
+                    existingWash.Deleted = false;
                     existingWash.SelectUser = null;
                     existingWash.SelectUserId = null;
                     await _db.SaveChangesAsync(ct);
@@ -172,7 +172,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 return res.WithError($"Not found time {timeWash:dd.MM.yyyy HH:mm}");
             }
 
-            _db.DeleteEntity(wash);
+            wash.Deleted = true;
             await _db.SaveChangesAsync(ct);
             return res.WithData(true);
         }

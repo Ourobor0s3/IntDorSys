@@ -22,5 +22,8 @@ namespace IntDorSys.Services.Users
 
         /// <summary>Updates the password hash for a user.</summary>
         Task<DataResult<UserInfo>> UpdatePasswordAsync(long userId, string passwordHash, CancellationToken ct);
+
+        /// <summary>Confirms a user and assigns a role.</summary>
+        Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, CancellationToken ct);
     }
 }

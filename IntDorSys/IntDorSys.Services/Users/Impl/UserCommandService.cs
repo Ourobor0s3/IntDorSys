@@ -4,6 +4,7 @@ using IntDorSys.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Ouro.CommonUtils.Results;
 using Telegram.Bot.Types;
+using Ouro.DatabaseUtils.Extensions;
 
 namespace IntDorSys.Services.Users.Impl
 {
@@ -165,6 +166,37 @@ namespace IntDorSys.Services.Users.Impl
 
             await _db.SaveChangesAsync(ct);
             return res.WithData(user);
+        }
+
+        public async Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, CancellationToken ct)
+        {
+            var result = new DataResult<UserInfo>();
+
+            var user = await _db.Set<UserInfo>()
+                .FirstOrDefaultAsync(x => x.Id == userId, ct);
+
+            if (user == null)
+            {
+                return result.WithError("User not found");
+            }
+
+            var existingRole = await _db.Set<UserRoles>()
+                .FirstOrDefaultAsync(x => x.KeyRoles == roleKey && x.UserId == userId, ct);
+
+            if (existingRole == null)
+            {
+                var userRole = new UserRoles
+                {
+                    UserId = userId,
+                    User = user,
+                    KeyRoles = roleKey,
+                };
+                _db.AddOrUpdateEntity(userRole);
+            }
+
+            user.IsConfirm = true;
+            await _db.SaveChangesAsync(ct);
+            return result.WithData(user);
         }
 
         private static string GetUsername(User user)

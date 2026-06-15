@@ -36,7 +36,6 @@ export class AuthComponent extends BaseComponent implements OnInit, OnDestroy {
         private themeService: ThemeService,
     ) {
         super(translate, modal);
-        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.translate.setDefaultLang(languages[Language.EN].shortName);
     }
 
@@ -47,16 +46,23 @@ export class AuthComponent extends BaseComponent implements OnInit, OnDestroy {
             : languages[Language.EN].shortName;
         this.translate.use(this.currentLang);
         this.isDarkMode = this.themeService.getTheme() === 'dark';
-        const subpageRoute = this.activateRoute.snapshot.paramMap.get('subpageRoute');
-        const found = this.subpagesMenu.find((tab) => tab.route == subpageRoute);
 
-        if (!subpageRoute || !found) {
-            this.navigateTab(this.subpagesMenu[0].route);
-            return;
-        }
+        this.activateRoute.params.subscribe(params => {
+            const subpageRoute = params['subpageRoute'];
+            const found = this.subpagesMenu.find((tab) => tab.route == subpageRoute);
 
-        this.currentActiveTab = found;
-        found.isActive = true;
+            if (!subpageRoute || !found) {
+                this.navigateTab(this.subpagesMenu[0].route);
+                return;
+            }
+
+            if (this.currentActiveTab) {
+                this.currentActiveTab.isActive = false;
+            }
+
+            this.currentActiveTab = found;
+            found.isActive = true;
+        });
     }
 
     changeLanguage(): void {

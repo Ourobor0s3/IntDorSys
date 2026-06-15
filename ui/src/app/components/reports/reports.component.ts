@@ -17,7 +17,6 @@ import { LoadingService } from "../../shared/services/loading.service";
 export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy {
     reportList: ReportModel[] = [];
     sortedReports: ReportModel[] = [];
-    timerId: ReturnType<typeof setTimeout> | null;
     filter: BaseFilterModel = new BaseFilterModel();
     startDate: Date = new Date();
     endDate: Date = new Date();
@@ -41,7 +40,6 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
 
     ngOnInit() {
         this.loadData();
-        this.startAutoRefresh();
         this.dataReloadService.dataReload$
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
@@ -82,14 +80,6 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
         this.applySort();
     }
 
-    startAutoRefresh() {
-        clearTimeout(this.timerId);
-        this.timerId = setTimeout(() => {
-            this.searchReports();
-            this.startAutoRefresh();
-        }, 60000);
-    }
-
     openLightbox(report: ReportModel, index: number) {
         this.lightboxReport = report;
         this.lightboxIndex = index;
@@ -110,7 +100,6 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
     }
 
     ngOnDestroy(): void {
-        clearTimeout(this.timerId);
         this.destroy$.next();
         this.destroy$.complete();
     }

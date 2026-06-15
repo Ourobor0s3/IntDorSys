@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ApiService } from "./api.service";
 import { IResponse } from "../interface/response";
@@ -28,6 +29,6 @@ export class AccountService {
      */
     register(registerModel: IRegister): Promise<IResponse<void>> {
         this.email = registerModel.email
-        return this.api.postAnonym<void>(accountApiUrl, registerModel).toPromise();
+        return lastValueFrom(this.api.postAnonym<void>(accountApiUrl, registerModel));
     }
 }

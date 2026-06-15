@@ -127,7 +127,7 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
 
     loadData() {
         this.setLoading(true);
-        Promise.all([this.refreshUser()])
+        this.userService.refreshUser().then(u => this.user = u ?? new UserInfoModel())
             .finally(() => {
                 this.setLoading(false);
             });
@@ -208,7 +208,4 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         return item.path || String(index);
     }
 
-    private async refreshUser() {
-        this.user = await this.userService.refreshUser();
-    }
 }

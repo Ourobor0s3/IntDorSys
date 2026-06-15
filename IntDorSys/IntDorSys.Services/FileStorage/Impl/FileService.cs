@@ -1,10 +1,10 @@
 using IntDorSys.Core.Constants;
+using IntDorSys.Core.Entities;
 using IntDorSys.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Ouro.CommonUtils.Results;
-using FileInfo = IntDorSys.Core.Entities.FileInfo;
 
 namespace IntDorSys.Services.FileStorage.Impl
 {
@@ -27,10 +27,10 @@ namespace IntDorSys.Services.FileStorage.Impl
             _storagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
         }
 
-        public async Task<DataResult<FileInfo>> GetAsync(Guid id, CancellationToken ct)
+        public async Task<DataResult<StoredFileInfo>> GetAsync(Guid id, CancellationToken ct)
         {
-            var result = new DataResult<FileInfo>();
-            var file = await _db.Set<FileInfo>()
+            var result = new DataResult<StoredFileInfo>();
+            var file = await _db.Set<StoredFileInfo>()
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Guid == id, ct);
 
@@ -81,7 +81,7 @@ namespace IntDorSys.Services.FileStorage.Impl
             var guid = Guid.NewGuid();
             var extension = Path.GetExtension(name);
 
-            var fileInfo = new FileInfo
+            var fileInfo = new StoredFileInfo
             {
                 Name = guid + extension,
                 Guid = guid,

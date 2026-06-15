@@ -10,6 +10,7 @@ import { LoadingService } from '../../services/loading.service';
 import { Renderer2, inject } from '@angular/core';
 import { TimezoneService } from '../../services/timezone.service';
 
+
 export abstract class BaseComponent {
 
     public passwordPattern = /^[A-Za-z0-9!@#$%^&*()_+-=\[\]{};':"\\|,.<>\/?]+$/;
@@ -20,7 +21,6 @@ export abstract class BaseComponent {
         isAnimated: true,
     };
     private modalRefBase: NgbModalRef | null = null;
-    private translationCache: Map<string, string> = new Map();
     protected timezoneService = inject(TimezoneService);
 
     protected constructor(
@@ -315,7 +315,7 @@ export abstract class BaseComponent {
      * @param duration - Длительность отображения в миллисекундах
      */
     protected showToast(message: string, duration: number = 3000): void {
-        const cachedMessage = this.getCachedTranslation(message);
+        const cachedMessage = this.translateBase.instant(message);
         const renderer = this.rendererBase;
         const toast = renderer
             ? renderer.createElement('div')
@@ -363,14 +363,4 @@ export abstract class BaseComponent {
         return this.modalRefBase.result;
     }
 
-    /**
-     * Получает перевод из кэша или выполняет новый перевод
-     * @param key - Ключ перевода
-     */
-    private getCachedTranslation(key: string): string {
-        if (!this.translationCache.has(key)) {
-            this.translationCache.set(key, this.translateBase.instant(key));
-        }
-        return this.translationCache.get(key) || key;
-    }
 }

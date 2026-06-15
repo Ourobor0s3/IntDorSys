@@ -149,7 +149,7 @@ namespace IntDorSys.DataAccess.Migrations
                     b.ToTable("audit_log");
                 });
 
-            modelBuilder.Entity("IntDorSys.Core.Entities.FileInfo", b =>
+            modelBuilder.Entity("IntDorSys.Core.Entities.StoredFileInfo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
