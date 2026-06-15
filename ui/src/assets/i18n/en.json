@@ -114,7 +114,7 @@
     "select_user": "Select user",
     "select_user_placeholder": "-- Select user --",
     "select_user_required": "Please select a user",
-    "create_success": "Time slot created successfully",
+    "create_success": "Created {{ count }} time slot(s)",
     "book_success": "User booked successfully",
     "confirm_unbook": "Remove user from this slot?",
     "confirm_delete_slot": "Delete this time slot?",

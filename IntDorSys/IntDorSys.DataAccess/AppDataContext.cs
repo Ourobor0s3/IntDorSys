@@ -127,7 +127,7 @@ namespace IntDorSys.DataAccess
 
         public void DeleteEntity<T>(T entity) where T : class, ISoftDeletable
         {
-            var prop = typeof(T).GetProperty("IsDeleted");
+            var prop = typeof(T).GetProperty("Deleted");
             if (prop != null && prop.CanWrite)
             {
                 prop.SetValue(entity, true);
@@ -136,6 +136,16 @@ namespace IntDorSys.DataAccess
             else
             {
                 Set<T>().Remove(entity);
+            }
+        }
+
+        public void RestoreEntity<T>(T entity) where T : class, ISoftDeletable
+        {
+            var prop = typeof(T).GetProperty("Deleted");
+            if (prop != null && prop.CanWrite)
+            {
+                prop.SetValue(entity, false);
+                Set<T>().Update(entity);
             }
         }
     }

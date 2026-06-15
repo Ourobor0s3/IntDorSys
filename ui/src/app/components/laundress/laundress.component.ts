@@ -115,7 +115,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         this.laundService.createTimeRange(this.newTimeWashDate, this.newTimeRangeStartHour, this.newTimeRangeEndHour)
             .then(res => {
                 if (res.isSuccess) {
-                    this.showSuccess(this.translate.instant('laundress.create_success'));
+                    this.showSuccess(this.translate.instant('laundress.create_success', { count: res.data }));
                     modal.close();
                     this.searchTimeLaund();
                 } else {
