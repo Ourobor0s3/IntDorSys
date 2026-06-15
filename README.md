@@ -1,7 +1,5 @@
 # IntDorSys
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
 Система управления прачечной: REST API + Telegram-бот + веб-интерфейс администратора.
 
 ## Архитектура
@@ -137,6 +135,3 @@ Nginx проксирует запросы с префиксами `/(account|use
 1. `dotnet restore + build` — проверка сборки
 2. SSH-деплой на сервер: `git pull && docker compose up -d --build`
 
-## Лицензия
-
-MIT — подробнее в [LICENSE](LICENSE).
