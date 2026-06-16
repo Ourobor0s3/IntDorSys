@@ -187,6 +187,7 @@ namespace IntDorSys.Services.Users.Impl
             }
 
             var existingRole = await _db.Set<UserRoles>()
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(x => x.KeyRoles == roleKey && x.UserId == userId, ct);
 
             if (existingRole == null)
@@ -199,10 +200,32 @@ namespace IntDorSys.Services.Users.Impl
                 };
                 _db.AddOrUpdateEntity(userRole);
             }
+            else if (existingRole.Deleted)
+            {
+                existingRole.Deleted = false;
+            }
 
             user.IsConfirm = true;
             await _db.SaveChangesAsync(ct);
             return result.WithData(user);
+        }
+
+        /// <inheritdoc />
+        public async Task<DataResult<bool>> RemoveRoleAsync(long userId, string roleKey, CancellationToken ct)
+        {
+            var result = new DataResult<bool>();
+
+            var role = await _db.Set<UserRoles>()
+                .FirstOrDefaultAsync(x => x.KeyRoles == roleKey && x.UserId == userId, ct);
+
+            if (role == null)
+            {
+                return result.WithError($"Role '{roleKey}' not found for user {userId}");
+            }
+
+            role.Deleted = true;
+            await _db.SaveChangesAsync(ct);
+            return result.WithData(true);
         }
 
         private static string GetUsername(User user)

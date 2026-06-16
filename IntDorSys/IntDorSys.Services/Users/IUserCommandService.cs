@@ -46,5 +46,12 @@ namespace IntDorSys.Services.Users
         /// <param name="ct">Cancellation token</param>
         /// <returns>Updated user info</returns>
         Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, CancellationToken ct);
+
+        /// <summary>Removes a role from a user.</summary>
+        /// <param name="userId">User ID</param>
+        /// <param name="roleKey">Role key to remove</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>True if role was removed</returns>
+        Task<DataResult<bool>> RemoveRoleAsync(long userId, string roleKey, CancellationToken ct);
     }
 }

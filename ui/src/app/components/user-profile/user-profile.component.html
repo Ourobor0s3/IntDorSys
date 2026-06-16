@@ -24,9 +24,15 @@
               <span class="text-muted small">{{ user.username }}</span>
             }
           </div>
-          <span class="status-tag ms-auto" [ngClass]="getStatusStyle(user.status).classname">
-            {{ 'user_status.' + user.status | lang }}
-          </span>
+          <div class="d-flex align-items-center gap-2 ms-auto">
+            <span class="status-tag" [ngClass]="getStatusStyle(user.status).classname">
+              {{ 'user_status.' + user.status | lang }}
+            </span>
+            <button class="btn btn-sm btn-outline-secondary px-2" (click)="changeStatus()"
+                    title="{{ 'users.block_user' | lang }}">
+              <img alt="" height="12" ngSrc="assets/image/buttons/pencil.svg" width="14"/>
+            </button>
+          </div>
         </div>
 
         <div class="row mb-2">
@@ -72,6 +78,9 @@
             }
             @if (!user.isConfirm) {
               <span class="text-danger">{{ 'common.no' | lang }}</span>
+              <button class="btn btn-sm btn-outline-success ms-2" (click)="confirmUser()">
+                {{ 'user_page.confirm_user' | lang }}
+              </button>
             }
           </div>
         </div>

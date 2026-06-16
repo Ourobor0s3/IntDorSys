@@ -8,7 +8,7 @@ import { LaundressService } from "../../shared/services/laundress.service";
 import { AuditLogModel } from "../../shared/interface/audit-log";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
 
-export const AUDIT_ACTIONS = ['CreateSlot', 'CreateSlotRange', 'BookSlot', 'UnbookSlot', 'DeleteSlot', 'ChangeUserStatus', 'UpdateSetting'] as const;
+export const AUDIT_ACTIONS = ['CreateSlot', 'CreateSlotRange', 'BookSlot', 'UnbookSlot', 'DeleteSlot', 'ChangeUserStatus', 'UpdateSetting', 'ConfirmUser', 'RemoveRole'] as const;
 
 @Component({
     selector: 'app-audit',

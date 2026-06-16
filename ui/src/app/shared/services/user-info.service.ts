@@ -27,4 +27,12 @@ export class UsersInfoService {
         let newStatus = isBlocked ? UserStatus.Blocked : UserStatus.Registered;
         return await lastValueFrom(await this.api.put<void>(apiContactUrl + "/change-status/" + userId, newStatus));
     }
+
+    async confirmUser(userId: number, roleKey: string = 'Student'): Promise<IResponse<void>> {
+        return await lastValueFrom(await this.api.put<void>(apiContactUrl + "/confirm/" + userId + "?roleKey=" + roleKey, {}));
+    }
+
+    async removeRole(userId: number, roleKey: string): Promise<IResponse<void>> {
+        return await lastValueFrom(await this.api.put<void>(apiContactUrl + "/remove-role/" + userId + "?roleKey=" + roleKey, {}));
+    }
 }

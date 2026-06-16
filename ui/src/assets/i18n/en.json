@@ -74,7 +74,9 @@
     "export_xlsx": "Export XLSX"
   },
   "user_page": {
-    "title": "User Profile"
+    "title": "User Profile",
+    "confirm_user": "Confirm user",
+    "confirm_user_desc": "Are you sure you want to confirm this user?"
   },
   "users": {
     "name": "Name",
@@ -137,7 +139,9 @@
       "UnbookSlot": "Unbook slot",
       "DeleteSlot": "Delete slot",
       "ChangeUserStatus": "Change user status",
-      "UpdateSetting": "Update setting"
+      "UpdateSetting": "Update setting",
+      "ConfirmUser": "Confirm user",
+      "RemoveRole": "Remove role"
     }
   },
   "chart": {

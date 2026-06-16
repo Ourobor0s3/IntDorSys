@@ -1,3 +1,4 @@
+using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
 using IntDorSys.Services.Audit;
@@ -49,6 +50,40 @@ namespace IntDorSys.Web.Api.Controllers
             {
                 await audit.RecordAsync(UserId, "ChangeUserStatus", "UserInfo",
                     userId.ToString(), $"New status: {newStatus}");
+            }
+            return result;
+        }
+
+        [HttpPut("confirm/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<DataResult<UserInfo>> ConfirmUserAsync(
+            long userId,
+            [FromServices] IUserCommandService service,
+            [FromServices] IAuditService audit,
+            [FromQuery] string roleKey = "Student")
+        {
+            var result = await service.ConfirmUserWithRoleAsync(userId, roleKey, HttpContext.RequestAborted);
+            if (result.IsSuccess)
+            {
+                await audit.RecordAsync(UserId, "ConfirmUser", "UserInfo",
+                    userId.ToString(), $"Role: {roleKey}");
+            }
+            return result;
+        }
+
+        [HttpPut("remove-role/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<DataResult<bool>> RemoveRoleAsync(
+            long userId,
+            [FromQuery] string roleKey,
+            [FromServices] IUserCommandService service,
+            [FromServices] IAuditService audit)
+        {
+            var result = await service.RemoveRoleAsync(userId, roleKey, HttpContext.RequestAborted);
+            if (result.IsSuccess)
+            {
+                await audit.RecordAsync(UserId, "RemoveRole", "UserInfo",
+                    userId.ToString(), $"Role: {roleKey}");
             }
             return result;
         }

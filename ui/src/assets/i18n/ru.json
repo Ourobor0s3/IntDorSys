@@ -74,7 +74,9 @@
     "export_xlsx": "Экспорт XLSX"
   },
   "user_page": {
-    "title": "Профиль пользователя"
+    "title": "Профиль пользователя",
+    "confirm_user": "Подтвердить",
+    "confirm_user_desc": "Вы уверены, что хотите подтвердить этого пользователя?"
   },
   "users": {
     "name": "Имя",
@@ -137,7 +139,9 @@
       "UnbookSlot": "Отмена записи",
       "DeleteSlot": "Удаление слота",
       "ChangeUserStatus": "Изменение статуса",
-      "UpdateSetting": "Обновление настройки"
+      "UpdateSetting": "Обновление настройки",
+      "ConfirmUser": "Подтверждение пользователя",
+      "RemoveRole": "Снятие роли"
     }
   },
   "chart": {
