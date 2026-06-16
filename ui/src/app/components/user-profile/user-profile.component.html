@@ -29,6 +29,11 @@
           </span>
         </div>
 
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">{{ 'common.id' | lang }}</div>
+          <div class="col-sm-8">{{ user.id }}</div>
+        </div>
+
         @if (user.fullName) {
           <div class="row mb-2">
             <div class="col-sm-4 text-muted">{{ 'users.name' | lang }}</div>
@@ -36,12 +41,16 @@
           </div>
         }
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">{{ 'common.id' | lang }}</div>
-          <div class="col-sm-8">{{ user.id }}</div>
-        </div>
-        <div class="row mb-2">
           <div class="col-sm-4 text-muted">{{ 'users.telegram' | lang }}</div>
           <div class="col-sm-8">{{ user.username }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">{{ 'users.roles' | lang }}</div>
+          <div class="col-sm-8">
+            @for (role of user.roles; track role; let last = $last) {
+              <span class="role-badge">{{ 'user_role.' + role | lang }}</span>
+            }
+          </div>
         </div>
         @if (user.numGroup) {
           <div class="row mb-2">

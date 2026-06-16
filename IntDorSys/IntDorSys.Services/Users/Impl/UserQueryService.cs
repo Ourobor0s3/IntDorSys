@@ -14,6 +14,7 @@ namespace IntDorSys.Services.Users.Impl
             _db = db;
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> GetByEmailAsync(string email, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -28,6 +29,7 @@ namespace IntDorSys.Services.Users.Impl
                 : result.WithData(user);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> GetByTgIdAsync(long id, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -40,6 +42,7 @@ namespace IntDorSys.Services.Users.Impl
                 : result.WithData(userReg);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> GetByUserIdAsync(long id, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -52,6 +55,7 @@ namespace IntDorSys.Services.Users.Impl
                 : result.WithData(userReg);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> GetAsync(long id, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -62,6 +66,7 @@ namespace IntDorSys.Services.Users.Impl
             return user == null ? result.WithError("Not found") : result.WithData(user);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<List<UserInfo>>> GetListUsersAsync(CancellationToken ct)
         {
             var res = new DataResult<List<UserInfo>>();

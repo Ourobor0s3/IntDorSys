@@ -48,6 +48,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 .AnyAsync(ct);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<List<UseLaundress>>> GetTimeByFilterAsync(
             LaundressFilterModel? filter = null,
             CancellationToken ct = default)

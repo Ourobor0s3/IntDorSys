@@ -40,6 +40,7 @@ namespace IntDorSys.Laundress.Services.Impl
             _link = link.CurrentValue;
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<List<StoredFileInfo>>> GetFilterAsync(BaseFilterModel filter, CancellationToken ct)
         {
             var result = new DataResult<List<StoredFileInfo>>();
@@ -67,6 +68,7 @@ namespace IntDorSys.Laundress.Services.Impl
             return result.WithData(files);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<List<ReportModel>>> GetReportAsync(BaseFilterModel filter, CancellationToken ct)
         {
             var result = new DataResult<List<ReportModel>>();
@@ -152,6 +154,7 @@ namespace IntDorSys.Laundress.Services.Impl
             return result.WithData(reports);
         }
 
+        /// <inheritdoc />
         public async Task SaveReportAsync(Message message, CancellationToken ct)
         {
             if (message.ReplyToMessage == null)
@@ -182,6 +185,7 @@ namespace IntDorSys.Laundress.Services.Impl
             _logger.LogInformation("Create new report, user: {userId}", user.Id);
         }
 
+        /// <inheritdoc />
         public async Task SavePhotoAsync(Message message, CancellationToken ct)
         {
             if (message.Type != MessageType.Photo || message.Photo?.Length == 0)

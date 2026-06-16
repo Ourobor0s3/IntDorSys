@@ -11,5 +11,13 @@ namespace IntDorSys.Services.Statistics
         /// <param name="ct">Cancellation token</param>
         /// <returns>Dictionary mapping user ID to number of laundry uses</returns>
         Task<Dictionary<long, int>> GetUsageCountsAsync(CancellationToken ct);
+
+        /// <summary>
+        ///     Returns usage count for a single user
+        /// </summary>
+        /// <param name="userId">User identifier</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>Number of laundry uses in the last 6 months</returns>
+        Task<int> GetUsageCountAsync(long userId, CancellationToken ct);
     }
 }

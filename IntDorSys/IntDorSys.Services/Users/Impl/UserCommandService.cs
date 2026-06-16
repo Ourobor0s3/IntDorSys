@@ -17,6 +17,7 @@ namespace IntDorSys.Services.Users.Impl
             _db = db;
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> CreateAsync(UserInfo user, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -69,6 +70,7 @@ namespace IntDorSys.Services.Users.Impl
             return result.WithData(userReg);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> CreateOrUpdateTgInfoAsync(User user, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -114,6 +116,7 @@ namespace IntDorSys.Services.Users.Impl
             return result.WithData(userInfo);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> UpdateUserInfo(UserInfo newInfo, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -132,6 +135,7 @@ namespace IntDorSys.Services.Users.Impl
             return result.WithData(userInfo);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, CancellationToken ct)
         {
             var res = new DataResult<bool>();
@@ -150,6 +154,7 @@ namespace IntDorSys.Services.Users.Impl
             return res.WithData(true);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> UpdatePasswordAsync(long userId, string passwordHash, CancellationToken ct)
         {
             var res = new DataResult<UserInfo>();
@@ -168,6 +173,7 @@ namespace IntDorSys.Services.Users.Impl
             return res.WithData(user);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();

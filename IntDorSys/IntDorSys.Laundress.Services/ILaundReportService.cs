@@ -24,6 +24,7 @@ namespace IntDorSys.Laundress.Services
         /// </summary>
         /// <param name="message">Telegram message containing photos</param>
         /// <param name="ct">Cancellation token</param>
+        /// <returns>Task representing the async operation</returns>
         Task SavePhotoAsync(Message message, CancellationToken ct);
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace IntDorSys.Laundress.Services
         /// </summary>
         /// <param name="message">Telegram message with report data</param>
         /// <param name="ct">Cancellation token</param>
+        /// <returns>Task representing the async operation</returns>
         Task SaveReportAsync(Message message, CancellationToken ct);
 
         /// <summary>

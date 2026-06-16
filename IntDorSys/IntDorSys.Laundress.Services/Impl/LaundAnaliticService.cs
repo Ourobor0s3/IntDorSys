@@ -3,7 +3,6 @@ using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models;
 using IntDorSys.Laundress.Core.Models.Filters;
 using Microsoft.EntityFrameworkCore;
-using Ouro.CommonUtils.Extensions;
 using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Laundress.Services.Impl
@@ -17,6 +16,7 @@ namespace IntDorSys.Laundress.Services.Impl
             _db = db;
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<List<ChartPointDto>>> GetTimeAnaliticAsync(
             LaundressFilterModel filter,
             CancellationToken ct)

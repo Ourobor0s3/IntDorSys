@@ -28,6 +28,7 @@ namespace IntDorSys.Security.Services.Impl
                 SecurityAlgorithms.HmacSha256);
         }
 
+        /// <inheritdoc />
         public async Task<AuthToken> IssueTokenAsync(UserInfo user, CancellationToken ct = default)
         {
             var now = DateTime.UtcNow;

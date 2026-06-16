@@ -20,7 +20,7 @@ namespace IntDorSys.Web.Api.Controllers
 
             return !user.IsSuccess
                 ? res.WithErrors(user.Errors)
-                : res.WithData(builder.Build(user.Data));
+                : res.WithData(await builder.BuildAsync(user.Data, HttpContext.RequestAborted));
         }
     }
 }

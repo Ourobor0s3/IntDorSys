@@ -90,6 +90,7 @@
     "confirm_unblock": "Are you sure you want to unblock this user?",
     "sort_desc": "Desc",
     "sort_asc": "Asc",
+    "roles": "Roles",
     "with_name": "With Name"
   },
   "home": {
@@ -175,6 +176,11 @@
     "restarting": "Restarting...",
     "restart_success": "Bot restarted successfully",
     "restart_fail": "Bot restart failed"
+  },
+  "user_role": {
+    "Admin": "Admin",
+    "Manager": "Manager",
+    "Student": "Student"
   },
   "user_status": {
     "-1": "Blocked",

@@ -53,5 +53,10 @@ namespace IntDorSys.Core.Models
         ///     Number of laundress bookings in the last 6 months
         /// </summary>
         public int UsageCount { get; set; }
+
+        /// <summary>
+        ///     User role keys
+        /// </summary>
+        public List<string> Roles { get; set; } = [];
     }
 }

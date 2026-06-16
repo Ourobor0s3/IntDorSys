@@ -27,6 +27,7 @@ namespace IntDorSys.Services.FileStorage.Impl
             _storagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<StoredFileInfo>> GetAsync(Guid id, CancellationToken ct)
         {
             var result = new DataResult<StoredFileInfo>();
@@ -57,6 +58,7 @@ namespace IntDorSys.Services.FileStorage.Impl
             return result.WithData(file);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<Guid>> SaveAsync(
             string name,
             MemoryStream stream,

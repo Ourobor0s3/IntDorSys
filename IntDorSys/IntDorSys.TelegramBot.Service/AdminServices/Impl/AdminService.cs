@@ -31,6 +31,7 @@ namespace IntDorSys.TelegramBot.Service.AdminServices.Impl
             _adminSettings = adminSettings;
         }
 
+        /// <inheritdoc />
         public async Task SendUsersNotificationAsync(UserInfo userInfo, CancellationToken ct)
         {
             if (_adminSettings.CurrentValue.AdminsChatId.Contains(userInfo.TelegramId))
@@ -49,6 +50,7 @@ namespace IntDorSys.TelegramBot.Service.AdminServices.Impl
             await _telegramService.SendMessageAsync(userInfo.TelegramId, MessageText.CreateNotification, ct);
         }
 
+        /// <inheritdoc />
         public async Task UpdateNotificateUserAsync(long userId, CancellationToken ct)
         {
             var userInfoResult = await _userQueryService.GetByTgIdAsync(userId, ct);

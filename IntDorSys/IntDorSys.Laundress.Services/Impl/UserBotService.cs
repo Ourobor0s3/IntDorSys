@@ -101,6 +101,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task ChangeStatusUserAsync(
             long userId,
             long forUserId,

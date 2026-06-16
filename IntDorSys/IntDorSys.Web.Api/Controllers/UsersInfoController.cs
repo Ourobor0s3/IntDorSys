@@ -26,10 +26,14 @@ namespace IntDorSys.Web.Api.Controllers
             [FromServices] IUserInfoBuilder builder,
             [FromServices] IUserQueryService userService)
         {
+            var result = new DataResult<UserInfoModel>();
             var user = await userService.GetAsync(userId, HttpContext.RequestAborted);
-            return !user.IsSuccess
-                ? new DataResult<UserInfoModel>().WithErrors(user.Errors)
-                : new DataResult<UserInfoModel>().WithData(builder.Build(user.Data));
+
+            if (!user.IsSuccess)
+                return result.WithErrors(user.Errors);
+
+            result.Data = await builder.BuildAsync(user.Data, HttpContext.RequestAborted);
+            return result;
         }
 
         [HttpPut("change-status/{userId}")]

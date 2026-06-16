@@ -31,6 +31,7 @@ namespace IntDorSys.Laundress.Services.Impl
             _adminSettings = adminSettings;
         }
 
+        /// <inheritdoc />
         public async Task SendMenuAsync(UserInfo user, int messageId = 0, CancellationToken ct = default)
         {
             var mes = new BotResponceMessage
@@ -54,6 +55,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task SendAllTimeAsync(long chatId, int messageId = 0, CancellationToken ct = default)
         {
             try
@@ -116,6 +118,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task SendUseTimeByUserAsync(UserInfo user, int messageId = 0, CancellationToken ct = default)
         {
             try
@@ -163,6 +166,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task SendDatesForDeleteAsync(long chatId, int messageId = 0, CancellationToken ct = default)
         {
             try
@@ -210,6 +214,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task SendFreeDateAsync(long chatId, int messageId = 0, CancellationToken ct = default)
         {
             try
@@ -260,6 +265,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task SendFreeTimeAsync(long chatId, int messageId, DateTime date, CancellationToken ct)
         {
             try
@@ -301,6 +307,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task SendTimesForDeleteAsync(long chatId, int messageId, DateTime date, CancellationToken ct)
         {
             try

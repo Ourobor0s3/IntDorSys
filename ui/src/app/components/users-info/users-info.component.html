@@ -34,6 +34,7 @@
           <th class="col-telegram">{{ 'users.telegram' | lang }}</th>
           <th class="col-room">{{ 'users.room' | lang }}</th>
           <th class="col-status">{{ 'users.status' | lang }}</th>
+          <th class="col-roles">{{ 'users.roles' | lang }}</th>
           <th class="col-action"></th>
           <th class="col-usage">{{ 'users.usage' | lang }}</th>
           <th class="col-date">{{ 'users.registered_date' | lang }}</th>
@@ -54,6 +55,11 @@
               <span class="status-tag" [ngClass]="getStatusStyle(user.status).classname">
                 {{ 'user_status.' + user.status | lang }}
               </span>
+            </td>
+            <td class="col-roles">
+              @for (role of user.roles; track role; let last = $last) {
+                <span class="role-badge">{{ 'user_role.' + role | lang }}</span>
+              }
             </td>
             <td class="col-action">
               <button class="btn btn-sm btn-outline-secondary px-2" (click)="changeStatus(user)" title="{{ 'users.block_user' | lang }}">

@@ -12,4 +12,5 @@ export class UserInfoModel {
     // показывает, заблочен ли пользователь
     isBlocked: boolean;
     usageCount: number;
+    roles?: string[];
 }

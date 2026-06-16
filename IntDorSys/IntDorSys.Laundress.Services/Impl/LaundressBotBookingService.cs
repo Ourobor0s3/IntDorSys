@@ -2,6 +2,7 @@ using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Entities;
+using IntDorSys.Services.AppSettings;
 using IntDorSys.Services.Audit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,8 +20,9 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly ILogger<LaundressBotBookingService> _logger;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly IAuditService _audit;
+        private readonly IAppSettingService _settings;
 
-        private const int SlotIntervalHours = 2;
+        private const int defaultSlotIntervalHours = 2;
 
         public LaundressBotBookingService(
             ILaundressService laund,
@@ -28,7 +30,8 @@ namespace IntDorSys.Laundress.Services.Impl
             ILogger<LaundressBotBookingService> logger,
             AppDataContext db,
             IOptionsMonitor<AdminSettings> adminSettings,
-            IAuditService audit)
+            IAuditService audit,
+            IAppSettingService settings)
         {
             _laund = laund;
             _telegramService = telegramService;
@@ -36,8 +39,16 @@ namespace IntDorSys.Laundress.Services.Impl
             _db = db;
             _adminSettings = adminSettings;
             _audit = audit;
+            _settings = settings;
         }
 
+        private async Task<int> GetSlotIntervalHoursAsync(CancellationToken ct)
+        {
+            var val = await _settings.GetValueAsync("WashDurationHours", ct);
+            return int.TryParse(val, out var hours) ? hours : defaultSlotIntervalHours;
+        }
+
+        /// <inheritdoc />
         public async Task CreateTimesAsync(
             UserInfo crUser,
             string date,
@@ -47,8 +58,9 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
+                var intervalHours = await GetSlotIntervalHoursAsync(ct);
                 var appointments = Enumerable.Range(start, end - start + 1)
-                    .Where(i => i % SlotIntervalHours == 0)
+                    .Where(i => i % intervalHours == 0)
                     .Select(i =>
                     {
                         var dt = DateTime.Parse($"{date} {i}:00");
@@ -81,6 +93,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task DeleteLaundAsync(UserInfo user, DateTime dateTime, CancellationToken ct)
         {
             try
@@ -108,6 +121,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task UnUseLaundAsync(UserInfo user, DateTime dateTime, CancellationToken ct)
         {
             try
@@ -138,6 +152,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task UseTimeLaundByUserAsync(
             UserInfo user,
             DateTime time,
@@ -173,6 +188,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task RemoveTimeByUserAsync(UserInfo user, DateTime time, CancellationToken ct)
         {
             try
@@ -206,6 +222,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task DelUseTimeByAdminAsync(UserInfo user, DateTime time, CancellationToken ct)
         {
             try
@@ -231,6 +248,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task AddUserToTimeAsync(UserInfo admin, string userName, DateTime time, CancellationToken ct)
         {
             try
