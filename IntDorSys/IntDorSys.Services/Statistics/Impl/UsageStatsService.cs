@@ -1,3 +1,4 @@
+using IntDorSys.Core.Models;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,22 @@ namespace IntDorSys.Services.Statistics.Impl
             var sixMonthsAgo = DateTime.Today.AddMonths(-6);
             return await _db.Set<UseLaundress>()
                 .CountAsync(x => x.SelectUserId == userId && x.TimeWash >= sixMonthsAgo, ct);
+        }
+
+        /// <inheritdoc />
+        public async Task<List<WashRecordModel>> GetRecentWashesAsync(long userId, int count, CancellationToken ct)
+        {
+            return await _db.Set<UseLaundress>()
+                .Where(x => x.SelectUserId == userId)
+                .OrderByDescending(x => x.TimeWash)
+                .Take(count)
+                .Select(x => new WashRecordModel
+                {
+                    TimeWash = x.TimeWash,
+                    DateStr = x.TimeWash.ToString("dd-MM-yyyy"),
+                    TimeStr = x.TimeWash.ToString("HH:mm"),
+                })
+                .ToListAsync(ct);
         }
     }
 }

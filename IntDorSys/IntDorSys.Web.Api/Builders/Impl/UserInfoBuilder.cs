@@ -1,6 +1,8 @@
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
+using IntDorSys.Services.AppSettings;
 using IntDorSys.Services.Statistics;
 using IntDorSys.Services.Users;
 using Ouro.CommonUtils.Results;
@@ -12,12 +14,14 @@ namespace IntDorSys.Web.Api.Builders.Impl
         private readonly IUserQueryService _service;
         private readonly IUsageStatsService _usageStats;
         private readonly IUserRoleService _roleService;
+        private readonly IAppSettingService _settings;
 
-        public UserInfoBuilder(IUserQueryService service, IUsageStatsService usageStats, IUserRoleService roleService)
+        public UserInfoBuilder(IUserQueryService service, IUsageStatsService usageStats, IUserRoleService roleService, IAppSettingService settings)
         {
             _service = service;
             _usageStats = usageStats;
             _roleService = roleService;
+            _settings = settings;
         }
 
         public UserInfoModel Build(UserInfo userInfo)
@@ -70,6 +74,9 @@ namespace IntDorSys.Web.Api.Builders.Impl
             model.Roles = rolesResult.Data ?? [];
             var usageCounts = await _usageStats.GetUsageCountsAsync(ct);
             model.UsageCount = usageCounts.GetValueOrDefault(userInfo.Id, 0);
+            var val = await _settings.GetValueAsync("MaxConcurrentBookings", ct);
+            var recentCount = (int.TryParse(val, out var m) ? m : DefaultSettings.MaxConcurrentBookings) * 3;
+            model.RecentWashes = await _usageStats.GetRecentWashesAsync(userInfo.Id, recentCount, ct);
             return model;
         }
     }

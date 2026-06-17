@@ -4,6 +4,9 @@ namespace IntDorSys.Core.Constants
 {
     public static class DefaultSettings
     {
+        public const int WashDurationHours = 2;
+        public const int MaxConcurrentBookings = 2;
+
         public static readonly DefaultSettingEntry[] All =
         [
             new()
@@ -15,13 +18,13 @@ namespace IntDorSys.Core.Constants
             new()
             {
                 Key = "WashDurationHours",
-                Value = "2",
+                Value = WashDurationHours.ToString(),
                 IsEditable = false
             },
             new()
             {
                 Key = "MaxConcurrentBookings",
-                Value = "2",
+                Value = MaxConcurrentBookings.ToString(),
                 IsEditable = true
             },
             new()

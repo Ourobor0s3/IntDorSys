@@ -3,23 +3,18 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { AppComponent } from './app.component';
 import { SharedModule } from "./shared/shared.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { AuthService } from "./shared/services/auth.service";
 import { LoginModule } from "./auth/login/login.module";
 import { RegisterModule } from "./auth/register/register.module";
 import { AuthComponent } from "./auth/auth.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from "@angular/common/http";
-import { TokenService } from "./shared/services/token.service";
-import { ApiService } from "./shared/services/api.service";
-import { AuthGuard } from "./shared/guards/auth.guard";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { languages } from './shared/constants/languages';
 import { Language } from './shared/enums/language';
-import { AccountService } from "./shared/services/account.service";
 import { AuthInterceptor } from "./shared/services/auth.interceptor";
 import { GlobalErrorHandler } from "./shared/services/global-error-handler";
 
@@ -54,11 +49,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         }),
     ],
     providers: [
-        AuthService,
-        AccountService,
-        TokenService,
-        ApiService,
-        AuthGuard,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,

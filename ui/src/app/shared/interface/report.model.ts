@@ -1,6 +1,6 @@
 import { FileInfoModel } from "./fileInfo.model";
 
-export class ReportModel {
+export interface ReportModel {
     userId: number;
     createdAt: Date;
     username: string;

@@ -58,296 +58,248 @@ namespace IntDorSys.Laundress.Services.Impl
         /// <inheritdoc />
         public async Task SendAllTimeAsync(long chatId, int messageId = 0, CancellationToken ct = default)
         {
-            try
+            if (!_adminSettings.CurrentValue.ManagersLaundress.Contains(chatId))
             {
-                if (!_adminSettings.CurrentValue.ManagersLaundress.Contains(chatId))
+                return;
+            }
+
+            var appointments = (await _query.GetTimeByFilterAsync(
+                new LaundressFilterModel
                 {
-                    return;
-                }
+                    StartDate = DateTime.Today.ToString(DateFormatConstants.DateFormat),
+                },
+                ct)).Data;
+            var message = "";
 
-                var appointments = (await _query.GetTimeByFilterAsync(
-                    new LaundressFilterModel
-                    {
-                        StartDate = DateTime.Today.ToString(DateFormatConstants.DateFormat),
-                    },
-                    ct)).Data;
-                var message = "";
-
-                if (appointments.Count > 0)
+            if (appointments.Count > 0)
+            {
+                var currentDate = appointments[0].TimeWash.Date;
+                message += $"----- Все записи -----\n<< {currentDate:dd.MM.yyyy} >>";
+                foreach (var laundress in appointments)
                 {
-                    var currentDate = appointments[0].TimeWash.Date;
-                    message += $"----- Все записи -----\n<< {currentDate:dd.MM.yyyy} >>";
-                    foreach (var laundress in appointments)
+                    if (laundress.TimeWash.Date != currentDate)
                     {
-                        if (laundress.TimeWash.Date != currentDate)
-                        {
-                            currentDate = laundress.TimeWash.Date;
-                            message += $"\n<< {currentDate:dd.MM.yyyy} >>";
-                        }
-
-                        message += $"\n * {laundress.TimeWash:HH:mm} - {laundress.SelectUser?.FullName}";
+                        currentDate = laundress.TimeWash.Date;
+                        message += $"\n<< {currentDate:dd.MM.yyyy} >>";
                     }
-                }
-                else
-                {
-                    message = MessageText.NoEntries;
-                }
 
-                var sendMessage = new BotResponceMessage
-                {
-                    Message = message,
-                    InlineKeyboard = KeyboardButtons.InlineButton(
-                        MessageKeyConstants.Back,
-                        MessageKeyConstants.Menu,
-                        MessageText.Back),
-                };
-
-                if (messageId != 0)
-                {
-                    await _telegramService.EditMessageTextAsync(chatId, messageId, sendMessage, ct);
-                }
-                else
-                {
-                    await _telegramService.SendResponseMessageAsync(chatId, sendMessage, ct);
+                    message += $"\n * {laundress.TimeWash:HH:mm} - {laundress.SelectUser?.FullName}";
                 }
             }
-            catch (Exception)
+            else
             {
-                _logger.LogError("Error in SendAdminAllTime method");
-                throw;
+                message = MessageText.NoEntries;
+            }
+
+            var sendMessage = new BotResponceMessage
+            {
+                Message = message,
+                InlineKeyboard = KeyboardButtons.InlineButton(
+                    MessageKeyConstants.Back,
+                    MessageKeyConstants.Menu,
+                    MessageText.Back),
+            };
+
+            if (messageId != 0)
+            {
+                await _telegramService.EditMessageTextAsync(chatId, messageId, sendMessage, ct);
+            }
+            else
+            {
+                await _telegramService.SendResponseMessageAsync(chatId, sendMessage, ct);
             }
         }
 
         /// <inheritdoc />
         public async Task SendUseTimeByUserAsync(UserInfo user, int messageId = 0, CancellationToken ct = default)
         {
-            try
+            var appointments = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
             {
-                var appointments = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
-                {
-                    StartDate = DateTime.Today.ToString(DateFormatConstants.DateFormat),
-                    UserId = user.Id,
-                },
-                        ct)).Data
-                    .Select(x => x.TimeWash);
-                var inlineKeyboard = appointments.Select(x => new[]
-                        { InlineKeyboardButton.WithCallbackData(x.ToString("dd.MM.yyyy HH:mm"), $"DeleteUserTime//{x:yyyy-MM-dd HH:mm}") })
-                    .ToList();
-                var message = inlineKeyboard.Count != 0
-                    ? "Ваши записи (нажмите на дату, если хотите отменить):"
-                    : "У вас нету активных записей";
+                StartDate = DateTime.Today.ToString(DateFormatConstants.DateFormat),
+                UserId = user.Id,
+            },
+                    ct)).Data
+                .Select(x => x.TimeWash);
+            var inlineKeyboard = appointments.Select(x => new[]
+                    { InlineKeyboardButton.WithCallbackData(x.ToString("dd.MM.yyyy HH:mm"), $"DeleteUserTime//{x:yyyy-MM-dd HH:mm}") })
+                .ToList();
+            var message = inlineKeyboard.Count != 0
+                ? "Ваши записи (нажмите на дату, если хотите отменить):"
+                : "У вас нету активных записей";
 
-                inlineKeyboard.Add([
-                    KeyboardButtons.InlineButton(
-                        MessageKeyConstants.Back,
-                        MessageKeyConstants.Menu,
-                        MessageText.Back),
-                ]);
+            inlineKeyboard.Add([
+                KeyboardButtons.InlineButton(
+                    MessageKeyConstants.Back,
+                    MessageKeyConstants.Menu,
+                    MessageText.Back),
+            ]);
 
-                var sendMessage = new BotResponceMessage
-                {
-                    Message = message,
-                    InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
-                };
+            var sendMessage = new BotResponceMessage
+            {
+                Message = message,
+                InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
+            };
 
-                if (messageId != 0)
-                {
-                    await _telegramService.EditMessageTextAsync(user.TelegramId, messageId, sendMessage, ct);
-                }
-                else
-                {
-                    await _telegramService.SendResponseMessageAsync(user.TelegramId, sendMessage, ct);
-                }
+            if (messageId != 0)
+            {
+                await _telegramService.EditMessageTextAsync(user.TelegramId, messageId, sendMessage, ct);
             }
-            catch (Exception)
+            else
             {
-                _logger.LogError("Error in GetMyTimeLaundressAsync method");
-                throw;
+                await _telegramService.SendResponseMessageAsync(user.TelegramId, sendMessage, ct);
             }
         }
 
         /// <inheritdoc />
         public async Task SendDatesForDeleteAsync(long chatId, int messageId = 0, CancellationToken ct = default)
         {
-            try
-            {
-                var dates = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
+            var dates = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
                 {
                     IsOccupiedRecords = true,
                 },
-                        ct))
-                    .Data
-                    .Select(x => x.TimeWash.Date)
-                    .Distinct()
-                    .OrderBy(x => x);
+                    ct))
+                .Data
+                .Select(x => x.TimeWash.Date)
+                .Distinct()
+                .OrderBy(x => x);
 
-                var inlineKeyboard = dates.Select(x => new[]
-                        { KeyboardButtons.InlineButton("DelDate", x.ToString(DateFormatConstants.DateFormat), x.ToString("dd.MM.yyyy")) })
-                    .ToList();
+            var inlineKeyboard = dates.Select(x => new[]
+                    { KeyboardButtons.InlineButton("DelDate", x.ToString(DateFormatConstants.DateFormat), x.ToString("dd.MM.yyyy")) })
+                .ToList();
 
-                var message = inlineKeyboard.Count != 0
-                    ? "Выберите дату для удаления слота:"
-                    : "Нет записей для удаления";
+            var message = inlineKeyboard.Count != 0
+                ? "Выберите дату для удаления слота:"
+                : "Нет записей для удаления";
 
-                inlineKeyboard.Add([
-                    KeyboardButtons.InlineButton(MessageKeyConstants.Back, $"{MessageText.Back}", MessageText.Back),
-                ]);
-                var sendMessage = new BotResponceMessage
-                {
-                    Message = message,
-                    InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
-                };
-
-                if (messageId != 0)
-                {
-                    await _telegramService.EditMessageTextAsync(chatId, messageId, sendMessage, ct);
-                }
-                else
-                {
-                    await _telegramService.SendResponseMessageAsync(chatId, sendMessage, ct);
-                }
-            }
-            catch (Exception)
+            inlineKeyboard.Add([
+                KeyboardButtons.InlineButton(MessageKeyConstants.Back, $"{MessageText.Back}", MessageText.Back),
+            ]);
+            var sendMessage = new BotResponceMessage
             {
-                _logger.LogError("Error in SendDatesForDeleteAsync method");
-                throw;
+                Message = message,
+                InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
+            };
+
+            if (messageId != 0)
+            {
+                await _telegramService.EditMessageTextAsync(chatId, messageId, sendMessage, ct);
+            }
+            else
+            {
+                await _telegramService.SendResponseMessageAsync(chatId, sendMessage, ct);
             }
         }
 
         /// <inheritdoc />
         public async Task SendFreeDateAsync(long chatId, int messageId = 0, CancellationToken ct = default)
         {
-            try
-            {
-                var dates = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
+            var dates = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
                 {
                     StartDate = DateTime.Today.ToString(DateFormatConstants.DateFormat),
                     IsUnoccupiedRecords = true,
                 },
-                        ct))
-                    .Data
-                    .Select(x => x.TimeWash.Date)
-                    .Distinct();
+                    ct))
+                .Data
+                .Select(x => x.TimeWash.Date)
+                .Distinct();
 
-                var inlineKeyboard = dates.Select(x => new[]
-                        { KeyboardButtons.InlineButton("UseDate", x.ToString(DateFormatConstants.DateFormat), x.ToString("dd.MM.yyyy")) })
-                    .ToList();
+            var inlineKeyboard = dates.Select(x => new[]
+                    { KeyboardButtons.InlineButton("UseDate", x.ToString(DateFormatConstants.DateFormat), x.ToString("dd.MM.yyyy")) })
+                .ToList();
 
-                var message = inlineKeyboard.Count != 0
-                    ? "Свободные для записи даты:"
-                    : "Свободных дат нету";
+            var message = inlineKeyboard.Count != 0
+                ? "Свободные для записи даты:"
+                : "Свободных дат нету";
 
-                inlineKeyboard.Add([
-                    KeyboardButtons.InlineButton(
-                        MessageKeyConstants.Back,
-                        MessageKeyConstants.Menu,
-                        MessageText.Back),
-                ]);
-                var sendMessage = new BotResponceMessage
-                {
-                    Message = message,
-                    InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
-                };
-
-                if (messageId != 0)
-                {
-                    await _telegramService.EditMessageTextAsync(chatId, messageId, sendMessage, ct);
-                }
-                else
-                {
-                    await _telegramService.SendResponseMessageAsync(chatId, sendMessage, ct);
-                }
-            }
-            catch (Exception)
+            inlineKeyboard.Add([
+                KeyboardButtons.InlineButton(
+                    MessageKeyConstants.Back,
+                    MessageKeyConstants.Menu,
+                    MessageText.Back),
+            ]);
+            var sendMessage = new BotResponceMessage
             {
-                _logger.LogError("Error in GetAllFreeDateLaundressAsync method");
-                throw;
+                Message = message,
+                InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
+            };
+
+            if (messageId != 0)
+            {
+                await _telegramService.EditMessageTextAsync(chatId, messageId, sendMessage, ct);
+            }
+            else
+            {
+                await _telegramService.SendResponseMessageAsync(chatId, sendMessage, ct);
             }
         }
 
         /// <inheritdoc />
         public async Task SendFreeTimeAsync(long chatId, int messageId, DateTime date, CancellationToken ct)
         {
-            try
+            var times = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
             {
-                var times = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
+                IsUnoccupiedRecords = true,
+                SearchDate = date.Date,
+            },
+                    ct))
+                .Data
+                .Select(x => x.TimeWash);
+
+            var inlineKeyboard = times.Select(x => new[]
+                    { KeyboardButtons.InlineButton("UseTime", x.ToString("yyyy-MM-dd HH:mm"), x.ToString("HH:mm")) })
+                .ToList();
+
+            var message = inlineKeyboard.Count != 0
+                ? $"Свободное для записи время на {date:dd.MM.yyyy}:"
+                : "Свободного времени нету";
+
+            inlineKeyboard.Add([
+                KeyboardButtons.InlineButton("laund", $"{MessageText.AllFreeRecords}", MessageText.Back),
+            ]);
+
+            await _telegramService.EditMessageTextAsync(chatId,
+                messageId,
+                new BotResponceMessage
                 {
-                    IsUnoccupiedRecords = true,
-                    SearchDate = date.Date,
+                    Message = message,
+                    InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
                 },
-                        ct))
-                    .Data
-                    .Select(x => x.TimeWash);
-
-                var inlineKeyboard = times.Select(x => new[]
-                        { KeyboardButtons.InlineButton("UseTime", x.ToString("yyyy-MM-dd HH:mm"), x.ToString("HH:mm")) })
-                    .ToList();
-
-                var message = inlineKeyboard.Count != 0
-                    ? $"Свободное для записи время на {date:dd.MM.yyyy}:"
-                    : "Свободного времени нету";
-
-                inlineKeyboard.Add([
-                    KeyboardButtons.InlineButton("laund", $"{MessageText.AllFreeRecords}", MessageText.Back),
-                ]);
-
-                await _telegramService.EditMessageTextAsync(chatId,
-                    messageId,
-                    new BotResponceMessage
-                    {
-                        Message = message,
-                        InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
-                    },
-                    ct);
-            }
-            catch (Exception)
-            {
-                _logger.LogError("Error in GetAllFreeTimeLaundressAsync method");
-                throw;
-            }
+                ct);
         }
 
         /// <inheritdoc />
         public async Task SendTimesForDeleteAsync(long chatId, int messageId, DateTime date, CancellationToken ct)
         {
-            try
+            var times = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
             {
-                var times = (await _query.GetTimeByFilterAsync(new LaundressFilterModel
+                SearchDate = date.Date,
+            },
+                    ct))
+                .Data
+                .Where(x => x.SelectUserId != null)
+                .OrderBy(x => x.TimeWash)
+                .ToList();
+
+            var inlineKeyboard = times.Select(x => new[]
+                    { KeyboardButtons.InlineButton("DelUseTime", x.TimeWash.ToString("yyyy-MM-dd HH:mm"), $"{x.TimeWash:dd.MM.yyyy} {x.TimeWash:HH:mm} ({GetShortName(x.SelectUser?.FullName)})") })
+                .ToList();
+
+            var message = inlineKeyboard.Count != 0
+                ? $"Занятые записи на {date:dd.MM.yyyy}:"
+                : "Занятых записей нет";
+
+            inlineKeyboard.Add([
+                KeyboardButtons.InlineButton(MessageKeyConstants.Back, MessageText.Back, MessageText.Back),
+            ]);
+
+            await _telegramService.EditMessageTextAsync(chatId,
+                messageId,
+                new BotResponceMessage
                 {
-                    SearchDate = date.Date,
+                    Message = message,
+                    InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
                 },
-                        ct))
-                    .Data
-                    .Where(x => x.SelectUserId != null)
-                    .OrderBy(x => x.TimeWash)
-                    .ToList();
-
-                var inlineKeyboard = times.Select(x => new[]
-                        { KeyboardButtons.InlineButton("DelUseTime", x.TimeWash.ToString("yyyy-MM-dd HH:mm"), $"{x.TimeWash:dd.MM.yyyy} {x.TimeWash:HH:mm} ({GetShortName(x.SelectUser?.FullName)})") })
-                    .ToList();
-
-                var message = inlineKeyboard.Count != 0
-                    ? $"Занятые записи на {date:dd.MM.yyyy}:"
-                    : "Занятых записей нет";
-
-                inlineKeyboard.Add([
-                    KeyboardButtons.InlineButton(MessageKeyConstants.Back, MessageText.Back, MessageText.Back),
-                ]);
-
-                await _telegramService.EditMessageTextAsync(chatId,
-                    messageId,
-                    new BotResponceMessage
-                    {
-                        Message = message,
-                        InlineKeyboard = new InlineKeyboardMarkup(inlineKeyboard),
-                    },
-                    ct);
-            }
-            catch (Exception)
-            {
-                _logger.LogError("Error in SendTimesForDeleteAsync method");
-                throw;
-            }
+                ct);
         }
 
         private static string GetShortName(string? fullName)

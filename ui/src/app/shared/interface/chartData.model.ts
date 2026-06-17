@@ -4,7 +4,7 @@ export interface ChartDataModel<TKey, TValue> {
     value2: TValue;
 }
 
-export class ChartData {
+export interface ChartData {
     name: string;
     value1: number;
     value2: number;

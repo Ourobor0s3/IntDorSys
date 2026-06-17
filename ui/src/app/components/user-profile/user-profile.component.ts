@@ -2,13 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from "rxjs";
-import { UserInfoModel } from "../../shared/model/userInfo.model";
+import { UserInfoModel } from "../../shared/interface/userInfo.model";
 import { UsersInfoService } from "../../shared/services/user-info.service";
-import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
-import { TranslateService } from '@ngx-translate/core';
+import { ClipboardService } from "ngx-clipboard";
 import { UserStatus } from "../../shared/enums/UserStatus";
-import { USER_STATUS_STYLES } from "../../shared/constants/statusStyle";
-import { ConfirmModal } from "../../shared/component/modals/confirm";
+import { ConfirmModal } from "../../shared/component/modals/confirm/confirm.modal";
 
 @Component({
     selector: 'app-user-profile',
@@ -18,7 +16,6 @@ import { ConfirmModal } from "../../shared/component/modals/confirm";
 export class UserProfileComponent extends BaseComponent implements OnInit, OnDestroy {
     user?: UserInfoModel;
     userId: number = 0;
-    modalRef?: NgbModalRef;
     protected readonly UserStatus = UserStatus;
     private destroy$ = new Subject<void>();
 
@@ -26,10 +23,9 @@ export class UserProfileComponent extends BaseComponent implements OnInit, OnDes
         private route: ActivatedRoute,
         private router: Router,
         private userService: UsersInfoService,
-        modal: NgbModal,
-        translate: TranslateService,
+        private clipboardService: ClipboardService,
     ) {
-        super(translate, modal);
+        super();
     }
 
     ngOnInit() {
@@ -39,41 +35,41 @@ export class UserProfileComponent extends BaseComponent implements OnInit, OnDes
         });
     }
 
-    loadUser() {
+    async loadUser() {
         if (!this.userId) return;
 
         this.setLoading(true);
-        this.userService.getUserById(this.userId)
-            .then(res => {
-                this.user = res.data;
-            })
-            .catch(err => {
-                this.showResponseError(err);
-                this.router.navigate(['/user-info']);
-            })
-            .finally(() => this.setLoading(false));
+        try {
+            const res = await this.userService.getUserById(this.userId);
+            this.user = res.data;
+        } catch (err) {
+            this.showResponseError(err);
+            this.router.navigate(['/user-info']);
+        } finally {
+            this.setLoading(false);
+        }
     }
 
-    goBack() {
-        this.router.navigate(['/user-info']);
-    }
+    copyTelegram() {
+        if (!this.user?.username) return;
 
-    getStatusStyle(status: UserStatus) {
-        return USER_STATUS_STYLES[status];
+        this.clipboardService.copy(this.user.username);
+        this.showToast(this.translateBase.instant('common.copy_success'));
     }
 
     async confirmUser() {
         if (!this.user) return;
 
-        this.modalRef = this.modalServiceBase.open(ConfirmModal, this.getModalOptions('sm'));
-
-        this.modalRef.componentInstance.title = this.translateBase.instant('common.confirm');
-        this.modalRef.componentInstance.description = this.translateBase.instant('user_page.confirm_user_desc');
-        this.modalRef.componentInstance.buttonConfirm = this.translateBase.instant('common.ok');
-        this.modalRef.componentInstance.buttonDecline = this.translateBase.instant('common.cancel');
+        const modalRef = this.modalServiceBase.open(ConfirmModal, this.getModalOptions('sm'));
+        modalRef.componentInstance.config = {
+            title: this.translateBase.instant('common.confirm'),
+            description: this.translateBase.instant('user_page.confirm_user_desc'),
+            buttonConfirm: this.translateBase.instant('common.ok'),
+            buttonDecline: this.translateBase.instant('common.cancel'),
+        };
 
         try {
-            const result = await this.modalRef.result;
+            const result = await modalRef.result;
             if (result) {
                 await this.userService.confirmUser(this.user.id);
                 this.showToast(this.translateBase.instant('common.status_changed'));
@@ -88,20 +84,22 @@ export class UserProfileComponent extends BaseComponent implements OnInit, OnDes
         if (!this.user) return;
 
         const isBlocking = this.user.status !== UserStatus.Blocked;
-        this.modalRef = this.modalServiceBase.open(ConfirmModal, this.getModalOptions('sm'));
 
-        this.modalRef.componentInstance.title = this.translateBase.instant('common.confirm');
-        this.modalRef.componentInstance.showConfirmButton = !isBlocking;
-        this.modalRef.componentInstance.showErrorButton = isBlocking;
-        this.modalRef.componentInstance.description = isBlocking
-            ? this.translateBase.instant('users.confirm_block')
-            : this.translateBase.instant('users.confirm_unblock');
-        this.modalRef.componentInstance.buttonError = this.translateBase.instant('common.ok');
-        this.modalRef.componentInstance.buttonConfirm = this.translateBase.instant('common.ok');
-        this.modalRef.componentInstance.buttonDecline = this.translateBase.instant('common.cancel');
+        const modalRef = this.modalServiceBase.open(ConfirmModal, this.getModalOptions('sm'));
+        modalRef.componentInstance.config = {
+            title: this.translateBase.instant('common.confirm'),
+            description: isBlocking
+                ? this.translateBase.instant('users.confirm_block')
+                : this.translateBase.instant('users.confirm_unblock'),
+            buttonConfirm: this.translateBase.instant('common.ok'),
+            buttonDecline: this.translateBase.instant('common.cancel'),
+            buttonError: this.translateBase.instant('common.ok'),
+            showConfirmButton: !isBlocking,
+            showErrorButton: isBlocking,
+        };
 
         try {
-            const result = await this.modalRef.result;
+            const result = await modalRef.result;
             if (result) {
                 await this.userService.changeUserStatus(this.user.id, isBlocking);
                 this.showToast(this.translateBase.instant('common.status_changed'));

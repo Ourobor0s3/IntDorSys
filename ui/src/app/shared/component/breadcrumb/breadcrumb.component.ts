@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { HeaderButtonModel } from "../../model/headerButton.model";
+import { HeaderButtonModel, defaultHeaderButton } from "../../interface/headerButton.model";
 import { NavService } from "../../services/nav.service";
 import { EventService } from "../../services/event.service";
 
@@ -15,8 +15,7 @@ import { EventService } from "../../services/event.service";
 export class BreadcrumbComponent implements OnDestroy {
     title: string | undefined;
     sectionHeaderIsHidden: boolean | undefined;
-    button1: HeaderButtonModel = new HeaderButtonModel();
-    button2: HeaderButtonModel = new HeaderButtonModel();
+    button: HeaderButtonModel = defaultHeaderButton();
     showInput: boolean = false;
     private destroy$ = new Subject<void>();
 
@@ -25,21 +24,6 @@ export class BreadcrumbComponent implements OnDestroy {
         private navService: NavService,
         private eventService: EventService,
     ) {
-        this.eventService.SubpageEvent.pipe(takeUntil(this.destroy$)).subscribe(
-            (headerButton: HeaderButtonModel) => {
-                switch (headerButton.buttonNumber) {
-                    case 0:
-                        this.setButtonOptions(this.button1, headerButton);
-                        break;
-                    case 1:
-                        this.setButtonOptions(this.button2, headerButton);
-                        break;
-                    default:
-                        break;
-                }
-            },
-        );
-
         this.eventService.ShowUploadButtonEvent.pipe(takeUntil(this.destroy$)).subscribe(
             (showUploadInput: boolean) => {
                 this.showInput = showUploadInput;
@@ -47,10 +31,8 @@ export class BreadcrumbComponent implements OnDestroy {
         );
 
         this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
-            //this.title = '';
-            this.button1 = new HeaderButtonModel();
-            this.button2 = new HeaderButtonModel();
             if (event instanceof NavigationEnd) {
+                this.button = defaultHeaderButton();
                 let pages = navService.MainPages;
                 for (let i = 0; i < pages.length; i++) {
                     let item = pages[i];
@@ -82,15 +64,9 @@ export class BreadcrumbComponent implements OnDestroy {
                 navService.HEADERBUTTONS.filter((item: HeaderButtonModel) => {
                     if (
                         item.itemTitle == this.title ||
-                        item.headerTitle == this.title ||
-                        (!!item.url && event.urlAfterRedirects.includes(item.url))
+                        item.headerTitle == this.title
                     ) {
-                        if (item.buttonNumber == 0) {
-                            this.button1 = item;
-                        }
-                        if (item.buttonNumber == 1) {
-                            this.button2 = item;
-                        }
+                        this.button = item;
                     }
                 });
             }
@@ -102,14 +78,9 @@ export class BreadcrumbComponent implements OnDestroy {
         this.destroy$.complete();
     }
 
-    setButtonOptions(model: HeaderButtonModel, newModel: HeaderButtonModel) {
-        if (!!newModel.buttonTitle) {
-            model.buttonTitle = newModel.buttonTitle;
-        }
-        model.needShow = newModel.needShow;
-        model.buttonNumber = newModel.buttonNumber;
-        if (!!newModel.className) {
-            model.className = newModel.className;
+    onButtonClick(): void {
+        if (this.button.url) {
+            this.router.navigate([this.button.url]);
         }
     }
 }

@@ -1,3 +1,4 @@
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
@@ -22,7 +23,6 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly IAuditService _audit;
         private readonly IAppSettingService _settings;
 
-        private const int defaultSlotIntervalHours = 2;
 
         public LaundressBotBookingService(
             ILaundressService laund,
@@ -45,7 +45,7 @@ namespace IntDorSys.Laundress.Services.Impl
         private async Task<int> GetSlotIntervalHoursAsync(CancellationToken ct)
         {
             var val = await _settings.GetValueAsync("WashDurationHours", ct);
-            return int.TryParse(val, out var hours) ? hours : defaultSlotIntervalHours;
+            return int.TryParse(val, out var hours) ? hours : DefaultSettings.WashDurationHours;
         }
 
         /// <inheritdoc />

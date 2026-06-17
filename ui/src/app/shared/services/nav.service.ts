@@ -2,7 +2,7 @@ import { HostListener, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { menuitems } from '../constants/menuitems';
 import { auditRoute, laundressRoute, overviewRoute, reportsRoute, settingsRoute, userInfoRoute, userProfileRoute } from "../constants/routes";
-import { HeaderButtonModel } from "../model/headerButton.model";
+import { HeaderButtonModel } from "../interface/headerButton.model";
 
 // Menu
 export interface Page {
@@ -84,7 +84,16 @@ export class NavService {
             roles: ['admin'],
         },
     ];
-    HEADERBUTTONS: HeaderButtonModel[] = [];
+    HEADERBUTTONS: HeaderButtonModel[] = [
+        {
+            itemTitle: 'menu.profile',
+            buttonTitle: 'common.back',
+            className: 'btn-sm',
+            needShow: true,
+            url: '/user-info',
+        },
+    ];
+
     // Array
     mainItems = new BehaviorSubject<Page[]>(this.MainPages);
 

@@ -3,10 +3,8 @@ import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { LaundressService } from "../../shared/services/laundress.service";
 import { DataReloadService } from "../../shared/services/dataReload.service";
 import { Subject, takeUntil } from "rxjs";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
-import { TranslateService } from '@ngx-translate/core';
-import { ReportModel } from "../../shared/model/report.model";
+import { ReportModel } from "../../shared/interface/report.model";
 @Component({
     selector: 'app-reports',
     templateUrl: './reports.component.html',
@@ -26,10 +24,8 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
     constructor(
         private laundService: LaundressService,
         private dataReloadService: DataReloadService,
-        modal: NgbModal,
-        translate: TranslateService,
     ) {
-        super(translate, modal);
+        super();
         let dateBE = this.getCurrentDateWithDelta();
         this.startDate = dateBE.dateStart;
         this.endDate = dateBE.dateEnd;
@@ -44,22 +40,20 @@ export class ReportsComponent extends BaseComponent implements OnInit, OnDestroy
             });
     }
 
-    loadData() {
+    async loadData() {
         this.setLoading(true);
         this.filter.startDate = this.startDate.toISOString();
         this.filter.endDate = this.endDate.toISOString();
 
-        this.laundService.getReports(this.filter)
-            .then(res => {
-                this.reportList = res.data ?? [];
-                this.applySort();
-            })
-            .catch((err) => {
-                this.showResponseError(err);
-            })
-            .finally(() => {
-                this.setLoading(false);
-            });
+        try {
+            const res = await this.laundService.getReports(this.filter);
+            this.reportList = res.data ?? [];
+            this.applySort();
+        } catch (err) {
+            this.showResponseError(err);
+        } finally {
+            this.setLoading(false);
+        }
     }
 
     searchReports() {

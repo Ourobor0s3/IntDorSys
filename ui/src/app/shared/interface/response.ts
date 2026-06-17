@@ -1,10 +1,10 @@
 export interface IResponse<T> {
     data?: (T);
-    errors: Error[];
+    errors: ApiError[];
     isSuccess: boolean;
 }
 
-export class Error {
+export interface ApiError {
     code?: number;
-    message!: string;
+    message: string;
 }

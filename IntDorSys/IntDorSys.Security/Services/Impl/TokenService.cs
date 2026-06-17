@@ -15,10 +15,10 @@ namespace IntDorSys.Security.Services.Impl
     {
         private readonly SigningCredentials _creds;
         private readonly JwtSecurityTokenHandler _handler;
-        private readonly IOptionsSnapshot<JwtSettings> _settings;
+        private readonly IOptions<JwtSettings> _settings;
         private readonly IUserRoleService _userRoleService;
 
-        public TokenService(IOptionsSnapshot<JwtSettings> settings, IUserRoleService userRoleService)
+        public TokenService(IOptions<JwtSettings> settings, IUserRoleService userRoleService)
         {
             _settings = settings;
             _userRoleService = userRoleService;

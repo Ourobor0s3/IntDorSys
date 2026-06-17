@@ -1,7 +1,7 @@
 import { AbstractControl } from "@angular/forms";
 import { NgbModal, NgbModalOptions, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModal } from "../modals/confirm";
-import { ModalInfoModel } from "../../model/modalInfo.model";
+import { ModalInfoModel, defaultModalInfo } from "../../interface/modalInfo.model";
 import { ResultModal } from "../modals/result";
 import { BsDatepickerConfig } from "ngx-bootstrap/datepicker";
 import { formatDate } from '@angular/common';
@@ -23,10 +23,10 @@ export abstract class BaseComponent {
     private modalRefBase: NgbModalRef | null = null;
     protected timezoneService = inject(TimezoneService);
     protected loadingService = inject(LoadingService);
+    protected translateBase = inject(TranslateService);
+    protected modalServiceBase = inject(NgbModal);
 
     protected constructor(
-        protected translateBase: TranslateService,
-        protected modalServiceBase: NgbModal,
         protected rendererBase?: Renderer2,
     ) {
     }
@@ -48,22 +48,6 @@ export abstract class BaseComponent {
 
     public elemIsInvalid(elem: AbstractControl): boolean {
         return elem.dirty && !elem.untouched && elem.invalid;
-    }
-
-    public textErrorStr(elem: AbstractControl, namepattern: RegExp | null = null): string {
-        if (this.elemIsInvalid(elem)) {
-            let customError = Object.getOwnPropertyNames(elem.errors);
-            return elem.errors.required ? this.translateBase.instant("errors.required") :
-                elem.errors.max != undefined ? (this.translateBase.instant("errors.max")) :
-                    elem.errors.min != undefined ? (this.translateBase.instant("errors.min") + ' ' + elem.errors.min.min) :
-                        elem.errors.maxlength != undefined ? (this.translateBase.instant("errors.maxLength") + elem.errors.maxlength.requiredLength) :
-                            elem.errors.minlength != undefined ? (this.translateBase.instant("errors.minLength") + elem.errors.minlength.requiredLength) :
-                                elem.errors.pattern != undefined && namepattern != null && namepattern == this.passwordPattern ? this.translateBase.instant("errors.passwordPattern") :
-                                    elem.errors.email != undefined ? this.translateBase.instant("errors.invalidEmail") :
-                                        elem.errors.mismatch != undefined ? this.translateBase.instant("errors.mismatch") :
-                                            !!customError && customError.length > 0 ? this.translateBase.instant(customError[0]) : "";
-        }
-        return "";
     }
 
     /**
@@ -261,7 +245,7 @@ export abstract class BaseComponent {
         showDeclineButton: boolean = true,
         confirmButtonText: string = "Ok",
     ): Promise<any> {
-        const modalInfo = new ModalInfoModel();
+        const modalInfo = defaultModalInfo();
         modalInfo.title = title;
         modalInfo.description = message;
         modalInfo.showDeclineButton = showDeclineButton;
@@ -274,7 +258,7 @@ export abstract class BaseComponent {
      * @param htmlMessage - HTML-текст сообщения
      */
     protected showInfo(htmlMessage: string): Promise<any> {
-        const modalInfo = new ModalInfoModel();
+        const modalInfo = defaultModalInfo();
         modalInfo.description = htmlMessage;
         modalInfo.showDeclineButton = false;
         modalInfo.showConfirmButton = false;

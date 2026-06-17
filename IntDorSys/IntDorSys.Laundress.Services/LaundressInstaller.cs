@@ -17,7 +17,7 @@ namespace IntDorSys.Laundress.Services
             // Подключение сервисов
             services
                 .AddTransient<ILaundressService, LaundressService>()
-                .AddTransient<IUseLaundressQueryService, LaundressService>()
+                .AddTransient<IUseLaundressQueryService, LaundressQueryService>()
                 .AddTransient<ILaundReportService, LaundReportService>()
                 .AddTransient<IUserBotService, UserBotService>()
                 .AddTransient<ILaundAnaliticService, LaundAnaliticService>();

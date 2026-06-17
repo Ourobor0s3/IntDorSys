@@ -1,12 +1,12 @@
 import { ApiService } from './api.service';
 import { HttpClient } from '@angular/common/http';
 import { IResponse } from '../interface/response';
-import { PageLaundressModel } from "../model/laundress.model";
+import { PageLaundressModel } from "../interface/laundress.model";
 import { Injectable, Renderer2, RendererFactory2 } from "@angular/core";
 import { lastValueFrom } from "rxjs";
 import { BaseFilterModel } from "../model/filter/baseFilter.model";
 import { QueryUtils } from "../utils/queryUtils";
-import { ReportModel } from "../model/report.model";
+import { ReportModel } from "../interface/report.model";
 import { AuditLogModel } from "../interface/audit-log";
 import { environment } from "../../../environments/environment";
 

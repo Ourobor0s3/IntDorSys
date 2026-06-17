@@ -1,3 +1,5 @@
+using IntDorSys.Core.Models;
+
 namespace IntDorSys.Services.Statistics
 {
     /// <summary>
@@ -19,5 +21,14 @@ namespace IntDorSys.Services.Statistics
         /// <param name="ct">Cancellation token</param>
         /// <returns>Number of laundry uses in the last 6 months</returns>
         Task<int> GetUsageCountAsync(long userId, CancellationToken ct);
+
+        /// <summary>
+        ///     Returns the last N wash records for a user
+        /// </summary>
+        /// <param name="userId">User identifier</param>
+        /// <param name="count">Number of records to return</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>List of recent wash records</returns>
+        Task<List<WashRecordModel>> GetRecentWashesAsync(long userId, int count, CancellationToken ct);
     }
 }

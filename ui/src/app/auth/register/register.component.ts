@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { authRoute, loginRoute, registerRoute } from "../../shared/constants/routes";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { BaseComponent } from "../../shared/component/base/base.component";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from "@ngx-translate/core";
 import { AccountService, IRegister } from "../../shared/services/account.service";
 import { ValidationUtils } from "../../shared/utils/validationUtils";
@@ -23,10 +22,9 @@ export class RegisterComponent extends BaseComponent {
         private fb: FormBuilder,
         private accountService: AccountService,
         private router: Router,
-        private modal: NgbModal,
         private translate: TranslateService,
     ) {
-        super(translate, modal);
+        super();
         this.regForm = fb.group(
             {
                 telegram: ['', [Validators.required]],
@@ -55,7 +53,7 @@ export class RegisterComponent extends BaseComponent {
         return this.regForm.get('passwordConfirm')!;
     }
 
-    createAccount(): void {
+    async createAccount() {
         if (this.regForm.invalid) {
             this.markFormGroupTouchedAndDirty(this.regForm);
             return;
@@ -75,21 +73,19 @@ export class RegisterComponent extends BaseComponent {
             password: this.password.value,
         };
 
-        this.accountService.register(regCreds)
-            .then((res) => {
-                if (res.isSuccess) {
-                    this.navigateToLogin();
-                    this.showSuccess(this.translate.instant('registered_success'));
-                } else {
-                    this.showResponseError(res);
-                }
-            })
-            .catch((e) => {
-                this.showResponseError(e);
-            })
-            .finally(() => {
-                this.setLoading(false);
-            });
+        try {
+            const res = await this.accountService.register(regCreds);
+            if (res.isSuccess) {
+                this.navigateToLogin();
+                this.showSuccess(this.translate.instant('registered_success'));
+            } else {
+                this.showResponseError(res);
+            }
+        } catch (e) {
+            this.showResponseError(e);
+        } finally {
+            this.setLoading(false);
+        }
     }
 
     validatePassword(g: FormGroup): void {

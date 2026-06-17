@@ -52,7 +52,6 @@ namespace IntDorSys.Services.AppSettings.Impl
 
             var oldValue = setting.Value;
             setting.Value = value;
-            await _db.SaveChangesAsync(ct);
 
             try
             {
@@ -63,9 +62,11 @@ namespace IntDorSys.Services.AppSettings.Impl
             }
             catch (Exception ex)
             {
+                setting.Value = oldValue;
                 _logger.LogWarning(ex, "Failed to audit UpdateSetting for key={Key}", setting.Key);
             }
 
+            await _db.SaveChangesAsync(ct);
             return new Result();
         }
     }

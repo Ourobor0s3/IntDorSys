@@ -2,11 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { Subject, takeUntil } from "rxjs";
 import { DataReloadService } from "../../shared/services/dataReload.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { TranslateService } from '@ngx-translate/core';
 import { LaundressService } from "../../shared/services/laundress.service";
 import { AuditLogModel } from "../../shared/interface/audit-log";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
+import { PaginationState } from "../../shared/component/base/pagination-state";
 
 export const AUDIT_ACTIONS = ['CreateSlot', 'CreateSlotRange', 'BookSlot', 'UnbookSlot', 'DeleteSlot', 'ChangeUserStatus', 'UpdateSetting', 'ConfirmUser', 'RemoveRole'] as const;
 
@@ -18,9 +17,7 @@ export const AUDIT_ACTIONS = ['CreateSlot', 'CreateSlotRange', 'BookSlot', 'Unbo
 export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
     allLogs: AuditLogModel[] | null = null;
     logs: AuditLogModel[] = [];
-    page: number = 1;
-    pageSize: number = 50;
-    totalPages: number = 1;
+    pag = new PaginationState();
     actionFilter: string = '';
     startDate: Date;
     endDate: Date;
@@ -30,10 +27,8 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
     constructor(
         private laundService: LaundressService,
         private dataReloadService: DataReloadService,
-        modal: NgbModal,
-        translate: TranslateService,
     ) {
-        super(translate, modal);
+        super();
         let dates = this.getCurrentDateWithDelta(30);
         this.startDate = dates.dateStart;
         this.endDate = dates.dateEnd;
@@ -48,7 +43,7 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
             });
     }
 
-    loadLogs() {
+    async loadLogs() {
         this.setLoading(true);
 
         let filter = new BaseFilterModel();
@@ -57,45 +52,43 @@ export class AuditComponent extends BaseComponent implements OnInit, OnDestroy {
         filter.startDate = this.startDate ? this.startDate.toISOString() : undefined;
         filter.endDate = this.endDate ? this.endDate.toISOString() : undefined;
 
-        this.laundService.getAudit(filter)
-            .then(res => {
-                this.allLogs = res.data ?? [];
-                this.applyFilter();
-            })
-            .catch(err => this.showResponseError(err))
-            .finally(() => this.setLoading(false));
+        try {
+            const res = await this.laundService.getAudit(filter);
+            this.allLogs = res.data ?? [];
+            this.applyFilter();
+        } catch (err) {
+            this.showResponseError(err);
+        } finally {
+            this.setLoading(false);
+        }
     }
 
     applyFilter() {
         let filtered = this.allLogs;
         if (!filtered) {
             this.logs = [];
-            this.totalPages = 1;
+            this.pag.totalPages = 1;
             return;
         }
         if (this.actionFilter) {
             filtered = filtered.filter(x => x.action === this.actionFilter);
         }
-        this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
-        let start = (this.page - 1) * this.pageSize;
-        this.logs = filtered.slice(start, start + this.pageSize);
+        this.logs = this.pag.slice(filtered);
     }
 
     onFilterChange() {
-        this.page = 1;
+        this.pag.onFilterChange();
         this.applyFilter();
     }
 
     prevPage() {
-        if (this.page > 1) {
-            this.page--;
+        if (this.pag.prev()) {
             this.applyFilter();
         }
     }
 
     nextPage() {
-        if (this.page < this.totalPages) {
-            this.page++;
+        if (this.pag.next()) {
             this.applyFilter();
         }
     }

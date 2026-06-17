@@ -1,7 +1,7 @@
 import { lastValueFrom } from 'rxjs';
 import { ApiService } from './api.service';
 import { Injectable } from "@angular/core";
-import { UserInfoModel } from "../model/userInfo.model";
+import { UserInfoModel } from "../interface/userInfo.model";
 
 
 const apiContactUrl = 'user/';

@@ -1,7 +1,6 @@
 import { lastValueFrom } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
 import { ClipboardService } from "ngx-clipboard";
 import { ApiService } from "../../shared/services/api.service";
@@ -35,11 +34,10 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
     constructor(
         private api: ApiService,
-        modal: NgbModal,
         private translate: TranslateService,
         private clipboardService: ClipboardService,
     ) {
-        super(translate, modal);
+        super();
     }
 
     ngOnInit() {
@@ -100,25 +98,23 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     }
 
     editItem(item: SettingItem) {
-        item.editing = true;
+        this.items = this.items.map(i => i.id === item.id ? { ...i, editing: true } : i);
     }
 
     cancelEdit(item: SettingItem) {
-        item.editing = false;
-        item.value = item.originalValue;
+        this.items = this.items.map(i => i.id === item.id ? { ...i, editing: false, value: i.originalValue } : i);
     }
 
     async saveItem(item: SettingItem) {
         if (item.value === item.originalValue) {
-            item.editing = false;
+            this.items = this.items.map(i => i.id === item.id ? { ...i, editing: false } : i);
             return;
         }
         this.saving = true;
         try {
             let res = await lastValueFrom(await this.api.put<unknown>('settings/' + item.id, { value: item.value }));
             if (res?.isSuccess) {
-                item.originalValue = item.value;
-                item.editing = false;
+                this.items = this.items.map(i => i.id === item.id ? { ...i, originalValue: i.value, editing: false } : i);
                 this.showToast(this.translate.instant('common.saved'));
             }
         } catch (err) {

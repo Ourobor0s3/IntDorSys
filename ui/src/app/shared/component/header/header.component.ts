@@ -6,12 +6,11 @@ import { BaseComponent } from '../base/base.component';
 import { Language } from '../../enums/language';
 import { LanguageInfo, languages } from '../../constants/languages';
 import { TranslateService } from '@ngx-translate/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { EventService } from '../../services/event.service';
 import { ThemeService } from '../../services/theme.service';
-import { UserInfoModel } from "../../model/userInfo.model";
+import { UserInfoModel } from "../../interface/userInfo.model";
 import { UserService } from "../../services/user.service";
 import { DataReloadService } from "../../services/dataReload.service";
 import { NavService, Page } from "../../services/nav.service";
@@ -23,11 +22,8 @@ import { NavService, Page } from "../../services/nav.service";
 })
 export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy {
     currentLang: string = languages[Language.EN].shortName;
-    availableLanguages: LanguageInfo[] = Object.values(languages);
-    languages = languages;
     currentLanguageInfo: LanguageInfo = languages[Language.EN];
-    getUser: () => UserInfoModel;
-    user: UserInfoModel = new UserInfoModel();
+    user: UserInfoModel = {} as UserInfoModel;
     isMobileMenuOpen = false;
     isDarkMode = false;
     protected menuItems: Page[] | undefined;
@@ -38,19 +34,19 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         protected router: Router,
         private translate: TranslateService,
         private dataReloadService: DataReloadService,
-        modal: NgbModal,
         private userService: UserService,
         private navService: NavService,
         private eventService: EventService,
         private themeService: ThemeService,
         private renderer: Renderer2,
     ) {
-        super(translate, modal);
-        this.initializeLanguage();
-        this.getUser = () => this.userService.get() ?? new UserInfoModel();
+        super(renderer);
+        this.user = this.userService.get() ?? ({} as UserInfoModel);
     }
 
     ngOnInit(): void {
+        this.currentLang = this.translate.currentLang;
+        this.updateCurrentLanguageInfo();
         this.isDarkMode = this.themeService.getTheme() === 'dark';
 
         this.navService.mainItems
@@ -124,12 +120,13 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         this.navService.updateActiveTabs(this.menuItems, url);
     }
 
-    loadData() {
+    async loadData() {
         this.setLoading(true);
-        this.userService.refreshUser().then(u => this.user = u ?? new UserInfoModel())
-            .finally(() => {
-                this.setLoading(false);
-            });
+        try {
+            this.user = (await this.userService.refreshUser()) ?? ({} as UserInfoModel);
+        } finally {
+            this.setLoading(false);
+        }
     }
 
     onLogout(): void {
@@ -144,14 +141,14 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         return this.authService.isLoggedIn();
     }
 
-    changeLanguage(langCode: string): void {
-        if (this.currentLang !== langCode) {
-            this.currentLang = langCode;
-            this.translate.use(langCode);
-            localStorage.setItem('localization', langCode);
-            // Emit language change event
-            this.eventService.langChanged(langCode);
-        }
+    toggleLanguage(): void {
+        const langCodes = Object.values(languages).map(l => l.shortName);
+        const currentIndex = langCodes.indexOf(this.currentLang);
+        const nextLang = langCodes[(currentIndex + 1) % langCodes.length];
+        this.currentLang = nextLang;
+        this.translate.use(nextLang);
+        localStorage.setItem('localization', nextLang);
+        this.eventService.langChanged(nextLang);
     }
 
     toggleMobileMenu() {
@@ -161,30 +158,6 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
         } else {
             this.renderer.removeStyle(document.body, 'overflow');
         }
-    }
-
-    private initializeLanguage(): void {
-        // Set default language
-        this.translate.setDefaultLang(languages[Language.EN].shortName);
-
-        // Get stored language or use default
-        const storedLang = localStorage.getItem('localization');
-        this.currentLang = storedLang || languages[Language.EN].shortName;
-
-        // Validate stored language
-        if (!Object.values(languages).some(lang => lang.shortName === this.currentLang)) {
-            this.currentLang = languages[Language.EN].shortName;
-        }
-
-        // Set current language
-        this.translate.use(this.currentLang);
-        localStorage.setItem('localization', this.currentLang);
-
-        // Update current language info
-        this.updateCurrentLanguageInfo();
-
-        // Emit initial language
-        this.eventService.langChanged(this.currentLang);
     }
 
     private updateCurrentLanguageInfo(): void {
@@ -197,10 +170,6 @@ export class HeaderComponent extends BaseComponent implements OnInit, OnDestroy 
     toggleTheme() {
         this.themeService.toggle();
         this.isDarkMode = !this.isDarkMode;
-    }
-
-    trackByLang(index: number, lang: LanguageInfo): string {
-        return lang.shortName;
     }
 
     trackByMenuItem(index: number, item: Page): string {

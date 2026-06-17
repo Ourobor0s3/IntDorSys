@@ -4,7 +4,7 @@ import { authRoute, loginRoute } from "../constants/routes";
 import { Credentials, TokenService } from "./token.service";
 import { EventService } from "./event.service";
 import { UserService } from "./user.service";
-import { UserInfoModel } from "../model/userInfo.model";
+import { UserInfoModel } from "../interface/userInfo.model";
 import { lastValueFrom, tap } from "rxjs";
 import { IResponse } from '../interface/response';
 

@@ -45,14 +45,14 @@
         <tbody>
         @for (user of users; track user.id) {
           <tr>
-            <td class="col-num">{{ (page - 1) * pageSize + $index + 1 }}</td>
+            <td class="col-num">{{ (pag.page - 1) * pag.pageSize + $index + 1 }}</td>
             <td class="col-name cell-ellipsis" [title]="user.fullName">{{ user.fullName }}</td>
             <td class="col-telegram">
               <span (click)="copyText(user.username)" class="copy-link">{{ user.username }}</span>
             </td>
             <td class="col-room">{{ user.numRoom }}</td>
             <td class="col-status">
-              <span class="status-tag" [ngClass]="getStatusStyle(user.status).classname">
+              <span class="status-tag" [ngClass]="(user.status | statusStyle).classname">
                 {{ 'user_status.' + user.status | lang }}
               </span>
             </td>
@@ -87,11 +87,11 @@
       </table>
 
       <div class="pagination-controls">
-        <button (click)="prevPage()" [disabled]="page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
+        <button (click)="prevPage()" [disabled]="pag.page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
           &laquo; {{ 'common.prev' | lang }}
         </button>
-        <span class="page-info">{{ page }} / {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="page >= totalPages" class="btn btn-sm btn-outline-secondary" type="button">
+        <span class="page-info">{{ pag.page }} / {{ pag.totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="pag.page >= pag.totalPages" class="btn btn-sm btn-outline-secondary" type="button">
           {{ 'common.next' | lang }} &raquo;
         </button>
       </div>

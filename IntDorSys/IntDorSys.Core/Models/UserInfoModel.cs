@@ -55,6 +55,11 @@ namespace IntDorSys.Core.Models
         public int UsageCount { get; set; }
 
         /// <summary>
+        ///     Recent wash records for the user (limited to MaxConcurrentBookings * 3)
+        /// </summary>
+        public List<WashRecordModel> RecentWashes { get; set; } = [];
+
+        /// <summary>
         ///     User role keys
         /// </summary>
         public List<string> Roles { get; set; } = [];

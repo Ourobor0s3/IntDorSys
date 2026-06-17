@@ -1,8 +1,8 @@
 @if (!!title && !sectionHeaderIsHidden) {
   <app-section-header
-    [firstButton]="button1"
-    [secondButton]="button2"
+    [button]="button"
     [showInput]="showInput"
     [title]="title"
+    (buttonClick)="onButtonClick()"
   ></app-section-header>
 }

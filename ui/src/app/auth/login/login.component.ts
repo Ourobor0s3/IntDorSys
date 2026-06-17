@@ -5,7 +5,6 @@ import { authRoute, overviewRoute, registerRoute } from "../../shared/constants/
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { BaseComponent } from "../../shared/component/base/base.component";
 import { Credentials } from "../../shared/services/token.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -22,17 +21,16 @@ export class LoginComponent extends BaseComponent {
         private fb: FormBuilder,
         private authService: AuthService,
         private router: Router,
-        private modal: NgbModal,
         private translate: TranslateService,
     ) {
-        super(translate, modal);
+        super();
         this.loginForm = fb.group({
             login: ['', [Validators.required]],
             password: ['', [Validators.required]],
         });
     }
 
-    onSubmit(): void {
+    async onSubmit(): Promise<void> {
         if (this.loginForm.invalid) {
             this.markFormGroupTouchedAndDirty(this.loginForm);
             return;
@@ -44,22 +42,20 @@ export class LoginComponent extends BaseComponent {
             password: this.loginForm.get('password')!.value,
         };
 
-        this.authService.login(loginCred)
-            .then(res => {
-                if (res.isSuccess) {
-                    this.navigateTab(overviewRoute);
-                } else if (res.errors && res.errors.length > 0) {
-                    this.showError(res.errors[0].message);
-                } else {
-                    this.showResponseError(res);
-                }
-            })
-            .catch((e) => {
-                this.showError(this.translate.instant('common.system_error'));
-            })
-            .finally(() => {
-                this.setLoading(false);
-            });
+        try {
+            const res = await this.authService.login(loginCred);
+            if (res.isSuccess) {
+                this.navigateTab(overviewRoute);
+            } else if (res.errors && res.errors.length > 0) {
+                this.showError(res.errors[0].message);
+            } else {
+                this.showResponseError(res);
+            }
+        } catch (e) {
+            this.showError(this.translate.instant('common.system_error'));
+        } finally {
+            this.setLoading(false);
+        }
     }
 
     navigateToReg(): void {
