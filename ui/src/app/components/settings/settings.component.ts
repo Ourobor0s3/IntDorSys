@@ -116,6 +116,9 @@ export class SettingsComponent extends BaseComponent implements OnInit {
             if (res?.isSuccess) {
                 this.items = this.items.map(i => i.id === item.id ? { ...i, originalValue: i.value, editing: false } : i);
                 this.showToast(this.translate.instant('common.saved'));
+                if (item.key === 'TimeZone') {
+                    this.timezoneService.update(item.value);
+                }
             }
         } catch (err) {
             this.showResponseError(err);

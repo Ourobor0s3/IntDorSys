@@ -35,6 +35,11 @@ export class TimezoneService {
         this.fetchTimezone();
     }
 
+    update(value: string): void {
+        this.setTimezone(value);
+        localStorage.setItem('timezone', value);
+    }
+
     private setTimezone(value: string): void {
         this.timezone = value;
         this.timezoneSubject.next(value);

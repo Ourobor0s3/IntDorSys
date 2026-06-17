@@ -6,9 +6,15 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class LoadingService {
     private loadingSubject = new BehaviorSubject<boolean>(false);
+    private counter = 0;
     loading$ = this.loadingSubject.asObservable();
 
     setLoading(isLoading: boolean): void {
-        this.loadingSubject.next(isLoading);
+        if (isLoading) {
+            this.counter++;
+        } else {
+            this.counter = Math.max(0, this.counter - 1);
+        }
+        this.loadingSubject.next(this.counter > 0);
     }
 }

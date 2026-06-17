@@ -25,8 +25,6 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
         private dataReloadService: DataReloadService,
     ) {
         super();
-        this.filter.startDate = this.getTodayDate().toISOString();
-        this.filter.endDate = this.getTodayDate().toISOString();
     }
 
     ngOnInit() {
@@ -39,6 +37,8 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
     }
 
     loadData() {
+        this.filter.startDate = this.getTodayDate().toISOString();
+        this.filter.endDate = this.getTodayDate().toISOString();
         this.getAnaliticLaund();
         this.searchTimeLaund()
     }
