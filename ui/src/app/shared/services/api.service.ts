@@ -15,7 +15,7 @@ export class ApiService {
     constructor(private http: HttpClient) {
     }
 
-    getAccessToken(): string | null {
+    private getAccessToken(): string | null {
         try {
             return localStorage.getItem('accessToken');
         } catch {

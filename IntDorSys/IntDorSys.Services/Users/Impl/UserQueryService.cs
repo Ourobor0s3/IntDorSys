@@ -73,7 +73,6 @@ namespace IntDorSys.Services.Users.Impl
 
             var users = await _db.Set<UserInfo>()
                 .AsNoTracking()
-                .Where(x => x.FullName != "")
                 .OrderBy(x => x.FullName)
                 .ToListAsync(ct);
 

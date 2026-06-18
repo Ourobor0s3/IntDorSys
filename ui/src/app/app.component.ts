@@ -72,6 +72,7 @@ export class AppComponent extends BaseComponent implements OnDestroy {
     }
 
     private initializeLanguage(): void {
+        this.translate.addLangs([languages[Language.EN].shortName, languages[Language.RU].shortName]);
         this.translate.setDefaultLang(languages[Language.EN].shortName);
 
         const storedLang = localStorage.getItem('localization');

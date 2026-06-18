@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { LaundressRoutingModule } from './laundress-routing.module';
 import { LaundressComponent } from './laundress.component';
-import { SharedModule } from "../../shared/shared.component";
+import { SharedModule } from "../../shared/shared.module";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 
 @NgModule({

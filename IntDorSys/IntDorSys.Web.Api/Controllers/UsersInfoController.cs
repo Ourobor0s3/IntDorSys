@@ -1,3 +1,4 @@
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
@@ -51,7 +52,7 @@ namespace IntDorSys.Web.Api.Controllers
         public async Task<DataResult<UserInfo>> ConfirmUserAsync(
             long userId,
             [FromServices] IUserCommandService service,
-            [FromQuery] string roleKey = "Student")
+            [FromQuery] string roleKey = UserRoleKeys.Student)
         {
             return await service.ConfirmUserWithRoleAsync(userId, roleKey, UserId, HttpContext.RequestAborted);
         }

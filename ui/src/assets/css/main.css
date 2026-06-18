@@ -1239,6 +1239,7 @@ body::-webkit-scrollbar-thumb:hover {
 .chart-card.content-card {
     position: relative;
     overflow-x: auto;
+    padding: 1.25rem;
 }
 
 .content-card canvas,
@@ -1246,4 +1247,28 @@ body::-webkit-scrollbar-thumb:hover {
     display: block;
     width: 100% !important;
     height: auto !important;
+}
+
+/* Filter date input width constraint */
+.filter-input {
+    max-width: 200px;
+}
+
+/* Modal image sizing */
+.modal-icon-img {
+    width: 58px;
+    height: 58px;
+}
+
+/* Preserve whitespace/line-breaks */
+.pre-line {
+    white-space: pre-line;
+}
+
+/* User avatar circle */
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    font-weight: 600;
 }

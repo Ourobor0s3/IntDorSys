@@ -1,3 +1,4 @@
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Models;
 using IntDorSys.Laundress.Core.Entities;
 using IntDorSys.Laundress.Core.Models;
@@ -49,7 +50,7 @@ namespace IntDorSys.Web.Api.Builders.Impl
         private List<PageLaundressModel> Build(List<LaundModel> launds)
         {
             return launds
-                .GroupBy(x => x.TimeWash.ToString("dd.MM.yyyy"))
+                .GroupBy(x => x.TimeWash.ToString(DateFormatConstants.DisplayDateFormat))
                 .Select(g => new PageLaundressModel
                 {
                     Date = g.Key,

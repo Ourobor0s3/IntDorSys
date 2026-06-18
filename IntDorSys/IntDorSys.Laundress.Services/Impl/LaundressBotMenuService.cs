@@ -164,7 +164,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 .OrderBy(x => x);
 
             var inlineKeyboard = dates.Select(x => new[]
-                    { KeyboardButtons.InlineButton("DelDate", x.ToString(DateFormatConstants.DateFormat), x.ToString("dd.MM.yyyy")) })
+                    { KeyboardButtons.InlineButton("DelDate", x.ToString(DateFormatConstants.DateFormat), x.ToString(DateFormatConstants.DisplayDateFormat)) })
                 .ToList();
 
             var message = inlineKeyboard.Count != 0
@@ -204,7 +204,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 .Distinct();
 
             var inlineKeyboard = dates.Select(x => new[]
-                    { KeyboardButtons.InlineButton("UseDate", x.ToString(DateFormatConstants.DateFormat), x.ToString("dd.MM.yyyy")) })
+                    { KeyboardButtons.InlineButton("UseDate", x.ToString(DateFormatConstants.DateFormat), x.ToString(DateFormatConstants.DisplayDateFormat)) })
                 .ToList();
 
             var message = inlineKeyboard.Count != 0

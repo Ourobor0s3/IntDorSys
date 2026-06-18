@@ -3,7 +3,7 @@ import { BaseComponent } from 'src/app/shared/component/base/base.component';
 import { LaundressService } from "../../shared/services/laundress.service";
 import { PageLaundressModel } from "../../shared/interface/laundress.model";
 import { DataReloadService } from "../../shared/services/dataReload.service";
-import { Subject, takeUntil } from "rxjs";
+import { Subject, interval, takeUntil } from "rxjs";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,6 @@ import { AuthService } from "../../shared/services/auth.service";
 })
 export class LaundressComponent extends BaseComponent implements OnInit, OnDestroy {
     laundList?: PageLaundressModel[];
-    timerId: ReturnType<typeof setTimeout> | undefined;
     filter: BaseFilterModel = new BaseFilterModel();
     isAutoRefresh: boolean = true;
     startDate: Date = new Date();
@@ -59,12 +58,19 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
             .subscribe(() => {
                 this.searchTimeLaund();
             });
+        interval(60000)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                if (this.isAutoRefresh) {
+                    this.searchTimeLaund(false);
+                }
+            });
     }
 
     async searchTimeLaund(isRunLoading: boolean = true) {
         if (isRunLoading) {
             this.setLoading(true);
-            this.disableAutoRefresh()
+            this.isAutoRefresh = false;
         }
 
         this.filter.startDate = this.startDate.toISOString();
@@ -78,8 +84,6 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         } finally {
             if (isRunLoading)
                 this.setLoading(false);
-            if (this.isAutoRefresh)
-                this.timerId = setTimeout(() => this.searchTimeLaund(false), 1000 * 60);
         }
     }
 
@@ -202,13 +206,7 @@ export class LaundressComponent extends BaseComponent implements OnInit, OnDestr
         return new Date(timeWash) < new Date();
     }
 
-    disableAutoRefresh() {
-        this.isAutoRefresh = false;
-        clearTimeout(this.timerId);
-    }
-
     ngOnDestroy(): void {
-        this.disableAutoRefresh();
         this.destroy$.next();
         this.destroy$.complete();
     }

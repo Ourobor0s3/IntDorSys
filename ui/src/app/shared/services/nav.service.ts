@@ -54,6 +54,7 @@ export class NavService {
             title: 'menu.reports',
             type: 'link',
             image: menuitems[reportsRoute],
+            roles: ['admin'],
         },
         {
             path: '/' + userInfoRoute,

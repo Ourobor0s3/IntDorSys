@@ -9,8 +9,7 @@
   @if (user) {
     <div class="content-card content-card--padded">
         <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
-          <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white flex-shrink-0"
-               style="width:48px;height:48px;font-size:20px;font-weight:600">
+          <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white flex-shrink-0 avatar-circle">
             {{ (user.fullName || user.username || '?') | slice:0:1 | uppercase }}
           </div>
           <div>
