@@ -1,6 +1,7 @@
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.DataAccess;
+using IntDorSys.Services.Audit;
 using Microsoft.EntityFrameworkCore;
 using Ouro.CommonUtils.Results;
 using Telegram.Bot.Types;
@@ -11,10 +12,12 @@ namespace IntDorSys.Services.Users.Impl
     internal sealed class UserCommandService : IUserCommandService
     {
         private readonly AppDataContext _db;
+        private readonly IAuditService _audit;
 
-        public UserCommandService(AppDataContext db)
+        public UserCommandService(AppDataContext db, IAuditService audit)
         {
             _db = db;
+            _audit = audit;
         }
 
         /// <inheritdoc />
@@ -86,7 +89,7 @@ namespace IntDorSys.Services.Users.Impl
                     LanguageCode = user.LanguageCode,
                     IsBot = user.IsBot,
                     Email = "",
-                    Password = "TelegramUser.NoPassword",
+                    Password = "",
                 };
 
                 _db.AddOrUpdateEntity(userInfo);
@@ -136,7 +139,7 @@ namespace IntDorSys.Services.Users.Impl
         }
 
         /// <inheritdoc />
-        public async Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, CancellationToken ct)
+        public async Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, long actingUserId, CancellationToken ct)
         {
             var res = new DataResult<bool>();
 
@@ -151,6 +154,8 @@ namespace IntDorSys.Services.Users.Impl
             user.Status = newStatus;
 
             await _db.SaveChangesAsync(ct);
+            await _audit.RecordAsync(actingUserId, "ChangeUserStatus", "UserInfo",
+                userId.ToString(), $"New status: {newStatus}", ct);
             return res.WithData(true);
         }
 
@@ -174,7 +179,7 @@ namespace IntDorSys.Services.Users.Impl
         }
 
         /// <inheritdoc />
-        public async Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, CancellationToken ct)
+        public async Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, long actingUserId, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
 
@@ -207,11 +212,13 @@ namespace IntDorSys.Services.Users.Impl
 
             user.IsConfirm = true;
             await _db.SaveChangesAsync(ct);
+            await _audit.RecordAsync(actingUserId, "ConfirmUser", "UserInfo",
+                userId.ToString(), $"Role: {roleKey}", ct);
             return result.WithData(user);
         }
 
         /// <inheritdoc />
-        public async Task<DataResult<bool>> RemoveRoleAsync(long userId, string roleKey, CancellationToken ct)
+        public async Task<DataResult<bool>> RemoveRoleAsync(long userId, string roleKey, long actingUserId, CancellationToken ct)
         {
             var result = new DataResult<bool>();
 
@@ -225,6 +232,8 @@ namespace IntDorSys.Services.Users.Impl
 
             role.Deleted = true;
             await _db.SaveChangesAsync(ct);
+            await _audit.RecordAsync(actingUserId, "RemoveRole", "UserInfo",
+                userId.ToString(), $"Role: {roleKey}", ct);
             return result.WithData(true);
         }
 

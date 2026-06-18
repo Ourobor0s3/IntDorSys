@@ -37,7 +37,7 @@ body.modal-open-scroll-lock {
   --form-bg: var(--app-card-bg);
   --border-color: var(--app-border-color);
   --text-muted: var(--app-text-muted);
-  --header-color: #1a1a2e;
+  --header-color: #e4e4e7;
   --body-bg: var(--app-body-bg);
   --dark-color: #e4e4e7;
 
@@ -58,7 +58,7 @@ body.modal-open-scroll-lock {
   .sidebar {
     background: var(--app-sidebar-bg) !important;
     border-right: 1px solid var(--app-border-color);
-    
+
     .nav-link {
       color: var(--app-text-muted);
 

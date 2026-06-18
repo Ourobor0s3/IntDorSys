@@ -1,4 +1,3 @@
-import { lastValueFrom } from 'rxjs';
 import { ApiService } from './api.service';
 import { Injectable } from "@angular/core";
 import { UserInfoModel } from "../interface/userInfo.model";
@@ -32,7 +31,7 @@ export class UserService {
     }
 
     public refreshUser = async (): Promise<UserInfoModel | undefined> => {
-        const resp = await lastValueFrom(await this.api.get<UserInfoModel>(apiContactUrl));
+        const resp = await this.api.get<UserInfoModel>(apiContactUrl);
         this.user = resp.data;
         return this.user;
     };

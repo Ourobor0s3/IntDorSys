@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { BehaviorSubject } from 'rxjs';
-import { lastValueFrom } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -47,7 +46,7 @@ export class TimezoneService {
 
     private async fetchTimezone(): Promise<void> {
         try {
-            const res = await lastValueFrom(this.api.getAnonym<{ data: string }>('settings/timezone'));
+            const res = await this.api.getAnonym<{ data: string }>('settings/timezone');
             const value = res?.data?.data;
             if (value) {
                 this.setTimezone(value);

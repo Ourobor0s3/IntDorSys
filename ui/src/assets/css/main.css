@@ -1,7 +1,7 @@
 /* Global styles */
 :root {
     /* Colors */
-    --header-color: #e4e4e7;
+    --header-color: #2c3e50;
     --border-color: #e0e0e0;
     --primary: #4466f2;
     --border: #ced4da;
@@ -1037,7 +1037,7 @@ body::-webkit-scrollbar-thumb:hover {
     }
 }
 
-/* ╨Ш╨╜╨┐╤Г╤В╤Л ╤Б ╨║╨░╨╗╨╡╨╜╨┤╨░╤А╤С╨╝ */
+/* Inputs with calendar */
 .input-datepicker {
     min-width: 250px;
     height: 45px;
@@ -1053,13 +1053,13 @@ body::-webkit-scrollbar-thumb:hover {
     box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.2);
 }
 
-/* ╨Ъ╨╛╨│╨┤╨░ ╨║╨░╨╗╨╡╨╜╨┤╨░╤А╤М ╨░╨║╤В╨╕╨▓╨╡╨╜ */
+/* When calendar is active */
 .iconShow {
     border-color: var(--primary, #6366f1) !important;
     box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
 }
 
-/* ╨Р╨┤╨░╨┐╤В╨╕╨▓╨╜╨╛╤Б╤В╤М */
+/* Responsive */
 @media (max-width: 768px) {
     .input-datepicker {
         width: 100%;
@@ -1075,18 +1075,17 @@ body::-webkit-scrollbar-thumb:hover {
 .section-header span {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--header-color, #2c3e50);
     display: inline-block;
 }
 
-/* ╨Ч╨░╨│╨╛╨╗╨╛╨▓╨╛╨║ */
+/* Header */
 .card-modal .f-26 {
     font-size: 26px;
     font-weight: 600;
     color: var(--app-text-primary, #222);
 }
 
-/* ╨Ю╨┐╨╕╤Б╨░╨╜╨╕╨╡ */
+/* Description */
 .card-modal label {
     font-size: 16px;
     color: var(--app-text-muted, #666);
@@ -1094,17 +1093,17 @@ body::-webkit-scrollbar-thumb:hover {
     white-space: pre-line;
 }
 
-/* ╨Ю╤В╤Б╤В╤Г╨┐ ╨┐╨╛╨┤ ╨╛╨┐╨╕╤Б╨░╨╜╨╕╨╡ */
+/* Margin below description */
 .card-modal .mb-4 {
     margin-bottom: 1.5rem !important;
 }
 
-/* ╨Ъ╨╜╨╛╨┐╨║╨╕: ╨▓╤Л╤А╨░╨▓╨╜╨╕╨▓╨░╨╜╨╕╨╡ ╨╕ ╨╛╤В╤Б╤В╤Г╨┐╤Л */
+/* Buttons: alignment and margins */
 .card-modal .row.justify-content-center > .col {
     padding: 0 0.5rem;
 }
 
-/* ╨Р╨┤╨░╨┐╤В╨╕╨▓╨╜╨╛╤Б╤В╤М: ╨║╨╜╨╛╨┐╨║╨╕ ╨▓ ╤Б╤В╨╛╨╗╨▒╨╕╨║ ╨╜╨░ ╨╝╨░╨╗╨╡╨╜╤М╨║╨╕╤Е ╤Н╨║╤А╨░╨╜╨░╤Е */
+/* Responsive: stacked buttons on small screens */
 @media (max-width: 480px) {
     .card-modal .row.justify-content-center > .col {
         padding: 0.25rem 0;
@@ -1121,7 +1120,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /**==========================
-    Toast end
+    Toast
 ==========================**/
 .toast-notification {
     position: fixed;
@@ -1146,10 +1145,6 @@ body::-webkit-scrollbar-thumb:hover {
         transform: translateY(0);
     }
 }
-
-/**==========================
-    Toast end
-==========================**/
 
 /* ngx-bootstrap datepicker theming */
 .bs-datepicker {

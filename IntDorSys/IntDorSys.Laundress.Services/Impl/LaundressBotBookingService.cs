@@ -75,7 +75,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 var mess = "Time:";
                 foreach (var appointment in appointments)
                 {
-                    var res = await _laund.CreateTimeAsync(appointment, ct);
+                    var res = await _laund.CreateTimeAsync(appointment, 0, ct);
                     mess += res.IsSuccess
                         ? $"\n* {appointment.TimeWash:dd.MM.yyyy HH:mm} created"
                         : $"\n* {appointment.TimeWash:dd.MM.yyyy HH:mm} not created";
@@ -98,10 +98,9 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
-                var res = await _laund.RemoveTimeAsync(dateTime, ct);
+                var res = await _laund.RemoveTimeAsync(dateTime, user.Id, ct);
                 if (res.IsSuccess)
                 {
-                    await _audit.RecordAsync(user.Id, "DeleteSlot", "UseLaundress", dateTime.ToString("O"));
                     _logger.LogInformation("User_id: {user} delete time: {time}", user.Id, dateTime);
                     await _telegramService.SendMessageAsync(user.TelegramId, $"{dateTime:dd.MM.yyyy HH:mm} удалено", ct);
                 }
@@ -130,6 +129,7 @@ namespace IntDorSys.Laundress.Services.Impl
                     user.Id,
                     dateTime,
                     true,
+                    user.Id,
                     ct);
                 if (res.IsSuccess)
                 {
@@ -161,7 +161,7 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
-                var res = await _laund.UseTimeAsync(user.Id, time, ct);
+                var res = await _laund.UseTimeAsync(user.Id, time, user.Id, ct);
 
                 if (!res.IsSuccess)
                 {
@@ -198,7 +198,7 @@ namespace IntDorSys.Laundress.Services.Impl
                     return;
                 }
 
-                var res = await _laund.RemoveUseTimeAsync(user.Id, time, ct: ct);
+                var res = await _laund.RemoveUseTimeAsync(user.Id, time, false, user.Id, ct);
                 if (!res.IsSuccess)
                 {
                     _logger.LogError("User_id: {user} remove use time: {time}, error: {error}",
@@ -227,10 +227,9 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
-                var res = await _laund.RemoveUseTimeAsync(user.Id, time, true, ct);
+                var res = await _laund.RemoveUseTimeAsync(user.Id, time, true, user.Id, ct);
                 if (res.IsSuccess)
                 {
-                    await _audit.RecordAsync(user.Id, "UnbookSlot", "UseLaundress", time.ToString("O"), "Admin-forced unbook");
                     _logger.LogInformation("Admin {user} delete use time: {time}", user.Id, time);
                     await _telegramService.SendMessageAsync(user.TelegramId, $"Запись на {time:dd.MM.yyyy HH:mm} удалена", ct);
                 }

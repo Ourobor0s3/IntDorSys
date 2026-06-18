@@ -60,7 +60,7 @@ namespace IntDorSys.TelegramBot.Service.AdminServices.Impl
                 return;
             }
 
-            await _userCommandService.ConfirmUserWithRoleAsync(userInfoResult.Data.Id, UserRoleKeys.Student, ct);
+            await _userCommandService.ConfirmUserWithRoleAsync(userInfoResult.Data.Id, UserRoleKeys.Student, userInfoResult.Data.Id, ct);
 
             await _telegramService.SendMessageAsync(_adminSettings.CurrentValue.AdminChatId,
                 $"User {userInfoResult.Data.FullName}({userInfoResult.Data.Username}) confirm!",
@@ -69,8 +69,8 @@ namespace IntDorSys.TelegramBot.Service.AdminServices.Impl
 
         private async Task AutoConfirmAsync(UserInfo userInfo, CancellationToken ct)
         {
-            await _userCommandService.ConfirmUserWithRoleAsync(userInfo.Id, UserRoleKeys.Admin, ct);
-            await _userCommandService.ConfirmUserWithRoleAsync(userInfo.Id, UserRoleKeys.Student, ct);
+            await _userCommandService.ConfirmUserWithRoleAsync(userInfo.Id, UserRoleKeys.Admin, userInfo.Id, ct);
+            await _userCommandService.ConfirmUserWithRoleAsync(userInfo.Id, UserRoleKeys.Student, userInfo.Id, ct);
 
             _logger.LogInformation("User {name} (telegram_id: {id}) auto-confirmed as Admin, Student",
                 userInfo.FullName, userInfo.TelegramId);

@@ -22,41 +22,41 @@ export class LaundressService {
         this.renderer = rendererFactory.createRenderer(null, null);
     }
 
-    async getLaund(filter: BaseFilterModel): Promise<IResponse<PageLaundressModel[]>> {
+    getLaund(filter: BaseFilterModel): Promise<IResponse<PageLaundressModel[]>> {
         let url = apiLaundUrl + QueryUtils.objectToQueryString(filter)
-        return await lastValueFrom(await this.api.get<PageLaundressModel[]>(url));
+        return this.api.get<PageLaundressModel[]>(url);
     }
 
-    async getReports(filter: BaseFilterModel): Promise<IResponse<ReportModel[]>> {
+    getReports(filter: BaseFilterModel): Promise<IResponse<ReportModel[]>> {
         let url = apiLaundUrl + "/reports" + QueryUtils.objectToQueryString(filter);
-        return await lastValueFrom(await this.api.get<ReportModel[]>(url));
+        return this.api.get<ReportModel[]>(url);
     }
 
-    async createTime(timeWash: string, createdUserId: number): Promise<IResponse<boolean>> {
-        return await lastValueFrom(await this.api.post<boolean>(apiLaundUrl, { timeWash, createdUserId }));
+    createTime(timeWash: string, createdUserId: number): Promise<IResponse<boolean>> {
+        return this.api.post<boolean>(apiLaundUrl, { timeWash, createdUserId });
     }
 
-    async bookUser(timeWash: string, userId: number): Promise<IResponse<boolean>> {
-        return await lastValueFrom(await this.api.post<boolean>(apiLaundUrl + '/book', { timeWash, userId }));
+    bookUser(timeWash: string, userId: number): Promise<IResponse<boolean>> {
+        return this.api.post<boolean>(apiLaundUrl + '/book', { timeWash, userId });
     }
 
-    async unbookUser(timeWash: string, userId: number): Promise<IResponse<boolean>> {
+    unbookUser(timeWash: string, userId: number): Promise<IResponse<boolean>> {
         let url = apiLaundUrl + '/book?timeWash=' + encodeURIComponent(timeWash) + '&userId=' + userId;
-        return await lastValueFrom(await this.api.delete<boolean>(url));
+        return this.api.delete<boolean>(url);
     }
 
-    async createTimeRange(date: string, startHour: number, endHour: number): Promise<IResponse<number>> {
-        return await lastValueFrom(await this.api.post<number>(apiLaundUrl + '/range', { date, startHour, endHour }));
+    createTimeRange(date: string, startHour: number, endHour: number): Promise<IResponse<number>> {
+        return this.api.post<number>(apiLaundUrl + '/range', { date, startHour, endHour });
     }
 
-    async deleteTime(timeWash: string): Promise<IResponse<boolean>> {
+    deleteTime(timeWash: string): Promise<IResponse<boolean>> {
         let url = apiLaundUrl + '?timeWash=' + encodeURIComponent(timeWash);
-        return await lastValueFrom(await this.api.delete<boolean>(url));
+        return this.api.delete<boolean>(url);
     }
 
-    async getAudit(filter: BaseFilterModel): Promise<IResponse<AuditLogModel[]>> {
+    getAudit(filter: BaseFilterModel): Promise<IResponse<AuditLogModel[]>> {
         let url = apiLaundUrl + '/audit' + QueryUtils.objectToQueryString(filter);
-        return await lastValueFrom(await this.api.get<AuditLogModel[]>(url));
+        return this.api.get<AuditLogModel[]>(url);
     }
 
     async exportExcel(startDate: string, endDate: string): Promise<void> {

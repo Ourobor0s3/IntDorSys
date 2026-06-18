@@ -83,6 +83,9 @@ namespace IntDorSys.Web.Api
                 .AddBotServices(builder.Configuration)
                 .AddCoreConfiguration(builder.Configuration);
 
+            builder.Services.AddProblemDetails();
+            builder.Services.AddExceptionHandler<Middlewares.GlobalExceptionHandler>();
+
             builder.Services
                 .AddSingleton<BotStatus>()
                 .AddTransient<BotConnectivityCheck>()
@@ -97,7 +100,8 @@ namespace IntDorSys.Web.Api
 
             var app = builder.Build();
 
-            app.UseMiddleware<Middlewares.ExceptionHandlingMiddleware>();
+            app.UseExceptionHandler();
+            app.UseStatusCodePages();
 
             app.MigrateDb();
             app.SeedSettings();

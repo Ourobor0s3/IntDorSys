@@ -42,58 +42,34 @@ namespace IntDorSys.Web.Api.Controllers.Laundress
         [Authorize(Roles = "Admin")]
         public async Task<DataResult<bool>> CreateAsync(
             [FromBody] CreateLaundressRequest request,
-            [FromServices] ILaundressService service,
-            [FromServices] IAuditService audit)
+            [FromServices] ILaundressService service)
         {
-            var userId = UserId;
             var useLaundress = new UseLaundress
             {
                 TimeWash = request.TimeWash,
                 CreatedUserId = request.CreatedUserId,
             };
-            var result = await service.CreateTimeAsync(useLaundress, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(userId, "CreateSlot", "UseLaundress",
-                    request.TimeWash.ToString("O"), $"Created by user {request.CreatedUserId}");
-            }
-            return result;
+            return await service.CreateTimeAsync(useLaundress, UserId, HttpContext.RequestAborted);
         }
 
         [HttpPost("range")]
         [Authorize(Roles = "Admin")]
         public async Task<DataResult<int>> CreateRangeAsync(
             [FromBody] CreateLaundressRangeRequest request,
-            [FromServices] ILaundressService service,
-            [FromServices] IAuditService audit)
+            [FromServices] ILaundressService service)
         {
-            var userId = UserId;
-            var result = await service.CreateTimeRangeAsync(
+            return await service.CreateTimeRangeAsync(
                 request.Date, request.StartHour, request.EndHour,
                 UserId, HttpContext.RequestAborted);
-            if (result.IsSuccess && result.Data > 0)
-            {
-                await audit.RecordAsync(userId, "CreateSlotRange", "UseLaundress",
-                    $"{request.Date:O}", $"Slots {request.StartHour}:00-{request.EndHour}:00, created {result.Data}");
-            }
-            return result;
         }
 
         [HttpPost("book")]
         [Authorize(Roles = "Admin")]
         public async Task<DataResult<bool>> BookAsync(
             [FromBody] BookLaundressRequest request,
-            [FromServices] ILaundressService service,
-            [FromServices] IAuditService audit)
+            [FromServices] ILaundressService service)
         {
-            var userId = UserId;
-            var result = await service.UseTimeAsync(request.UserId, request.TimeWash, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(userId, "BookSlot", "UseLaundress",
-                    request.TimeWash.ToString("O"), $"Booked user {request.UserId}");
-            }
-            return result;
+            return await service.UseTimeAsync(request.UserId, request.TimeWash, UserId, HttpContext.RequestAborted);
         }
 
         [HttpDelete("book")]
@@ -101,34 +77,18 @@ namespace IntDorSys.Web.Api.Controllers.Laundress
         public async Task<DataResult<bool>> UnbookAsync(
             [FromQuery] DateTime timeWash,
             [FromQuery] long userId,
-            [FromServices] ILaundressService service,
-            [FromServices] IAuditService audit)
+            [FromServices] ILaundressService service)
         {
-            var adminId = UserId;
-            var result = await service.RemoveUseTimeAsync(userId, timeWash, true, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(adminId, "UnbookSlot", "UseLaundress",
-                    timeWash.ToString("O"), $"Unbooked user {userId}");
-            }
-            return result;
+            return await service.RemoveUseTimeAsync(userId, timeWash, true, UserId, HttpContext.RequestAborted);
         }
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
         public async Task<DataResult<bool>> DeleteAsync(
             [FromQuery] DateTime timeWash,
-            [FromServices] ILaundressService service,
-            [FromServices] IAuditService audit)
+            [FromServices] ILaundressService service)
         {
-            var userId = UserId;
-            var result = await service.RemoveTimeAsync(timeWash, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(userId, "DeleteSlot", "UseLaundress",
-                    timeWash.ToString("O"), null);
-            }
-            return result;
+            return await service.RemoveTimeAsync(timeWash, UserId, HttpContext.RequestAborted);
         }
 
         [HttpGet("audit")]

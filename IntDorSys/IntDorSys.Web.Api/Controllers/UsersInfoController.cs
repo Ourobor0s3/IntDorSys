@@ -1,7 +1,6 @@
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
-using IntDorSys.Services.Audit;
 using IntDorSys.Services.Users;
 using IntDorSys.Web.Api.Builders;
 using IntDorSys.Web.Api.Controllers.Base;
@@ -42,16 +41,9 @@ namespace IntDorSys.Web.Api.Controllers
         public async Task<DataResult<bool>> ChangeStatusAsync(
             long userId,
             [FromBody] UserStatus newStatus,
-            [FromServices] IUserCommandService service,
-            [FromServices] IAuditService audit)
+            [FromServices] IUserCommandService service)
         {
-            var result = await service.ChangeUserStatus(userId, newStatus, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(UserId, "ChangeUserStatus", "UserInfo",
-                    userId.ToString(), $"New status: {newStatus}");
-            }
-            return result;
+            return await service.ChangeUserStatus(userId, newStatus, UserId, HttpContext.RequestAborted);
         }
 
         [HttpPut("confirm/{userId}")]
@@ -59,16 +51,9 @@ namespace IntDorSys.Web.Api.Controllers
         public async Task<DataResult<UserInfo>> ConfirmUserAsync(
             long userId,
             [FromServices] IUserCommandService service,
-            [FromServices] IAuditService audit,
             [FromQuery] string roleKey = "Student")
         {
-            var result = await service.ConfirmUserWithRoleAsync(userId, roleKey, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(UserId, "ConfirmUser", "UserInfo",
-                    userId.ToString(), $"Role: {roleKey}");
-            }
-            return result;
+            return await service.ConfirmUserWithRoleAsync(userId, roleKey, UserId, HttpContext.RequestAborted);
         }
 
         [HttpPut("remove-role/{userId}")]
@@ -76,16 +61,9 @@ namespace IntDorSys.Web.Api.Controllers
         public async Task<DataResult<bool>> RemoveRoleAsync(
             long userId,
             [FromQuery] string roleKey,
-            [FromServices] IUserCommandService service,
-            [FromServices] IAuditService audit)
+            [FromServices] IUserCommandService service)
         {
-            var result = await service.RemoveRoleAsync(userId, roleKey, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(UserId, "RemoveRole", "UserInfo",
-                    userId.ToString(), $"Role: {roleKey}");
-            }
-            return result;
+            return await service.RemoveRoleAsync(userId, roleKey, UserId, HttpContext.RequestAborted);
         }
     }
 }

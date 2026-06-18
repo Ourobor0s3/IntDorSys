@@ -12,17 +12,19 @@ namespace IntDorSys.Laundress.Services
         ///     Create wash time by model
         /// </summary>
         /// <param name="newWash">Use laundress model</param>
+        /// <param name="actingUserId">Admin who performed the action (0 to skip audit)</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if slot was created</returns>
-        Task<DataResult<bool>> CreateTimeAsync(UseLaundress newWash, CancellationToken ct);
+        Task<DataResult<bool>> CreateTimeAsync(UseLaundress newWash, long actingUserId, CancellationToken ct);
 
         /// <summary>
         ///     Delete wash time by time
         /// </summary>
         /// <param name="timeWash">Wash time</param>
+        /// <param name="actingUserId">Admin who performed the action</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if slot was removed</returns>
-        Task<DataResult<bool>> RemoveTimeAsync(DateTime timeWash, CancellationToken ct);
+        Task<DataResult<bool>> RemoveTimeAsync(DateTime timeWash, long actingUserId, CancellationToken ct);
 
         /// <summary>
         ///     Remove time user by user id and wash time
@@ -30,22 +32,25 @@ namespace IntDorSys.Laundress.Services
         /// <param name="userId">User id</param>
         /// <param name="timeWash">Wash time</param>
         /// <param name="isAdmin">Is admin</param>
+        /// <param name="actingUserId">Admin who performed the action</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if the booking was removed</returns>
         Task<DataResult<bool>> RemoveUseTimeAsync(
             long userId,
             DateTime timeWash,
-            bool isAdmin = false,
-            CancellationToken ct = default);
+            bool isAdmin,
+            long actingUserId,
+            CancellationToken ct);
 
         /// <summary>
         ///     Use time user by user id and wash time
         /// </summary>
         /// <param name="userId">User id</param>
         /// <param name="timeWash">Wash time</param>
+        /// <param name="actingUserId">Admin who performed the action</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if the slot was booked</returns>
-        Task<DataResult<bool>> UseTimeAsync(long userId, DateTime timeWash, CancellationToken ct);
+        Task<DataResult<bool>> UseTimeAsync(long userId, DateTime timeWash, long actingUserId, CancellationToken ct);
 
         /// <summary>
         ///     Create time slots for a range of even hours

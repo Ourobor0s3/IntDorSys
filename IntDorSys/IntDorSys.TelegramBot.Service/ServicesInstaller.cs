@@ -24,6 +24,7 @@ namespace IntDorSys.TelegramBot.Service
                 .AddTransient<IBaseCommandsService, BaseCommandsService>()
                 .AddTransient<ICommandService, CommandService>()
                 .AddTransient<IBotAuthService, AuthService>()
+                .AddTransient<IBotRegistrationService, BotRegistrationService>()
                 .AddTransient<IAdminService, AdminService>();
 
             // Register message handler services

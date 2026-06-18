@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
-import { Observable } from "rxjs";
 import { IResponse } from "../interface/response";
 
 export interface Credentials {
@@ -17,7 +16,7 @@ export class TokenService {
 
     constructor(private api: ApiService) {}
 
-    auth<T = unknown>(credentials: Credentials): Observable<IResponse<T>> {
+    auth<T = unknown>(credentials: Credentials): Promise<IResponse<T>> {
         return this.api.postAnonym<T>(tokenUrl, {
             login: credentials.login,
             password: credentials.password,

@@ -29,9 +29,10 @@ namespace IntDorSys.Services.Users
         /// <summary>Changes the status of a user (e.g. Blocked / Registered).</summary>
         /// <param name="userId">User ID</param>
         /// <param name="newStatus">New status</param>
+        /// <param name="actingUserId">Admin who performed the action</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if status was changed</returns>
-        Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, CancellationToken ct);
+        Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, long actingUserId, CancellationToken ct);
 
         /// <summary>Updates the password hash for a user.</summary>
         /// <param name="userId">User ID</param>
@@ -43,15 +44,17 @@ namespace IntDorSys.Services.Users
         /// <summary>Confirms a user and assigns a role.</summary>
         /// <param name="userId">User ID</param>
         /// <param name="roleKey">Role key to assign</param>
+        /// <param name="actingUserId">Admin who performed the action</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>Updated user info</returns>
-        Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, CancellationToken ct);
+        Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, long actingUserId, CancellationToken ct);
 
         /// <summary>Removes a role from a user.</summary>
         /// <param name="userId">User ID</param>
         /// <param name="roleKey">Role key to remove</param>
+        /// <param name="actingUserId">Admin who performed the action</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>True if role was removed</returns>
-        Task<DataResult<bool>> RemoveRoleAsync(long userId, string roleKey, CancellationToken ct);
+        Task<DataResult<bool>> RemoveRoleAsync(long userId, string roleKey, long actingUserId, CancellationToken ct);
     }
 }

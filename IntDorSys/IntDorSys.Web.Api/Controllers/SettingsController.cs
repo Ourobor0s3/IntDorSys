@@ -1,4 +1,3 @@
-using System.Text.Json;
 using IntDorSys.Core.Entities;
 using IntDorSys.Services.AppSettings;
 using IntDorSys.Web.Api.Controllers.Base;
@@ -35,16 +34,10 @@ namespace IntDorSys.Web.Api.Controllers
         [HttpPut("{id:long}")]
         public async Task<Result> UpdateAsync(
             long id,
-            [FromBody] JsonElement body,
+            [FromBody] string value,
             [FromServices] IAppSettingService settings,
             CancellationToken ct)
         {
-            var value = body.GetProperty("value").GetString();
-            if (string.IsNullOrEmpty(value))
-            {
-                return new Result().WithError("Value is required");
-            }
-
             return await settings.UpdateAsync(id, value, UserId, ct);
         }
     }

@@ -1,4 +1,4 @@
-import { HostListener, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { menuitems } from '../constants/menuitems';
 import { auditRoute, laundressRoute, overviewRoute, reportsRoute, settingsRoute, userInfoRoute, userProfileRoute } from "../constants/routes";
@@ -98,16 +98,11 @@ export class NavService {
     mainItems = new BehaviorSubject<Page[]>(this.MainPages);
 
     constructor() {
-        this.onResize();
+        this.screenWidth = window.innerWidth;
         if (this.screenWidth < 991) {
             this.collapseSidebar = false;
             this.collapseHeaderInfo = true;
         }
-    }
-
-    @HostListener('window:resize', ['$event'])
-    onResize() {
-        this.screenWidth = window.innerWidth;
     }
 
     updateActiveTabs(menuItems: Page[], url: string) {

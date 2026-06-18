@@ -2,7 +2,6 @@ using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Settings;
-using IntDorSys.Services.Audit;
 using IntDorSys.Services.Users;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,22 +19,19 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly ILogger<UserBotService> _logger;
         private readonly ITelegramService _telegramService;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
-        private readonly IAuditService _audit;
 
         public UserBotService(
             IUserQueryService userQuery,
             IUserCommandService userCommand,
             ILogger<UserBotService> logger,
             ITelegramService telegramService,
-            IOptionsMonitor<AdminSettings> adminSettings,
-            IAuditService audit)
+            IOptionsMonitor<AdminSettings> adminSettings)
         {
             _userQuery = userQuery;
             _userCommand = userCommand;
             _logger = logger;
             _telegramService = telegramService;
             _adminSettings = adminSettings;
-            _audit = audit;
         }
 
         /// <inheritdoc />
@@ -113,12 +109,11 @@ namespace IntDorSys.Laundress.Services.Impl
                 var userResult = await _userQuery.GetAsync(forUserId, ct);
                 if (!userResult.IsSuccess) return;
                 var user = userResult.Data;
-                var statusResult = await _userCommand.ChangeUserStatus(forUserId, newStatus, ct);
+                var statusResult = await _userCommand.ChangeUserStatus(forUserId, newStatus, userId, ct);
                 if (!statusResult.IsSuccess) return;
                 var res = statusResult.Data;
                 if (res)
                 {
-                    await _audit.RecordAsync(userId, "ChangeUserStatus", "UserInfo", forUserId.ToString(), $"New status: {newStatus}");
                     await _telegramService.SendMessageAsync(userId, $"User {user.FullName ?? user.Username} updated status to {newStatus}", ct);
                 }
                 else
