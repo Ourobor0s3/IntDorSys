@@ -85,6 +85,11 @@ namespace IntDorSys.TelegramBot.Service.CallbackServices.Impl
                             DateTime.Parse(listCallback[1]),
                             callbackQuery.Message?.MessageId ?? 0,
                             ct);
+                        await _laundMenu.SendFreeTimeAsync(
+                            userInfo.TelegramId,
+                            callbackQuery.Message!.MessageId,
+                            DateTime.Parse(listCallback[1]),
+                            ct);
                         break;
                     case "DeleteUserTime":
                         await _laundBooking.RemoveTimeByUserAsync(userInfo, DateTime.Parse(listCallback[1]), ct);
