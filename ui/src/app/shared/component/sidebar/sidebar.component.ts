@@ -3,11 +3,9 @@ import { BaseComponent } from "../base/base.component";
 import { NavigationEnd, NavigationStart, Router } from "@angular/router";
 import { NavService, Page } from "../../services/nav.service";
 import { Subject, takeUntil } from "rxjs";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { UserInfoModel } from "../../model/userInfo.model";
+import { UserInfoModel } from "../../interface/userInfo.model";
 import { UserService } from "../../services/user.service";
 import { AuthService } from '../../services/auth.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-sidebar',
@@ -23,15 +21,13 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
 
     constructor(
         private router: Router,
-        private modalService: NgbModal,
         private userService: UserService,
         protected navService: NavService,
         private authService: AuthService,
-        private translate: TranslateService,
         private renderer: Renderer2,
     ) {
-        super(translate, modalService);
-        this.getUser = () => this.userService.get() ?? new UserInfoModel();
+        super(renderer);
+        this.getUser = () => this.userService.get() ?? ({} as UserInfoModel);
     }
 
     ngAfterViewChecked(): void {
@@ -79,7 +75,8 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
     }
 
     updateActiveTabs(url: string) {
-        this.navService.updateActiveTabs(this.menuItems!, url);
+        if (!this.menuItems) return;
+        this.navService.updateActiveTabs(this.menuItems, url);
     }
 
     toggleMobileMenu() {
@@ -97,12 +94,12 @@ export class SidebarComponent extends BaseComponent implements OnInit, AfterView
             return;
         }
 
-        this.menuItems!.forEach((a) => {
-            if (this.menuItems!.includes(item))
+        this.menuItems?.forEach((a) => {
+            if (this.menuItems?.includes(item))
                 a.active = false
-            if (!a.children) return false
+            if (!a.children) return
             a.children.forEach(b => {
-                if (a.children!.includes(item)) {
+                if (a.children?.includes(item)) {
                     b.active = false
                 }
             })

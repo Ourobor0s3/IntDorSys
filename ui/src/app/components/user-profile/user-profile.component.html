@@ -1,9 +1,4 @@
 <div class="page-content">
-  <div class="d-flex align-items-center gap-2 mb-3">
-    <button (click)="goBack()" class="btn btn-sm btn-outline-secondary" type="button">
-      &larr; {{ 'common.back' | lang }}
-    </button>
-  </div>
 
   @if (!user) {
     <div class="empty-state">
@@ -14,8 +9,7 @@
   @if (user) {
     <div class="content-card content-card--padded">
         <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
-          <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white flex-shrink-0"
-               style="width:48px;height:48px;font-size:20px;font-weight:600">
+          <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white flex-shrink-0 avatar-circle">
             {{ (user.fullName || user.username || '?') | slice:0:1 | uppercase }}
           </div>
           <div>
@@ -24,9 +18,20 @@
               <span class="text-muted small">{{ user.username }}</span>
             }
           </div>
-          <span class="status-tag ms-auto" [ngClass]="getStatusStyle(user.status).classname">
-            {{ 'user_status.' + user.status | lang }}
-          </span>
+          <div class="d-flex align-items-center gap-2 ms-auto">
+            <span class="status-tag" [ngClass]="(user.status | statusStyle).classname">
+              {{ 'user_status.' + user.status | lang }}
+            </span>
+            <button class="btn btn-sm btn-outline-secondary px-2" (click)="changeStatus()"
+                    title="{{ 'users.block_user' | lang }}">
+              <img alt="" height="12" ngSrc="assets/image/buttons/pencil.svg" width="14"/>
+            </button>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-sm-4 text-muted">{{ 'common.id' | lang }}</div>
+          <div class="col-sm-8">{{ user.id }}</div>
         </div>
 
         @if (user.fullName) {
@@ -36,12 +41,21 @@
           </div>
         }
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">{{ 'common.id' | lang }}</div>
-          <div class="col-sm-8">{{ user.id }}</div>
+          <div class="col-sm-4 text-muted">{{ 'users.telegram' | lang }}</div>
+          <div class="col-sm-8">
+            <span class="copy-text" (click)="copyTelegram()" role="button" tabindex="0">
+              {{ user.username }}
+              <i class="bi bi-clipboard ms-1 small"></i>
+            </span>
+          </div>
         </div>
         <div class="row mb-2">
-          <div class="col-sm-4 text-muted">{{ 'users.telegram' | lang }}</div>
-          <div class="col-sm-8">{{ user.username }}</div>
+          <div class="col-sm-4 text-muted">{{ 'users.roles' | lang }}</div>
+          <div class="col-sm-8">
+            @for (role of user.roles; track role; let last = $last) {
+              <span class="role-badge">{{ 'user_role.' + role | lang }}</span>
+            }
+          </div>
         </div>
         @if (user.numGroup) {
           <div class="row mb-2">
@@ -63,6 +77,9 @@
             }
             @if (!user.isConfirm) {
               <span class="text-danger">{{ 'common.no' | lang }}</span>
+              <button class="btn btn-sm btn-outline-success ms-2" (click)="confirmUser()">
+                {{ 'user_page.confirm_user' | lang }}
+              </button>
             }
           </div>
         </div>
@@ -75,5 +92,31 @@
           <div class="col-sm-8">{{ user.registerDate }}</div>
         </div>
     </div>
+
+    @if (user.recentWashes && user.recentWashes.length) {
+      <div class="content-card content-card--padded mt-3">
+        <h5 class="mb-3">{{ 'user_page.recent_washes' | lang }}</h5>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{{ 'common.date' | lang }}</th>
+                <th>{{ 'common.time' | lang }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (wash of user.recentWashes; track wash.timeWash; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ wash.dateStr }}</td>
+                  <td>{{ wash.timeStr }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
   }
 </div>

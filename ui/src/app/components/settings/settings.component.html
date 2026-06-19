@@ -56,7 +56,7 @@
               <td class="text-nowrap"><code>{{ item.key }}</code></td>
               <td>
                 @if (!item.editing) {
-                  <span (dblclick)="editItem(item)" class="cursor-pointer" style="white-space:pre-line;">{{ item.value }}</span>
+                  <span (dblclick)="editItem(item)" class="cursor-pointer pre-line">{{ item.value }}</span>
                 }
                 @if (item.editing) {
                   <textarea class="form-control form-control-sm" [(ngModel)]="item.value" rows="4"></textarea>

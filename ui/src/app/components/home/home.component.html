@@ -32,7 +32,7 @@
     <div class="content-card chart-card">
       <div class="content-card-header">{{ 'chart.all_time_records' | lang }}</div>
       <div class="content-card-body">
-        <app-bar-chart [chartInfo]="chart"></app-bar-chart>
+        <app-bar-chart [chartInfo]="chart" [datasetLabels]="{ label1: 'chart.all_time_records' | lang, label2: 'chart.used_time_records' | lang }"></app-bar-chart>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-using FileInfo = IntDorSys.Core.Entities.FileInfo;
+using IntDorSys.Core.Entities;
 
 namespace IntDorSys.Laundress.Core.Models
 {
@@ -32,6 +32,6 @@ namespace IntDorSys.Laundress.Core.Models
         /// <summary>
         ///     Files
         /// </summary>
-        public List<FileInfo>? Files { get; set; }
+        public List<StoredFileInfo>? Files { get; set; }
     }
 }

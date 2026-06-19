@@ -4,7 +4,7 @@ import { FormsModule } from "@angular/forms";
 
 import { AuditRoutingModule } from './audit-routing.module';
 import { AuditComponent } from './audit.component';
-import { SharedModule } from "../../shared/shared.component";
+import { SharedModule } from "../../shared/shared.module";
 
 @NgModule({
     declarations: [

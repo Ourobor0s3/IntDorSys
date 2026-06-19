@@ -1,6 +1,6 @@
 import { Component, OnDestroy, Renderer2 } from '@angular/core';
 import { ChildrenOutletContexts, NavigationEnd, Router } from "@angular/router";
-import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { filter, Subscription } from "rxjs";
 import { BaseComponent } from "./shared/component/base/base.component";
 import { TranslateService } from '@ngx-translate/core';
@@ -40,7 +40,6 @@ export class AppComponent extends BaseComponent implements OnDestroy {
     ];
 
     constructor(
-        private modalService: NgbModal,
         private contexts: ChildrenOutletContexts,
         private router: Router,
         private translate: TranslateService,
@@ -49,7 +48,7 @@ export class AppComponent extends BaseComponent implements OnDestroy {
         private userService: UserService,
         private renderer: Renderer2,
     ) {
-        super(translate, modalService);
+        super(renderer);
         this.initializeApp();
     }
 
@@ -64,17 +63,26 @@ export class AppComponent extends BaseComponent implements OnDestroy {
     }
 
     private initializeApp(): void {
-        // Initialize language
-        this.translate.use(languages[Language.EN].shortName);
-
-        // Initialize timezone
+        this.initializeLanguage();
         this.timezoneService.init();
 
-        // Load styles
         this.styleConfigs.forEach(config => this.createStyle(config.name, config.preload));
 
-        // Setup router events
         this.setupRouterEvents();
+    }
+
+    private initializeLanguage(): void {
+        this.translate.addLangs([languages[Language.EN].shortName, languages[Language.RU].shortName]);
+        this.translate.setDefaultLang(languages[Language.EN].shortName);
+
+        const storedLang = localStorage.getItem('localization');
+        const lang = storedLang && Object.values(languages).some(l => l.shortName === storedLang)
+            ? storedLang
+            : languages[Language.EN].shortName;
+
+        this.translate.use(lang);
+        localStorage.setItem('localization', lang);
+        this.eventService.langChanged(lang);
     }
 
     private setupRouterEvents(): void {

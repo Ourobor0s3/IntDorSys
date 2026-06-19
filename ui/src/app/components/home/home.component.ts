@@ -1,16 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Subject, takeUntil } from "rxjs";
-import { PageLaundressModel } from "../../shared/model/laundress.model";
+import { PageLaundressModel } from "../../shared/interface/laundress.model";
 import { LaundressService } from "../../shared/services/laundress.service";
 import { DataReloadService } from "../../shared/services/dataReload.service";
 import { AnaliticService } from "../../shared/services/analitic.service";
-import { ChartData } from "../../shared/model/chartData.model";
-import { TranslateService } from '@ngx-translate/core';
+import { ChartData } from "../../shared/interface/chartData.model";
 import { BaseFilterModel } from "../../shared/model/filter/baseFilter.model";
-import { LoadingService } from "../../shared/services/loading.service";
-
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
@@ -27,13 +23,8 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
         private laundService: LaundressService,
         private analiticService: AnaliticService,
         private dataReloadService: DataReloadService,
-        private modal: NgbModal,
-        private translate: TranslateService,
-        private loading: LoadingService,
     ) {
-        super(translate, modal, loading);
-        this.filter.startDate = this.getTodayDate().toISOString();
-        this.filter.endDate = this.getTodayDate().toISOString();
+        super();
     }
 
     ngOnInit() {
@@ -46,41 +37,41 @@ export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
     }
 
     loadData() {
+        this.filter.startDate = this.getTodayDate().toISOString();
+        this.filter.endDate = this.getTodayDate().toISOString();
         this.getAnaliticLaund();
         this.searchTimeLaund()
     }
 
-    getAnaliticLaund(isRunLoading: boolean = true) {
+    async getAnaliticLaund(isRunLoading: boolean = true) {
         if (isRunLoading)
             this.setLoading(true);
 
-        this.analiticService.getAnaliticLaund().then(res => {
+        try {
+            const res = await this.analiticService.getAnaliticLaund();
             this.chart = res.data;
-        }).catch((err) => {
-                this.showResponseError(err);
-            })
-            .finally(() => {
-                if (isRunLoading)
-                    this.setLoading(false);
-            });
+        } catch (err) {
+            this.showResponseError(err);
+        } finally {
+            if (isRunLoading)
+                this.setLoading(false);
+        }
     }
 
-    searchTimeLaund(isRunLoading: boolean = true) {
+    async searchTimeLaund(isRunLoading: boolean = true) {
         if (isRunLoading) {
             this.setLoading(true);
         }
 
-        this.laundService.getLaund(this.filter)
-            .then(res => {
-                this.laund = res.data && res.data.length > 0 ? res.data[0] : undefined;
-            })
-            .catch((err) => {
-                this.showResponseError(err);
-            })
-            .finally(() => {
-                if (isRunLoading)
-                    this.setLoading(false);
-            });
+        try {
+            const res = await this.laundService.getLaund(this.filter);
+            this.laund = res.data && res.data.length > 0 ? res.data[0] : undefined;
+        } catch (err) {
+            this.showResponseError(err);
+        } finally {
+            if (isRunLoading)
+                this.setLoading(false);
+        }
     }
 
     ngOnDestroy(): void {

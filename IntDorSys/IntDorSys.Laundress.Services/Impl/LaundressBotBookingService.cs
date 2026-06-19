@@ -1,7 +1,9 @@
+using IntDorSys.Core.Constants;
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Settings;
 using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Entities;
+using IntDorSys.Services.AppSettings;
 using IntDorSys.Services.Audit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,8 +21,8 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly ILogger<LaundressBotBookingService> _logger;
         private readonly IOptionsMonitor<AdminSettings> _adminSettings;
         private readonly IAuditService _audit;
+        private readonly IAppSettingService _settings;
 
-        private const int SlotIntervalHours = 2;
 
         public LaundressBotBookingService(
             ILaundressService laund,
@@ -28,7 +30,8 @@ namespace IntDorSys.Laundress.Services.Impl
             ILogger<LaundressBotBookingService> logger,
             AppDataContext db,
             IOptionsMonitor<AdminSettings> adminSettings,
-            IAuditService audit)
+            IAuditService audit,
+            IAppSettingService settings)
         {
             _laund = laund;
             _telegramService = telegramService;
@@ -36,8 +39,16 @@ namespace IntDorSys.Laundress.Services.Impl
             _db = db;
             _adminSettings = adminSettings;
             _audit = audit;
+            _settings = settings;
         }
 
+        private async Task<int> GetSlotIntervalHoursAsync(CancellationToken ct)
+        {
+            var val = await _settings.GetValueAsync("WashDurationHours", ct);
+            return int.TryParse(val, out var hours) ? hours : DefaultSettings.WashDurationHours;
+        }
+
+        /// <inheritdoc />
         public async Task CreateTimesAsync(
             UserInfo crUser,
             string date,
@@ -47,8 +58,9 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
+                var intervalHours = await GetSlotIntervalHoursAsync(ct);
                 var appointments = Enumerable.Range(start, end - start + 1)
-                    .Where(i => i % SlotIntervalHours == 0)
+                    .Where(i => i % intervalHours == 0)
                     .Select(i =>
                     {
                         var dt = DateTime.Parse($"{date} {i}:00");
@@ -63,7 +75,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 var mess = "Time:";
                 foreach (var appointment in appointments)
                 {
-                    var res = await _laund.CreateTimeAsync(appointment, ct);
+                    var res = await _laund.CreateTimeAsync(appointment, 0, ct);
                     mess += res.IsSuccess
                         ? $"\n* {appointment.TimeWash:dd.MM.yyyy HH:mm} created"
                         : $"\n* {appointment.TimeWash:dd.MM.yyyy HH:mm} not created";
@@ -81,14 +93,14 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task DeleteLaundAsync(UserInfo user, DateTime dateTime, CancellationToken ct)
         {
             try
             {
-                var res = await _laund.RemoveTimeAsync(dateTime, ct);
+                var res = await _laund.RemoveTimeAsync(dateTime, user.Id, ct);
                 if (res.IsSuccess)
                 {
-                    await _audit.RecordAsync(user.Id, "DeleteSlot", "UseLaundress", dateTime.ToString("O"));
                     _logger.LogInformation("User_id: {user} delete time: {time}", user.Id, dateTime);
                     await _telegramService.SendMessageAsync(user.TelegramId, $"{dateTime:dd.MM.yyyy HH:mm} удалено", ct);
                 }
@@ -108,6 +120,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task UnUseLaundAsync(UserInfo user, DateTime dateTime, CancellationToken ct)
         {
             try
@@ -116,6 +129,7 @@ namespace IntDorSys.Laundress.Services.Impl
                     user.Id,
                     dateTime,
                     true,
+                    user.Id,
                     ct);
                 if (res.IsSuccess)
                 {
@@ -138,6 +152,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task UseTimeLaundByUserAsync(
             UserInfo user,
             DateTime time,
@@ -146,7 +161,7 @@ namespace IntDorSys.Laundress.Services.Impl
         {
             try
             {
-                var res = await _laund.UseTimeAsync(user.Id, time, ct);
+                var res = await _laund.UseTimeAsync(user.Id, time, user.Id, ct);
 
                 if (!res.IsSuccess)
                 {
@@ -173,6 +188,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task RemoveTimeByUserAsync(UserInfo user, DateTime time, CancellationToken ct)
         {
             try
@@ -182,7 +198,7 @@ namespace IntDorSys.Laundress.Services.Impl
                     return;
                 }
 
-                var res = await _laund.RemoveUseTimeAsync(user.Id, time, ct: ct);
+                var res = await _laund.RemoveUseTimeAsync(user.Id, time, false, user.Id, ct);
                 if (!res.IsSuccess)
                 {
                     _logger.LogError("User_id: {user} remove use time: {time}, error: {error}",
@@ -206,14 +222,14 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task DelUseTimeByAdminAsync(UserInfo user, DateTime time, CancellationToken ct)
         {
             try
             {
-                var res = await _laund.RemoveUseTimeAsync(user.Id, time, true, ct);
+                var res = await _laund.RemoveUseTimeAsync(user.Id, time, true, user.Id, ct);
                 if (res.IsSuccess)
                 {
-                    await _audit.RecordAsync(user.Id, "UnbookSlot", "UseLaundress", time.ToString("O"), "Admin-forced unbook");
                     _logger.LogInformation("Admin {user} delete use time: {time}", user.Id, time);
                     await _telegramService.SendMessageAsync(user.TelegramId, $"Запись на {time:dd.MM.yyyy HH:mm} удалена", ct);
                 }
@@ -231,6 +247,7 @@ namespace IntDorSys.Laundress.Services.Impl
             }
         }
 
+        /// <inheritdoc />
         public async Task AddUserToTimeAsync(UserInfo admin, string userName, DateTime time, CancellationToken ct)
         {
             try

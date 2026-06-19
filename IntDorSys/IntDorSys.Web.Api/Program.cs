@@ -10,7 +10,6 @@ using IntDorSys.Services;
 using IntDorSys.TelegramBot.Service;
 using IntDorSys.Web.Api.Bot;
 using IntDorSys.Web.Api.Installers;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.RateLimiting;
 using Ouro.TelegramBot.Core;
 
@@ -28,7 +27,7 @@ namespace IntDorSys.Web.Api
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             builder
-                .ConfigureAppConfiguration()
+                .ConfigureAppConfiguration(args)
                 .ConfigureAppLogging()
                 .ConfigureAuthentication();
 
@@ -84,6 +83,9 @@ namespace IntDorSys.Web.Api
                 .AddBotServices(builder.Configuration)
                 .AddCoreConfiguration(builder.Configuration);
 
+            builder.Services.AddProblemDetails();
+            builder.Services.AddExceptionHandler<Middlewares.GlobalExceptionHandler>();
+
             builder.Services
                 .AddSingleton<BotStatus>()
                 .AddTransient<BotConnectivityCheck>()
@@ -98,25 +100,8 @@ namespace IntDorSys.Web.Api
 
             var app = builder.Build();
 
-            app.UseExceptionHandler(exceptionHandlerApp =>
-            {
-                exceptionHandlerApp.Run(async context =>
-                {
-                    var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    context.Response.ContentType = "application/problem+json";
-
-                    var problem = new
-                    {
-                        type = "about:blank",
-                        title = "An unexpected error occurred",
-                        status = StatusCodes.Status500InternalServerError,
-                        detail = "Internal server error",
-                    };
-
-                    await JsonSerializer.SerializeAsync(context.Response.Body, problem);
-                });
-            });
+            app.UseExceptionHandler();
+            app.UseStatusCodePages();
 
             app.MigrateDb();
             app.SeedSettings();

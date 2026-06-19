@@ -1,4 +1,3 @@
-using System.Text.Json;
 using IntDorSys.Core.Entities;
 using IntDorSys.Services.AppSettings;
 using IntDorSys.Web.Api.Controllers.Base;
@@ -9,7 +8,6 @@ using Ouro.CommonUtils.Results;
 namespace IntDorSys.Web.Api.Controllers
 {
     [Route("settings")]
-    [Authorize(Roles = "Admin")]
     public sealed class SettingsController : ProtectedApiController
     {
         [AllowAnonymous]
@@ -22,6 +20,7 @@ namespace IntDorSys.Web.Api.Controllers
             return new DataResult<string>().WithData(value ?? "+03:00");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<DataResult<List<AppSetting>>> GetAllAsync(
             [FromServices] IAppSettingService settings,
@@ -31,17 +30,14 @@ namespace IntDorSys.Web.Api.Controllers
             return new DataResult<List<AppSetting>>().WithData(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:long}")]
         public async Task<Result> UpdateAsync(
             long id,
-            [FromBody] JsonElement body,
+            [FromBody] string value,
             [FromServices] IAppSettingService settings,
             CancellationToken ct)
         {
-            var value = body.GetProperty("value").GetString();
-            if (string.IsNullOrEmpty(value))
-                return new Result().WithError("Value is required");
-
             return await settings.UpdateAsync(id, value, UserId, ct);
         }
     }

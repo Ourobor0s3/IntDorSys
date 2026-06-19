@@ -15,8 +15,6 @@ export interface IRegister {
     providedIn: 'root',
 })
 export class AccountService {
-    public email: string = '';
-
     constructor(
         private api: ApiService,
     ) {
@@ -27,7 +25,6 @@ export class AccountService {
      * @param registerModel Данные о регистрации
      */
     register(registerModel: IRegister): Promise<IResponse<void>> {
-        this.email = registerModel.email
-        return this.api.postAnonym<void>(accountApiUrl, registerModel).toPromise();
+        return this.api.postAnonym<void>(accountApiUrl, registerModel);
     }
 }

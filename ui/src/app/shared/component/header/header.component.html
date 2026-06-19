@@ -9,24 +9,12 @@
           <ul class="d-flex align-items-center gap-4 mb-0 justify-content-end">
             <!-- Desktop menu items -->
             <li class="d-flex align-items-center d-none d-md-flex">
-              <span class="text-dark">{{ getUser()?.username ?? "" }}</span>
+              <span class="text-dark">{{ user.username ?? "" }}</span>
             </li>
             <li class="d-none d-md-block">
-              <div class="dropdown">
-                <button aria-expanded="false" class="btn btn-outline-primary" data-bs-toggle="dropdown"
-                        id="languageDropdown">
-                  {{ currentLanguageInfo.flag }}
-                </button>
-                <ul aria-labelledby="languageDropdown" class="dropdown-menu">
-                  @for (lang of availableLanguages; track lang.shortName) {
-                    <li>
-                      <a (click)="changeLanguage(lang.shortName)" class="dropdown-item" href="javascript:void(0)">
-                        {{ lang.flag }}
-                      </a>
-                    </li>
-                  }
-                </ul>
-              </div>
+              <button (click)="toggleLanguage()" class="btn btn-outline-primary" title="{{ 'common.language' | lang }}">
+                {{ currentLanguageInfo.flag }}
+              </button>
             </li>
             <li class="d-none d-md-block">
               <button (click)="toggleTheme()" class="btn btn-outline-secondary d-flex align-items-center px-2 theme-toggle-btn" title="{{ (isDarkMode ? 'theme.light' : 'theme.dark') | lang }}">
@@ -64,7 +52,7 @@
 <!-- Mobile menu -->
 <div [class.show]="isMobileMenuOpen" class="mobile-menu">
   <div class="mobile-menu-header">
-    <span class="text-dark">{{ getUser()?.username ?? "" }}</span>
+    <span class="text-dark">{{ user.username ?? "" }}</span>
     <button (click)="toggleMobileMenu()" class="btn btn-link text-dark">
       <img alt="Close" height="24" src="assets/image/table_icons/x_status.svg" width="24"/>
     </button>
@@ -102,20 +90,9 @@
   <div class="mobile-menu-content">
     <div class="row">
       <div class="col">
-        <div class="dropdown">
-          <button class="btn btn-outline-primary w-100" data-bs-toggle="dropdown">
-            {{ currentLanguageInfo.flag }}
-          </button>
-          <ul class="dropdown-menu">
-            @for (lang of availableLanguages; track lang.shortName) {
-              <li>
-                <a (click)="changeLanguage(lang.shortName)" class="dropdown-item" href="javascript:void(0)">
-                  {{ lang.flag }}
-                </a>
-              </li>
-            }
-          </ul>
-        </div>
+        <button (click)="toggleLanguage()" class="btn btn-outline-primary w-100" title="{{ 'common.language' | lang }}">
+          {{ currentLanguageInfo.flag }}
+        </button>
       </div>
       <div class="col">
         <button (click)="onLogout()"

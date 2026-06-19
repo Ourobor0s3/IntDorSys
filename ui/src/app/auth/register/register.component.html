@@ -48,7 +48,7 @@
       @if (elemIsInvalid(regForm.controls.email)) {
         <div class="invalid-feedback d-block"
              id="email-error">
-          {{ textErrorStr(regForm.controls.email) | lang }}
+          {{ regForm.controls.email | errorMessage | lang }}
         </div>
       }
     </div>
@@ -87,7 +87,7 @@
       @if (elemIsInvalid(regForm.controls.password)) {
         <div class="invalid-feedback d-block"
              id="pass-error">
-          {{ textErrorStr(regForm.controls.password, passwordPattern) | lang }}
+          {{ regForm.controls.password | errorMessage:passwordPattern | lang }}
         </div>
       }
     </div>
@@ -126,7 +126,7 @@
       @if (elemIsInvalid(regForm.controls.passwordConfirm)) {
         <div class="invalid-feedback d-block"
              id="pass-confirm-error">
-          {{ textErrorStr(regForm.controls.passwordConfirm, passwordPattern) | lang }}
+          {{ regForm.controls.passwordConfirm | errorMessage:passwordPattern | lang }}
         </div>
       }
     </div>

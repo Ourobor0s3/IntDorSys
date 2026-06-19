@@ -3,7 +3,7 @@ using Ouro.DatabaseUtils.Entities.Impl;
 
 namespace IntDorSys.Core.Entities
 {
-    public class FileInfo : SoftDeletableEntity<long>
+    public class StoredFileInfo : SoftDeletableEntity<long>
     {
         /// <summary>
         ///     Original file name

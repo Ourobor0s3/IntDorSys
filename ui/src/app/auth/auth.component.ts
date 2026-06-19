@@ -5,11 +5,12 @@ import { authSubpages, Subpages } from './auth.subpages';
 import { transition, trigger, useAnimation } from '@angular/animations';
 import { fadeIn } from 'ng-animate';
 import { authRoute } from '../shared/constants/routes';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
 import { Language } from '../shared/enums/language';
 import { languages } from '../shared/constants/languages';
 import { ThemeService } from '../shared/services/theme.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-auth',
@@ -27,36 +28,37 @@ export class AuthComponent extends BaseComponent implements OnInit, OnDestroy {
     currentYear: number = new Date().getFullYear();
     isDarkMode = false;
     currentLang: string = languages[Language.EN].shortName;
+    private destroy$ = new Subject<void>();
 
     constructor(
         private activateRoute: ActivatedRoute,
         private router: Router,
-        private modal: NgbModal,
         private translate: TranslateService,
         private themeService: ThemeService,
     ) {
-        super(translate, modal);
-        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        this.translate.setDefaultLang(languages[Language.EN].shortName);
+        super();
     }
 
     ngOnInit(): void {
-        const storedLang = localStorage.getItem('localization');
-        this.currentLang = storedLang && Object.values(languages).some(l => l.shortName === storedLang)
-            ? storedLang
-            : languages[Language.EN].shortName;
-        this.translate.use(this.currentLang);
+        this.currentLang = this.translate.currentLang;
         this.isDarkMode = this.themeService.getTheme() === 'dark';
-        const subpageRoute = this.activateRoute.snapshot.paramMap.get('subpageRoute');
-        const found = this.subpagesMenu.find((tab) => tab.route == subpageRoute);
 
-        if (!subpageRoute || !found) {
-            this.navigateTab(this.subpagesMenu[0].route);
-            return;
-        }
+        this.activateRoute.params.pipe(takeUntil(this.destroy$)).subscribe(params => {
+            const subpageRoute = params['subpageRoute'];
+            const found = this.subpagesMenu.find((tab) => tab.route == subpageRoute);
 
-        this.currentActiveTab = found;
-        found.isActive = true;
+            if (!subpageRoute || !found) {
+                this.navigateTab(this.subpagesMenu[0].route);
+                return;
+            }
+
+            if (this.currentActiveTab) {
+                this.currentActiveTab.isActive = false;
+            }
+
+            this.currentActiveTab = found;
+            found.isActive = true;
+        });
     }
 
     changeLanguage(): void {
@@ -73,6 +75,9 @@ export class AuthComponent extends BaseComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+
         if (this.currentActiveTab) {
             this.currentActiveTab.isActive = false;
         }

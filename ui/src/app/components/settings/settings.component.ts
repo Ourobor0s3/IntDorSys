@@ -1,25 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from 'src/app/shared/component/base/base.component';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from '@ngx-translate/core';
 import { ClipboardService } from "ngx-clipboard";
-import { LoadingService } from "../../shared/services/loading.service";
-import { ApiService } from "../../shared/services/api.service";
-
-interface SettingItem {
-    id: number;
-    key: string;
-    value: string;
-    originalValue: string;
-    isEditable: boolean;
-    editing: boolean;
-}
-
-interface BotStatus {
-    running: boolean;
-    username: string | null;
-    lastStarted: string | null;
-}
+import { SettingsService } from "../../shared/services/settings.service";
+import { SettingItem } from "../../shared/interface/setting-item";
+import { BotStatus } from "../../shared/interface/bot-status";
 
 @Component({
     selector: 'app-settings',
@@ -27,20 +12,18 @@ interface BotStatus {
 
 })
 export class SettingsComponent extends BaseComponent implements OnInit {
-    items: SettingItem[] = [];
+    items: (SettingItem & { originalValue: string; editing: boolean })[] = [];
     saving: boolean = false;
 
     botStatus: BotStatus | null = null;
     botRestarting: boolean = false;
 
     constructor(
-        private api: ApiService,
-        private modal: NgbModal,
+        private settingsService: SettingsService,
         private translate: TranslateService,
-        private loading: LoadingService,
         private clipboardService: ClipboardService,
     ) {
-        super(translate, modal, loading);
+        super();
     }
 
     ngOnInit() {
@@ -51,13 +34,10 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     async loadSettings() {
         this.setLoading(true);
         try {
-            let res = await (await this.api.get<unknown>('settings')).toPromise();
-            this.items = ((res?.data ?? []) as Array<{ id: number; key: string; value: string; isEditable: boolean }>).map((s) => ({
-                id: s.id,
-                key: s.key,
-                value: s.value,
+            let res = await this.settingsService.getAll();
+            this.items = (res?.data ?? []).map((s) => ({
+                ...s,
                 originalValue: s.value,
-                isEditable: s.isEditable,
                 editing: false,
             }));
         } catch (err) {
@@ -69,7 +49,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
 
     async loadBotStatus() {
         try {
-            let res = await (await this.api.get<BotStatus>('bot/status')).toPromise();
+            let res = await this.settingsService.getBotStatus();
             this.botStatus = res?.data ?? null;
         } catch {
             this.botStatus = null;
@@ -86,7 +66,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     async restartBot() {
         this.botRestarting = true;
         try {
-            let res = await (await this.api.post<unknown>('bot/restart', {})).toPromise();
+            let res = await this.settingsService.restartBot();
             if (res?.isSuccess) {
                 this.showToast(this.translate.instant('bot.restart_success'));
                 await this.loadBotStatus();
@@ -100,27 +80,28 @@ export class SettingsComponent extends BaseComponent implements OnInit {
         }
     }
 
-    editItem(item: SettingItem) {
-        item.editing = true;
+    editItem(item: SettingItem & { editing: boolean }) {
+        this.items = this.items.map(i => i.id === item.id ? { ...i, editing: true } : i);
     }
 
-    cancelEdit(item: SettingItem) {
-        item.editing = false;
-        item.value = item.originalValue;
+    cancelEdit(item: SettingItem & { originalValue: string; editing: boolean }) {
+        this.items = this.items.map(i => i.id === item.id ? { ...i, editing: false, value: i.originalValue } : i);
     }
 
-    async saveItem(item: SettingItem) {
+    async saveItem(item: SettingItem & { originalValue: string; editing: boolean }) {
         if (item.value === item.originalValue) {
-            item.editing = false;
+            this.items = this.items.map(i => i.id === item.id ? { ...i, editing: false } : i);
             return;
         }
         this.saving = true;
         try {
-            let res = await (await this.api.put<unknown>('settings/' + item.id, { value: item.value })).toPromise();
+            let res = await this.settingsService.update(item.id, item.value);
             if (res?.isSuccess) {
-                item.originalValue = item.value;
-                item.editing = false;
+                this.items = this.items.map(i => i.id === item.id ? { ...i, originalValue: i.value, editing: false } : i);
                 this.showToast(this.translate.instant('common.saved'));
+                if (item.key === 'TimeZone') {
+                    this.timezoneService.update(item.value);
+                }
             }
         } catch (err) {
             this.showResponseError(err);

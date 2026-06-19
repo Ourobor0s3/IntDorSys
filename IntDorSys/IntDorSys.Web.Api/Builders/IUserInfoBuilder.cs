@@ -9,5 +9,7 @@ namespace IntDorSys.Web.Api.Builders
         UserInfoModel Build(UserInfo userInfo);
 
         Task<DataResult<List<UserInfoModel>>> BuildAsync(CancellationToken ct);
+
+        Task<UserInfoModel> BuildAsync(UserInfo userInfo, CancellationToken ct);
     }
 }

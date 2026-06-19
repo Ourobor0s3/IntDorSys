@@ -73,11 +73,11 @@
       </table>
 
       <div class="pagination-controls">
-        <button (click)="prevPage()" [disabled]="page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
+        <button (click)="prevPage()" [disabled]="pag.page <= 1" class="btn btn-sm btn-outline-secondary" type="button">
           &laquo; {{ 'common.prev' | lang }}
         </button>
-        <span class="page-info">{{ page }} / {{ totalPages }}</span>
-        <button (click)="nextPage()" [disabled]="page >= totalPages" class="btn btn-sm btn-outline-secondary" type="button">
+        <span class="page-info">{{ pag.page }} / {{ pag.totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="pag.page >= pag.totalPages" class="btn btn-sm btn-outline-secondary" type="button">
           {{ 'common.next' | lang }} &raquo;
         </button>
       </div>

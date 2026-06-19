@@ -15,7 +15,7 @@ namespace IntDorSys.Web.Api.Requests
         [Required]
         [StringLength(50)]
         [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        required public string Email { get; set; }
 
         /// <summary>
         ///     Not hashed password
@@ -24,6 +24,6 @@ namespace IntDorSys.Web.Api.Requests
         [DataType(DataType.Password)]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
         [RegularExpression("[A-Za-z0-9!@#$%^&*()_+-=\\[\\]{};':\"\\\\|,.<>\\/?]+")]
-        public string Password { get; set; } = string.Empty;
+        required public string Password { get; set; }
     }
 }

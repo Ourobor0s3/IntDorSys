@@ -8,12 +8,9 @@
   "Login is required": "Login is required",
   "Registered": "Registered",
   "Email": "Email",
-  "Logout": "Logout",
   "registered_success": "Account registered successfully",
   "Confirm password": "Confirm password",
-  "Email is required": "Email is required",
   "Password is required": "Password is required",
-  "Please enter a valid email": "Please enter a valid email",
   "Hide password": "Hide password",
   "Show password": "Show password",
   "account": {
@@ -52,7 +49,7 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "date": "Date",
-    "optional": "optional",
+    "time": "Time",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
@@ -61,9 +58,9 @@
     "copy_success": "Copied to clipboard",
     "system_error": "System error. Please contact technical support",
     "status_changed": "Status updated successfully",
-    "operation_cancelled": "Operation cancelled",
     "prev": "Prev",
     "next": "Next",
+    "language": "Language",
     "saved": "Saved successfully",
     "view": "View",
     "back": "Back",
@@ -74,7 +71,10 @@
     "export_xlsx": "Export XLSX"
   },
   "user_page": {
-    "title": "User Profile"
+    "title": "User Profile",
+    "confirm_user": "Confirm user",
+    "confirm_user_desc": "Are you sure you want to confirm this user?",
+    "recent_washes": "Recent washes"
   },
   "users": {
     "name": "Name",
@@ -90,6 +90,7 @@
     "confirm_unblock": "Are you sure you want to unblock this user?",
     "sort_desc": "Desc",
     "sort_asc": "Asc",
+    "roles": "Roles",
     "with_name": "With Name"
   },
   "home": {
@@ -116,7 +117,9 @@
     "select_user_required": "Please select a user",
     "create_success": "Created {{ count }} time slot(s)",
     "book_success": "User booked successfully",
+    "unbook_title": "Unbook user",
     "confirm_unbook": "Remove user from this slot?",
+    "delete_slot_title": "Delete time slot",
     "confirm_delete_slot": "Delete this time slot?",
     "hour_from": "From hour",
     "hour_to": "To hour",
@@ -136,14 +139,14 @@
       "UnbookSlot": "Unbook slot",
       "DeleteSlot": "Delete slot",
       "ChangeUserStatus": "Change user status",
-      "UpdateSetting": "Update setting"
+      "UpdateSetting": "Update setting",
+      "ConfirmUser": "Confirm user",
+      "RemoveRole": "Remove role"
     }
   },
   "chart": {
     "all_time_records": "All time records",
-    "used_time_records": "Used time records",
-    "time": "Time",
-    "count": "Count"
+    "used_time_records": "Used time records"
   },
   "reports": {
     "newest": "Newest",
@@ -175,6 +178,11 @@
     "restarting": "Restarting...",
     "restart_success": "Bot restarted successfully",
     "restart_fail": "Bot restart failed"
+  },
+  "user_role": {
+    "Admin": "Admin",
+    "Manager": "Manager",
+    "Student": "Student"
   },
   "user_status": {
     "-1": "Blocked",

@@ -1,5 +1,5 @@
+using IntDorSys.Core.Entities;
 using Ouro.CommonUtils.Results;
-using FileInfo = IntDorSys.Core.Entities.FileInfo;
 
 namespace IntDorSys.Services.FileStorage
 {
@@ -14,7 +14,7 @@ namespace IntDorSys.Services.FileStorage
         /// <param name="id">File GUID</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>File info if found</returns>
-        Task<DataResult<FileInfo>> GetAsync(Guid id, CancellationToken ct);
+        Task<DataResult<StoredFileInfo>> GetAsync(Guid id, CancellationToken ct);
 
         /// <summary>
         ///     Saves a file from a memory stream

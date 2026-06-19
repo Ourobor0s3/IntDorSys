@@ -12,14 +12,13 @@ namespace IntDorSys.TelegramBot.Service.CommandServices.Impl
             _baseCommandsService = baseCommandsService;
         }
 
+        /// <inheritdoc />
         public Dictionary<string, Func<Message, CancellationToken, Task>> GetDictCommands()
         {
             return new Dictionary<string, Func<Message, CancellationToken, Task>>
             {
-                [MessageKeyConstants.Start] = async (message, ct) =>
-                    await _baseCommandsService.StartHandleAsync(message, ct),
-                [MessageKeyConstants.Rules] = async (message, ct) =>
-                    await _baseCommandsService.RulesHandleAsync(message, ct),
+                [MessageKeyConstants.Start] = _baseCommandsService.StartHandleAsync,
+                [MessageKeyConstants.Rules] = _baseCommandsService.RulesHandleAsync,
             };
         }
     }

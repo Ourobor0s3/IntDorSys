@@ -4,7 +4,7 @@ import { FormsModule } from "@angular/forms";
 
 import { UserInfoRoutingModule } from './users-info-routing.module';
 import { UserInfoComponent } from './users-info.component';
-import { SharedModule } from "../../shared/shared.component";
+import { SharedModule } from "../../shared/shared.module";
 
 
 @NgModule({

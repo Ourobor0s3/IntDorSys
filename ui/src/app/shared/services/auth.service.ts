@@ -4,8 +4,7 @@ import { authRoute, loginRoute } from "../constants/routes";
 import { Credentials, TokenService } from "./token.service";
 import { EventService } from "./event.service";
 import { UserService } from "./user.service";
-import { UserInfoModel } from "../model/userInfo.model";
-import { lastValueFrom, tap } from "rxjs";
+import { UserInfoModel } from "../interface/userInfo.model";
 import { IResponse } from '../interface/response';
 
 export interface User {
@@ -55,26 +54,16 @@ export class AuthService {
         AuthService._authData = newAuth;
     }
 
-    login(loginCred: Credentials): Promise<IResponse<AuthData>> {
-        return lastValueFrom(
-            this.tokenService.auth<AuthData>(loginCred).pipe(
-                tap((data: IResponse<AuthData>) => {
-                    const accessToken = data?.data?.accessToken;
-                    const refreshToken = data?.data?.refreshToken ?? "";
-                    const role = data?.data?.role ?? "";
-                    if (!accessToken) {
-                        return;
-                    }
-                    localStorage.setItem('accessToken', accessToken);
-                    const tokenObj: AuthData = {
-                        accessToken: accessToken,
-                        refreshToken: refreshToken,
-                        role: role,
-                    };
-                    this.authData = tokenObj;
-                }),
-            ),
-        );
+    async login(loginCred: Credentials): Promise<IResponse<AuthData>> {
+        const data = await this.tokenService.auth<AuthData>(loginCred);
+        const accessToken = data?.data?.accessToken;
+        const refreshToken = data?.data?.refreshToken ?? '';
+        const role = data?.data?.role ?? '';
+        if (accessToken) {
+            localStorage.setItem('accessToken', accessToken);
+            this.authData = { accessToken, refreshToken, role };
+        }
+        return data;
     }
 
     isAdmin(): boolean {
@@ -82,10 +71,6 @@ export class AuthService {
     }
 
     logout(): void {
-        this.router.routeReuseStrategy.shouldReuseRoute = function () {
-            return false;
-        };
-
         this.showLoader = false;
         this.authData = undefined;
         this.userService.clear();

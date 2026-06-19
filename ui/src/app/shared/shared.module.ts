@@ -12,6 +12,8 @@ import { CommonModule } from "@angular/common";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BarChartComponent } from "./component/bar-chart/bar-chart.component";
 import { TranslateReplacePipe } from "./pipes/translate-replace.pipe";
+import { StatusStylePipe } from "./pipes/status-style.pipe";
+import { ErrorMessagePipe } from "./pipes/error-message.pipe";
 import { TranslateModule } from "@ngx-translate/core";
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 import { ConfirmModule } from "./component/modals/confirm/confirm.module";
@@ -28,6 +30,8 @@ import { ResultModule } from "./component/modals/result/result.module";
         SectionHeaderComponent,
         BarChartComponent,
         TranslateReplacePipe,
+        StatusStylePipe,
+        ErrorMessagePipe,
     ],
     imports: [
         CommonModule,
@@ -46,6 +50,8 @@ import { ResultModule } from "./component/modals/result/result.module";
         BreadcrumbComponent,
         SectionHeaderComponent,
         TranslateReplacePipe,
+        StatusStylePipe,
+        ErrorMessagePipe,
         BsDatepickerModule,
     ],
     providers: [],

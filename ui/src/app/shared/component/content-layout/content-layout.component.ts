@@ -59,6 +59,7 @@ export class ContentLayoutComponent implements OnInit, AfterViewInit, OnDestroy 
 
     @HostListener('window:resize', ['$event'])
     onResize(event?: Event) {
+        this.navServices.screenWidth = window.innerWidth;
         this.calculatePageBodyWrapperWidth();
     }
 

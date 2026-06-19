@@ -15,7 +15,8 @@ export class ThemeService {
 
     constructor(rendererFactory: RendererFactory2) {
         this.renderer = rendererFactory.createRenderer(null, null);
-        this.currentTheme = (localStorage.getItem(this.STORAGE_KEY) as Theme) || 'light';
+        let stored = localStorage.getItem(this.STORAGE_KEY);
+        this.currentTheme = (stored === 'light' || stored === 'dark' ? stored : 'light') as Theme;
         this.applyTheme(this.currentTheme);
     }
 

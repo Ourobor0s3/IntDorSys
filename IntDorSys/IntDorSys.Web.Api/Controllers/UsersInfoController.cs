@@ -1,6 +1,7 @@
+using IntDorSys.Core.Constants;
+using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.Core.Models;
-using IntDorSys.Services.Audit;
 using IntDorSys.Services.Users;
 using IntDorSys.Web.Api.Builders;
 using IntDorSys.Web.Api.Controllers.Base;
@@ -26,10 +27,14 @@ namespace IntDorSys.Web.Api.Controllers
             [FromServices] IUserInfoBuilder builder,
             [FromServices] IUserQueryService userService)
         {
+            var result = new DataResult<UserInfoModel>();
             var user = await userService.GetAsync(userId, HttpContext.RequestAborted);
-            return !user.IsSuccess
-                ? new DataResult<UserInfoModel>().WithErrors(user.Errors)
-                : new DataResult<UserInfoModel>().WithData(builder.Build(user.Data));
+
+            if (!user.IsSuccess)
+                return result.WithErrors(user.Errors);
+
+            result.Data = await builder.BuildAsync(user.Data, HttpContext.RequestAborted);
+            return result;
         }
 
         [HttpPut("change-status/{userId}")]
@@ -37,16 +42,29 @@ namespace IntDorSys.Web.Api.Controllers
         public async Task<DataResult<bool>> ChangeStatusAsync(
             long userId,
             [FromBody] UserStatus newStatus,
-            [FromServices] IUserCommandService service,
-            [FromServices] IAuditService audit)
+            [FromServices] IUserCommandService service)
         {
-            var result = await service.ChangeUserStatus(userId, newStatus, HttpContext.RequestAborted);
-            if (result.IsSuccess)
-            {
-                await audit.RecordAsync(UserId, "ChangeUserStatus", "UserInfo",
-                    userId.ToString(), $"New status: {newStatus}");
-            }
-            return result;
+            return await service.ChangeUserStatus(userId, newStatus, UserId, HttpContext.RequestAborted);
+        }
+
+        [HttpPut("confirm/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<DataResult<UserInfo>> ConfirmUserAsync(
+            long userId,
+            [FromServices] IUserCommandService service,
+            [FromQuery] string roleKey = UserRoleKeys.Student)
+        {
+            return await service.ConfirmUserWithRoleAsync(userId, roleKey, UserId, HttpContext.RequestAborted);
+        }
+
+        [HttpPut("remove-role/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<DataResult<bool>> RemoveRoleAsync(
+            long userId,
+            [FromQuery] string roleKey,
+            [FromServices] IUserCommandService service)
+        {
+            return await service.RemoveRoleAsync(userId, roleKey, UserId, HttpContext.RequestAborted);
         }
     }
 }

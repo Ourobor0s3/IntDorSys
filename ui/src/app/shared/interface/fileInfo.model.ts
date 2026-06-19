@@ -1,4 +1,4 @@
-export class FileInfoModel {
+export interface FileInfoModel {
     name: string;
     guid: string;
     filePath: string;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { IResponse } from '../interface/response';
 import { environment } from '../../../environments/environment';
 
@@ -15,7 +15,7 @@ export class ApiService {
     constructor(private http: HttpClient) {
     }
 
-    async getAccessToken(): Promise<string | null> {
+    private getAccessToken(): string | null {
         try {
             return localStorage.getItem('accessToken');
         } catch {
@@ -23,54 +23,47 @@ export class ApiService {
         }
     }
 
-    getAnonym<T>(url: string): Observable<IResponse<T>> {
-        return this.http.get<IResponse<T>>(apiUrl + url);
+    getAnonym<T>(url: string): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.get<IResponse<T>>(apiUrl + url));
     }
 
-    async get<T>(url: string): Promise<Observable<IResponse<T>>> {
-        const headers = await this.getAuthorizationHeaders();
-        return this.http.get<IResponse<T>>(apiUrl + url, { headers });
+    get<T>(url: string): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.get<IResponse<T>>(apiUrl + url, { headers: this.getAuthorizationHeaders() }));
     }
 
-    async getForPreview(url: string): Promise<Observable<string>> {
-        const headers = await this.getAuthorizationHeaders();
-        return this.http.get(apiUrl + url, { headers, responseType: 'text' });
+    getForPreview(url: string): Promise<string> {
+        return lastValueFrom(this.http.get(apiUrl + url, { headers: this.getAuthorizationHeaders(), responseType: 'text' }));
     }
 
-    async delete<T>(url: string): Promise<Observable<IResponse<T>>> {
-        const headers = await this.getAuthorizationHeaders();
-        return this.http.delete<IResponse<T>>(apiUrl + url, { headers });
+    delete<T>(url: string): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.delete<IResponse<T>>(apiUrl + url, { headers: this.getAuthorizationHeaders() }));
     }
 
-    postAnonym<T>(url: string, body: unknown): Observable<IResponse<T>> {
-        return this.http.post<IResponse<T>>(apiUrl + url, body, { headers: this.getPublicHeaders() });
+    postAnonym<T>(url: string, body: unknown): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.post<IResponse<T>>(apiUrl + url, body, { headers: this.getPublicHeaders() }));
     }
 
-    async post<T>(url: string, body: unknown): Promise<Observable<IResponse<T>>> {
-        const headers = await this.getAuthorizationHeaders();
-        return this.http.post<IResponse<T>>(apiUrl + url, body, { headers });
+    post<T>(url: string, body: unknown): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.post<IResponse<T>>(apiUrl + url, body, { headers: this.getAuthorizationHeaders() }));
     }
 
-    putAnonym<T>(url: string, body: unknown): Observable<IResponse<T>> {
-        return this.http.put<IResponse<T>>(apiUrl + url, body);
+    putAnonym<T>(url: string, body: unknown): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.put<IResponse<T>>(apiUrl + url, body));
     }
 
-    async put<T>(url: string, body: unknown): Promise<Observable<IResponse<T>>> {
-        const headers = await this.getAuthorizationHeaders();
-        return this.http.put<IResponse<T>>(apiUrl + url, body, { headers });
+    put<T>(url: string, body: unknown): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.put<IResponse<T>>(apiUrl + url, body, { headers: this.getAuthorizationHeaders() }));
     }
 
-    async patch<T>(url: string, body: unknown = {}): Promise<Observable<IResponse<T>>> {
-        const headers = await this.getAuthorizationHeaders();
-        return this.http.patch<IResponse<T>>(apiUrl + url, body, { headers });
+    patch<T>(url: string, body: unknown = {}): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.patch<IResponse<T>>(apiUrl + url, body, { headers: this.getAuthorizationHeaders() }));
     }
 
-    async upload<T>(url: string, body: unknown): Promise<Observable<IResponse<T>>> {
-        const headers = await this.getAuthorizationHeaders(true);
-        return this.http.post<IResponse<T>>(apiUrl + url, body, { headers });
+    upload<T>(url: string, body: unknown): Promise<IResponse<T>> {
+        return lastValueFrom(this.http.post<IResponse<T>>(apiUrl + url, body, { headers: this.getAuthorizationHeaders(true) }));
     }
 
-    async uploadImage<T>(url: string, body: Record<string, unknown> | null, image: File) {
+    uploadImage<T>(url: string, body: Record<string, unknown> | null, image: File): Promise<IResponse<T>> {
         if (!!body) {
             body.file = image;
         }
@@ -78,16 +71,14 @@ export class ApiService {
         const formData: FormData = new FormData();
         formData.append('file', image);
 
-        const headers = await this.getAuthorizationHeaders(true);
-        return this.http.put<IResponse<T>>(apiUrl + url, formData, { params: body as never, headers });
+        return lastValueFrom(this.http.put<IResponse<T>>(apiUrl + url, formData, { params: body as never, headers: this.getAuthorizationHeaders(true) }));
     }
 
-    async uploadAvatar<T>(url: string, body: Blob): Promise<Observable<IResponse<T>>> {
+    uploadAvatar<T>(url: string, body: Blob): Promise<IResponse<T>> {
         const formData = new FormData();
 
         formData.append('file', body);
-        const headers = await this.getAuthorizationHeaders(true);
-        return this.http.put<IResponse<T>>(apiUrl + url, formData, { headers });
+        return lastValueFrom(this.http.put<IResponse<T>>(apiUrl + url, formData, { headers: this.getAuthorizationHeaders(true) }));
     }
 
     private getPublicHeaders(isFile: boolean = false) {
@@ -103,9 +94,9 @@ export class ApiService {
         return isFile ? fileHeaders : defaultHeaders;
     }
 
-    private async getAuthorizationHeaders(isFile: boolean = false) {
+    private getAuthorizationHeaders(isFile: boolean = false) {
         return {
-            Authorization: `Bearer ${await this.getAccessToken()}`,
+            Authorization: `Bearer ${this.getAccessToken()}`,
             ...this.getPublicHeaders(isFile),
         };
     }

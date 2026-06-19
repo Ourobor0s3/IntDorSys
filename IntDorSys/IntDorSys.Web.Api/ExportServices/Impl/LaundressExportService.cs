@@ -50,7 +50,8 @@ namespace IntDorSys.Web.Api.ExportServices.Impl
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
-            return stream.ToArray();
+            var result = stream.ToArray();
+            return result;
         }
     }
 }

@@ -2,7 +2,6 @@ using IntDorSys.DataAccess;
 using IntDorSys.Laundress.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Ouro.CommonUtils.Results;
 using Ouro.TelegramBot.Core.Services;
 
 namespace IntDorSys.Laundress.Services.Impl
@@ -13,8 +12,8 @@ namespace IntDorSys.Laundress.Services.Impl
         private readonly ITelegramService _telegramService;
         private readonly ILogger<LaundressBotNotificationService> _logger;
 
-        private static readonly TimeSpan NotificationLeadHours = TimeSpan.FromHours(-3);
-        private static readonly TimeSpan NotificationFollowUpHours = TimeSpan.FromHours(-2);
+        private static readonly TimeSpan _notificationLeadHours = TimeSpan.FromHours(-3);
+        private static readonly TimeSpan _notificationFollowUpHours = TimeSpan.FromHours(-2);
 
         public LaundressBotNotificationService(
             AppDataContext db,
@@ -26,6 +25,7 @@ namespace IntDorSys.Laundress.Services.Impl
             _logger = logger;
         }
 
+        /// <inheritdoc />
         public async Task CheckTimeAndSendNotifAsync(CancellationToken ct)
         {
             try
@@ -54,7 +54,7 @@ namespace IntDorSys.Laundress.Services.Impl
                 var usersWashHours = await _db.Set<UseLaundress>()
                     .Include(x => x.SelectUser)
                     .Where(x => x.SelectUserId != null)
-                    .Where(x => x.TimeWash.Add(NotificationLeadHours) >= DateTime.Now && x.TimeWash.Add(NotificationFollowUpHours) < DateTime.Now)
+                    .Where(x => x.TimeWash.Add(_notificationLeadHours) >= DateTime.Now && x.TimeWash.Add(_notificationFollowUpHours) < DateTime.Now)
                     .Where(x => !x.IsSendHours)
                     .ToListAsync(ct);
 

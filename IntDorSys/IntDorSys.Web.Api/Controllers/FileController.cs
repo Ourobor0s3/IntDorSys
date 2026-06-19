@@ -7,9 +7,9 @@ using Ouro.WebApiUtils;
 namespace IntDorSys.Web.Api.Controllers
 {
     [Route("file")]
+    [Authorize]
     public sealed class FileController : ApiController
     {
-        [AllowAnonymous]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetAsync(
             Guid id,

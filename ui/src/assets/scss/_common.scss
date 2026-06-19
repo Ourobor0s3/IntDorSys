@@ -117,6 +117,24 @@
   }
 }
 
+/* Role badge */
+.role-badge {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  border-radius: 4px;
+  background: #eef2ff;
+  color: #4338ca;
+  margin-right: 0.25rem;
+
+  [data-bs-theme="dark"] & {
+    background: #1e1b4b;
+    color: #a5b4fc;
+  }
+}
+
 /* Empty state - identical across laundress, reports, users-info, audit */
 .empty-state {
   display: flex;

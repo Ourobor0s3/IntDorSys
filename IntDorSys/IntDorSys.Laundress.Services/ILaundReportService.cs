@@ -1,8 +1,8 @@
+using IntDorSys.Core.Entities;
 using IntDorSys.Laundress.Core.Models;
 using Ouro.CommonUtils.Base.Entities;
 using Ouro.CommonUtils.Results;
 using Telegram.Bot.Types;
-using FileInfo = IntDorSys.Core.Entities.FileInfo;
 
 namespace IntDorSys.Laundress.Services
 {
@@ -17,13 +17,14 @@ namespace IntDorSys.Laundress.Services
         /// <param name="filter">Base filter model</param>
         /// <param name="ct">Cancellation token</param>
         /// <returns>List of file info models</returns>
-        Task<DataResult<List<FileInfo>>> GetFilterAsync(BaseFilterModel filter, CancellationToken ct);
+        Task<DataResult<List<StoredFileInfo>>> GetFilterAsync(BaseFilterModel filter, CancellationToken ct);
 
         /// <summary>
         ///     Saves photos sent by a user from a Telegram message
         /// </summary>
         /// <param name="message">Telegram message containing photos</param>
         /// <param name="ct">Cancellation token</param>
+        /// <returns>Task representing the async operation</returns>
         Task SavePhotoAsync(Message message, CancellationToken ct);
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace IntDorSys.Laundress.Services
         /// </summary>
         /// <param name="message">Telegram message with report data</param>
         /// <param name="ct">Cancellation token</param>
+        /// <returns>Task representing the async operation</returns>
         Task SaveReportAsync(Message message, CancellationToken ct);
 
         /// <summary>

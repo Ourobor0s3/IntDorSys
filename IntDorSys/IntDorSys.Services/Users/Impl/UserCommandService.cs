@@ -1,21 +1,26 @@
 using IntDorSys.Core.Entities.Users;
 using IntDorSys.Core.Enums;
 using IntDorSys.DataAccess;
+using IntDorSys.Services.Audit;
 using Microsoft.EntityFrameworkCore;
 using Ouro.CommonUtils.Results;
 using Telegram.Bot.Types;
+using Ouro.DatabaseUtils.Extensions;
 
 namespace IntDorSys.Services.Users.Impl
 {
     internal sealed class UserCommandService : IUserCommandService
     {
         private readonly AppDataContext _db;
+        private readonly IAuditService _audit;
 
-        public UserCommandService(AppDataContext db)
+        public UserCommandService(AppDataContext db, IAuditService audit)
         {
             _db = db;
+            _audit = audit;
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> CreateAsync(UserInfo user, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -68,6 +73,7 @@ namespace IntDorSys.Services.Users.Impl
             return result.WithData(userReg);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> CreateOrUpdateTgInfoAsync(User user, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -83,7 +89,7 @@ namespace IntDorSys.Services.Users.Impl
                     LanguageCode = user.LanguageCode,
                     IsBot = user.IsBot,
                     Email = "",
-                    Password = "TelegramUser.NoPassword",
+                    Password = "",
                 };
 
                 _db.AddOrUpdateEntity(userInfo);
@@ -113,6 +119,7 @@ namespace IntDorSys.Services.Users.Impl
             return result.WithData(userInfo);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> UpdateUserInfo(UserInfo newInfo, CancellationToken ct)
         {
             var result = new DataResult<UserInfo>();
@@ -131,7 +138,8 @@ namespace IntDorSys.Services.Users.Impl
             return result.WithData(userInfo);
         }
 
-        public async Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, CancellationToken ct)
+        /// <inheritdoc />
+        public async Task<DataResult<bool>> ChangeUserStatus(long userId, UserStatus newStatus, long actingUserId, CancellationToken ct)
         {
             var res = new DataResult<bool>();
 
@@ -146,9 +154,12 @@ namespace IntDorSys.Services.Users.Impl
             user.Status = newStatus;
 
             await _db.SaveChangesAsync(ct);
+            await _audit.RecordAsync(actingUserId, "ChangeUserStatus", "UserInfo",
+                userId.ToString(), $"New status: {newStatus}", ct);
             return res.WithData(true);
         }
 
+        /// <inheritdoc />
         public async Task<DataResult<UserInfo>> UpdatePasswordAsync(long userId, string passwordHash, CancellationToken ct)
         {
             var res = new DataResult<UserInfo>();
@@ -165,6 +176,65 @@ namespace IntDorSys.Services.Users.Impl
 
             await _db.SaveChangesAsync(ct);
             return res.WithData(user);
+        }
+
+        /// <inheritdoc />
+        public async Task<DataResult<UserInfo>> ConfirmUserWithRoleAsync(long userId, string roleKey, long actingUserId, CancellationToken ct)
+        {
+            var result = new DataResult<UserInfo>();
+
+            var user = await _db.Set<UserInfo>()
+                .FirstOrDefaultAsync(x => x.Id == userId, ct);
+
+            if (user == null)
+            {
+                return result.WithError("User not found");
+            }
+
+            var existingRole = await _db.Set<UserRoles>()
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.KeyRoles == roleKey && x.UserId == userId, ct);
+
+            if (existingRole == null)
+            {
+                var userRole = new UserRoles
+                {
+                    UserId = userId,
+                    User = user,
+                    KeyRoles = roleKey,
+                };
+                _db.AddOrUpdateEntity(userRole);
+            }
+            else if (existingRole.Deleted)
+            {
+                existingRole.Deleted = false;
+            }
+
+            user.IsConfirm = true;
+            await _db.SaveChangesAsync(ct);
+            await _audit.RecordAsync(actingUserId, "ConfirmUser", "UserInfo",
+                userId.ToString(), $"Role: {roleKey}", ct);
+            return result.WithData(user);
+        }
+
+        /// <inheritdoc />
+        public async Task<DataResult<bool>> RemoveRoleAsync(long userId, string roleKey, long actingUserId, CancellationToken ct)
+        {
+            var result = new DataResult<bool>();
+
+            var role = await _db.Set<UserRoles>()
+                .FirstOrDefaultAsync(x => x.KeyRoles == roleKey && x.UserId == userId, ct);
+
+            if (role == null)
+            {
+                return result.WithError($"Role '{roleKey}' not found for user {userId}");
+            }
+
+            role.Deleted = true;
+            await _db.SaveChangesAsync(ct);
+            await _audit.RecordAsync(actingUserId, "RemoveRole", "UserInfo",
+                userId.ToString(), $"Role: {roleKey}", ct);
+            return result.WithData(true);
         }
 
         private static string GetUsername(User user)

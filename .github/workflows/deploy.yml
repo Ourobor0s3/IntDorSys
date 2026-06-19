@@ -11,6 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('IntDorSys/**/*.csproj', 'IntDorSys/NuGet.Config') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
@@ -39,5 +47,4 @@ jobs:
             cd /opt/intdorsys
             git fetch origin
             git reset --hard origin/main
-            docker compose down
             docker compose up -d --build

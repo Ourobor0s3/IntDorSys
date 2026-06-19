@@ -1,7 +1,7 @@
 import { ApiService } from './api.service';
 import { IResponse } from '../interface/response';
 import { Injectable } from "@angular/core";
-import { ChartData } from "../model/chartData.model";
+import { ChartData } from "../interface/chartData.model";
 
 
 const apiContactUrl = 'analitic';
@@ -13,8 +13,7 @@ export class AnaliticService {
     constructor(private api: ApiService) {
     }
 
-    async getAnaliticLaund(): Promise<IResponse<ChartData[]>> {
-        return (await this.api.get<ChartData[]>(apiContactUrl + '/laund')).toPromise() as Promise<IResponse<ChartData[]>>;
-
+    getAnaliticLaund(): Promise<IResponse<ChartData[]>> {
+        return this.api.get<ChartData[]>(apiContactUrl + '/laund');
     }
 }

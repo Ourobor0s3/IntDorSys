@@ -12,6 +12,7 @@ namespace IntDorSys.Security.Services
         ///     Generates a JWT token for the given user
         /// </summary>
         /// <param name="user">User entity to issue token for</param>
+        /// <param name="ct">Cancellation token</param>
         /// <returns>Authentication token with access token and role</returns>
         Task<AuthToken> IssueTokenAsync(UserInfo user, CancellationToken ct = default);
     }

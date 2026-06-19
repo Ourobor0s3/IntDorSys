@@ -1,16 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HeaderButtonModel } from "../model/headerButton.model";
 
 @Injectable({
     providedIn: 'root',
 })
 export class EventService {
     readonly LangChangeEvent = new Subject<string>();
-    readonly NotifCountEvent = new Subject<number>();
-    readonly SubpageEvent = new Subject<HeaderButtonModel>();
     readonly ShowUploadButtonEvent = new Subject<boolean>();
-    readonly SubscriptionUpgrade = new Subject<void>();
     private arrIntervals: ReturnType<typeof setInterval>[] = [];
     private funcImpl: (() => void)[] = [];
     private arrForLogOut: { clear: () => void }[] = [];

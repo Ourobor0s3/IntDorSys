@@ -7,7 +7,7 @@ using Ouro.CommonUtils.Results;
 
 namespace IntDorSys.Web.Api.Controllers.Bot
 {
-    [Route("[controller]")]
+    [Route("bot")]
     [Authorize]
     public sealed class BotController : ProtectedApiController
     {

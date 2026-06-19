@@ -1,13 +1,13 @@
 import { UserInfoModel } from "./userInfo.model";
 
-export class LaundressModel {
+export interface LaundressModel {
     selectUser?: UserInfoModel;
-    timeWash!: string;
+    timeWash: string;
     dateStr?: string;
     timeStr?: string;
 }
 
-export class PageLaundressModel {
+export interface PageLaundressModel {
     date: string;
     laundModels: LaundressModel[];
 }

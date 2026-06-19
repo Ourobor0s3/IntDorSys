@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { HeaderButtonModel } from "../../model/headerButton.model";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { HeaderButtonModel, defaultHeaderButton } from "../../interface/headerButton.model";
 
 @Component({
     selector: 'app-section-header',
@@ -12,10 +12,12 @@ export class SectionHeaderComponent {
     public title: string | undefined;
 
     @Input()
-    public firstButton: HeaderButtonModel = new HeaderButtonModel();
-    @Input()
-    public secondButton: HeaderButtonModel = new HeaderButtonModel();
+    public button: HeaderButtonModel = defaultHeaderButton();
+
     @Input()
     public showInput: boolean = false;
+
+    @Output()
+    public buttonClick = new EventEmitter<void>();
 
 }

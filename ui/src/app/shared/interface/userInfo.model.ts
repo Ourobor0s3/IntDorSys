@@ -1,15 +1,17 @@
 import { UserStatus } from "../enums/UserStatus";
+import { WashRecordModel } from "./washRecord.model";
 
-export class UserInfoModel {
-    id!: number;
+export interface UserInfoModel {
+    id: number;
     fullName?: string;
     numGroup?: string;
     numRoom?: string;
-    username!: string;
-    isConfirm!: boolean;
+    username: string;
+    isConfirm: boolean;
     status: UserStatus;
     registerDate: string;
-    // показывает, заблочен ли пользователь
     isBlocked: boolean;
     usageCount: number;
+    recentWashes: WashRecordModel[];
+    roles?: string[];
 }

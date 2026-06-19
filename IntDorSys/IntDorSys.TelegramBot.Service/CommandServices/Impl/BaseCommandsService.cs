@@ -1,7 +1,6 @@
 using IntDorSys.Core.Constants;
 using IntDorSys.Services.AppSettings;
 using IntDorSys.Services.Users;
-using IntDorSys.TelegramBot.Service.AdminServices;
 using Ouro.TelegramBot.Core.Services;
 using Telegram.Bot.Types;
 
@@ -23,6 +22,7 @@ namespace IntDorSys.TelegramBot.Service.CommandServices.Impl
             _settings = settings;
         }
 
+        /// <inheritdoc />
         public async Task StartHandleAsync(Message message, CancellationToken ct)
         {
             var userResult = await _userService.GetByTgIdAsync(message.From!.Id, ct);
@@ -30,6 +30,7 @@ namespace IntDorSys.TelegramBot.Service.CommandServices.Impl
             await _telegramService.SendMessageAsync(userResult.Data.TelegramId, MessageText.Start, ct);
         }
 
+        /// <inheritdoc />
         public async Task RulesHandleAsync(Message message, CancellationToken ct)
         {
             var userResult = await _userService.GetByTgIdAsync(message.From!.Id, ct);

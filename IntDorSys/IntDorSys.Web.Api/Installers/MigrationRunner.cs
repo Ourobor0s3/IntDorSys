@@ -1,10 +1,13 @@
 using IntDorSys.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 
 namespace IntDorSys.Web.Api.Installers
 {
     internal static class MigrationRunner
     {
+        private static readonly NLog.ILogger _logger = LogManager.GetCurrentClassLogger();
+
         public static WebApplication MigrateDb(this WebApplication app)
         {
             var factory = app.Services.GetRequiredService<IServiceScopeFactory>();
@@ -17,8 +20,17 @@ namespace IntDorSys.Web.Api.Installers
                 return app;
             }
 
-            using var db = scope.ServiceProvider.GetRequiredService<AppDataContext>();
-            db.Database.Migrate();
+            try
+            {
+                using var db = scope.ServiceProvider.GetRequiredService<AppDataContext>();
+                db.Database.Migrate();
+                _logger.Info("Database migration completed successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Database migration failed");
+                throw;
+            }
 
             return app;
         }
